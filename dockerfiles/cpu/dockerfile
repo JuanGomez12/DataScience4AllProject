@@ -2,7 +2,7 @@ FROM tensorflow/tensorflow:2.9.0rc2-jupyter
 
 WORKDIR /app 
 
-COPY requirements/cpu/requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
