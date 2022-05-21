@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  cpu:
+    build:
+      context: .
+      dockerfile: dockerfiles/cpu/dockerfile
+    volumes:
+    - ./data:/app/data
+    command: >
+      sh -c "tail -f /dev/null"
+  gpu:
+    build:
+      context: .
+      dockerfile: dockerfiles/gpu/dockerfile
+    volumes:
+    - ./data:/app/data
+    command: >
+      sh -c "tail -f /dev/null"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
