@@ -1,24 +1,23 @@
+import nltk
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import (CountVectorizer, TfidfTransformer,
+                                             TfidfVectorizer)
 from sklearn.feature_selection import SelectFromModel
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.linear_model import ElasticNet
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    mean_squared_error,
-    confusion_matrix,
-    r2_score,
-    roc_auc_score,
-)
+from sklearn.metrics import (accuracy_score, balanced_accuracy_score,
+                             classification_report, confusion_matrix, f1_score,
+                             mean_squared_error, r2_score, roc_auc_score)
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+
+# Download the NLTK stopwords
+nltk.download("stopwords")
+
 
 class PipelineManager:
     def __init__(self, estimator: str):
@@ -75,9 +74,16 @@ class PipelineManager:
 
         text_preprocessor = Pipeline(
             [
-                ("vect", CountVectorizer(strip_accents='unicode')),
+                (
+                    "vect",
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ),
+                ),
                 ("tfidf", TfidfTransformer()),
-            ])
+            ]
+        )
 
         preprocessor = ColumnTransformer(
             [
@@ -129,7 +135,11 @@ class PipelineManager:
         if n_iter == -1:
             # Do a full search of the feature space
             self.hyperparameter_tuner = GridSearchCV(
-                self.pipeline, param_grids, cv=cv, n_jobs=n_jobs, **kwargs,
+                self.pipeline,
+                param_grids,
+                cv=cv,
+                n_jobs=n_jobs,
+                **kwargs,
             )
         else:
             # Do a randomized search of the feature space, looking for n_iter combinations
@@ -143,9 +153,10 @@ class PipelineManager:
             )
 
         self.hyperparameter_tuner.fit(X, y)
-        self.cv_results = pd.DataFrame(
-            self.hyperparameter_tuner.cv_results_
-        ).sort_values(by=["rank_test_score"])
+        self.cv_results = pd.DataFrame(self.hyperparameter_tuner.cv_results_)
+        if "rank_test_score" in self.cv_results:
+            self.cv_results = self.cv_results.sort_values(by=["rank_test_score"])
+
         self.best_estimator = self.hyperparameter_tuner.best_estimator_
         return self.best_estimator
 
@@ -159,12 +170,16 @@ class PipelineManager:
                 y_true, self.best_estimator.predict_proba(X), multi_class="ovo"
             )
             score["accuracy"] = accuracy_score(y_true, y_score)
+            score["balanced_accuracy"] = balanced_accuracy_score(y_true, y_score)
             for measurement in ["micro", "macro", "weighted"]:
                 score[f"{measurement}_f1_score"] = f1_score(
                     y_true, y_score, average=measurement
                 )
             score["confusion_matrix"] = confusion_matrix(y_true, y_score)
-            score["confusion_matrix_normalized"] = confusion_matrix(y_true, y_score, normalize='all')
+            score["confusion_matrix_normalized"] = confusion_matrix(
+                y_true, y_score, normalize="all"
+            )
+            score['classification_report'] = classification_report(y_true, y_score)
         elif self.estimator == "regressor":
             score["R2"] = r2_score(y_true, y_score)
             score["MSE"] = mean_squared_error(y_true, y_score)
