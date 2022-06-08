@@ -3,17 +3,34 @@ import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.feature_extraction.text import (CountVectorizer, TfidfTransformer,
-                                             TfidfVectorizer)
+from sklearn.feature_extraction.text import (
+    CountVectorizer,
+    TfidfTransformer,
+    TfidfVectorizer,
+)
 from sklearn.feature_selection import SelectFromModel
 from sklearn.impute import KNNImputer, SimpleImputer
-from sklearn.linear_model import ElasticNet
-from sklearn.metrics import (accuracy_score, balanced_accuracy_score,
-                             classification_report, confusion_matrix, f1_score,
-                             mean_squared_error, r2_score, roc_auc_score)
+from sklearn.linear_model import ElasticNet, Ridge, Lasso
+from sklearn.metrics import (
+    accuracy_score,
+    balanced_accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    mean_squared_error,
+    r2_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import (
+    MinMaxScaler,
+    Normalizer,
+    OneHotEncoder,
+    PowerTransformer,
+    RobustScaler,
+    StandardScaler,
+)
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
@@ -109,16 +126,28 @@ class PipelineManager:
                 SimpleImputer(missing_values=np.nan, strategy="most_frequent"),
                 KNNImputer(),
             ],
+            "preprocessor__numerical__scaler": [
+                StandardScaler(),
+                RobustScaler(),
+                MinMaxScaler(),
+                Normalizer(),
+                # PowerTransformer(),
+            ],
             "feature_selector": [
-                SelectFromModel(RandomForestRegressor()),
+                SelectFromModel(Lasso()),
                 SelectFromModel(ElasticNet()),
+                SelectFromModel(Ridge()),
             ],
         }
         return param_grid
 
     @staticmethod
     def convert_dict_names(param_grid):
-        return {f"estimator__{key}": value for key, value in param_grid.items()}
+        return {
+            f"estimator__{key}": value
+            for key, value in param_grid.items()
+            if "__" not in key
+        }
 
     def add_estimator(self, estimator, param_grid: dict):
         param_dict = {}
@@ -154,8 +183,6 @@ class PipelineManager:
 
         self.hyperparameter_tuner.fit(X, y)
         self.cv_results = pd.DataFrame(self.hyperparameter_tuner.cv_results_)
-        if "rank_test_score" in self.cv_results:
-            self.cv_results = self.cv_results.sort_values(by=["rank_test_score"])
 
         self.best_estimator = self.hyperparameter_tuner.best_estimator_
         return self.best_estimator
@@ -166,20 +193,35 @@ class PipelineManager:
         score = {}
         y_score = self.best_estimator.predict(X)
         if self.estimator == "classifier":
-            score["ROC_AUC"] = roc_auc_score(
-                y_true, self.best_estimator.predict_proba(X), multi_class="ovo"
-            )
+            try:
+                score["ROC_AUC"] = roc_auc_score(
+                    y_true, self.best_estimator.predict_proba(X), multi_class="ovo"
+                )
+            except:
+                score["ROC_AUC"] = "NA"
             score["accuracy"] = accuracy_score(y_true, y_score)
             score["balanced_accuracy"] = balanced_accuracy_score(y_true, y_score)
             for measurement in ["micro", "macro", "weighted"]:
                 score[f"{measurement}_f1_score"] = f1_score(
                     y_true, y_score, average=measurement
                 )
-            score["confusion_matrix"] = confusion_matrix(y_true, y_score)
-            score["confusion_matrix_normalized"] = confusion_matrix(
-                y_true, y_score, normalize="all"
-            )
-            score['classification_report'] = classification_report(y_true, y_score)
+            try:
+                score["confusion_matrix"] = confusion_matrix(y_true, y_score)
+            except:
+                score["confusion_matrix"] = "NA"
+            try:
+                score["confusion_matrix_normalized"] = confusion_matrix(
+                    y_true, y_score, normalize="all"
+                )
+            except:
+                score["confusion_matrix_normalized"] = "NA"
+            try:
+                score["classification_report"] = pd.DataFrame(
+                    classification_report(y_true, y_score, output_dict=True)
+                ).transpose()
+            except:
+                score["classification_report"] = "NA"
+
         elif self.estimator == "regressor":
             score["R2"] = r2_score(y_true, y_score)
             score["MSE"] = mean_squared_error(y_true, y_score)
