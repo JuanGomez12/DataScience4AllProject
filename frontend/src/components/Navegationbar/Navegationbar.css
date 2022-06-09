@@ -7,10 +7,19 @@
   margin-left: 0 !important;
 }
 
+.navbar-brand a{
+  vertical-align: text-bottom;
+  color: #08c4a4;
+}
+
+.navbar-brand span {
+  margin: 0 1rem;
+}
+
 .nav-menu{
   background: white;
   width: 250px;
-  height: 90vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -37,7 +46,7 @@
 
 .nav-text a {
   text-decoration: none;
-  color: gray;
+  color: #414656;
   font-size: 18px;
   width: 95%;
   height: 100%;
@@ -45,6 +54,14 @@
   align-items: center;
   /* padding: 0 16px; */
   border-radius: 4px;
+}
+
+.nav-text span {
+  margin: 0 1rem;
+}
+
+.sidebar-icon{
+  color: #08c4a4;
 }
 
 .nav-text a:hover {

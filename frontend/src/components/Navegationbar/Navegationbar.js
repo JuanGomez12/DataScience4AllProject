@@ -6,6 +6,8 @@ import * as AiIcons from "react-icons/ai";
 import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData';
 
+import SidebarMenu from 'react-bootstrap-sidebar-menu';
+
 function Navegationbar() {
 
   const [sidebar, setSidebar] = useState(false);
@@ -19,10 +21,11 @@ function Navegationbar() {
           <Link to="#" >
             <AiIcons.AiOutlineMenu onClick={showSidebar}/>
           </Link>
-          Medical predictions
+          <span>Medical predictions</span>
         </Navbar.Brand>
       </Container>
     </Navbar>
+    
     <nav className={sidebar ? "nav-menu active": "nav-menu"}>
       {SidebarData.map((item, index) => {
         return(
