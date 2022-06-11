@@ -90,7 +90,7 @@ class PipelineManager:
         )
 
         text_preprocessor = Pipeline(
-            [
+            steps=[
                 (
                     "vectorizer",
                     CountVectorizer(
@@ -133,12 +133,7 @@ class PipelineManager:
                 Normalizer(),
                 # PowerTransformer(),
             ],
-            "feature_selector": [
-                SelectFromModel(Lasso()),
-                SelectFromModel(ElasticNet()),
-                SelectFromModel(Ridge()),
-            ],
-            "preprocessor_text_vectorizer": [
+            "preprocessor__text__vectorizer": [
                 CountVectorizer(
                     strip_accents="unicode",
                     stop_words=nltk.corpus.stopwords.words("spanish"),
@@ -170,11 +165,16 @@ class PipelineManager:
                     ngram_range=(3, 3),
                 ),
             ],
-            "preprocessor_text_tfidf": [
-                TfidfTransformer(norm = 'l2', sublinear_tf = True),
-                TfidfTransformer(norm = 'l2', sublinear_tf = False),
-                TfidfTransformer(norm = 'l1', sublinear_tf = False),
-                TfidfTransformer(norm = 'l1', sublinear_tf = True),
+            "preprocessor__text__tfidf": [
+                TfidfTransformer(norm="l2", sublinear_tf=True),
+                TfidfTransformer(norm="l2", sublinear_tf=False),
+                TfidfTransformer(norm="l1", sublinear_tf=False),
+                TfidfTransformer(norm="l1", sublinear_tf=True),
+            ],
+            "feature_selector": [
+                SelectFromModel(Lasso()),
+                SelectFromModel(ElasticNet()),
+                SelectFromModel(Ridge()),
             ],
         }
         return param_grid
