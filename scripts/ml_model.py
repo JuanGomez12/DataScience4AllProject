@@ -170,6 +170,12 @@ class PipelineManager:
                     ngram_range=(3, 3),
                 ),
             ],
+            "preprocessor_text_tfidf": [
+                TfidfTransformer(norm = 'l2', sublinear_tf = True),
+                TfidfTransformer(norm = 'l2', sublinear_tf = False),
+                TfidfTransformer(norm = 'l1', sublinear_tf = False),
+                TfidfTransformer(norm = 'l1', sublinear_tf = True),
+            ],
         }
         return param_grid
 
