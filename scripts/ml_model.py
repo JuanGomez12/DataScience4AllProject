@@ -92,7 +92,7 @@ class PipelineManager:
         text_preprocessor = Pipeline(
             [
                 (
-                    "vect",
+                    "vectorizer",
                     CountVectorizer(
                         strip_accents="unicode",
                         stop_words=nltk.corpus.stopwords.words("spanish"),
@@ -137,6 +137,38 @@ class PipelineManager:
                 SelectFromModel(Lasso()),
                 SelectFromModel(ElasticNet()),
                 SelectFromModel(Ridge()),
+            ],
+            "preprocessor_text_vectorizer": [
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(1, 1),
+                ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(1, 2),
+                ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(1, 3),
+                ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(2, 2),
+                ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(2, 3),
+                ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(3, 3),
+                ),
             ],
         }
         return param_grid
