@@ -164,6 +164,11 @@ class PipelineManager:
                     stop_words=nltk.corpus.stopwords.words("spanish"),
                     ngram_range=(3, 3),
                 ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(4, 4),
+                ),
             ],
             "preprocessor__text__tfidf": [
                 TfidfTransformer(norm="l2", sublinear_tf=True),
