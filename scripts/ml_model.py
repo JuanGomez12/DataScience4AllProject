@@ -8,9 +8,9 @@ from sklearn.feature_extraction.text import (
     TfidfTransformer,
     TfidfVectorizer,
 )
-from sklearn.feature_selection import SelectFromModel
+from sklearn.feature_selection import SelectFromModel, VarianceThreshold
 from sklearn.impute import KNNImputer, SimpleImputer
-from sklearn.linear_model import ElasticNet, Ridge, Lasso
+from sklearn.linear_model import ElasticNet, Lasso, Ridge
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -175,6 +175,7 @@ class PipelineManager:
                 SelectFromModel(Lasso()),
                 SelectFromModel(ElasticNet()),
                 SelectFromModel(Ridge()),
+                VarianceThreshold(),
             ],
         }
         return param_grid
