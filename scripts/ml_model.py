@@ -294,6 +294,12 @@ class PipelineManager:
         if self.pipeline is None:
             self.set_basic_pipeline()
         param_grids = self.param_grids
+        
+        if kwargs.get('fit_params'):
+            fit_params = kwargs.get('fit_params')
+            del kwargs['fit_params']
+        else:
+            fit_params = {}
 
         if n_iter == -1:
             # Do a full search of the feature space
@@ -315,7 +321,7 @@ class PipelineManager:
                 **kwargs,
             )
 
-        self.hyperparameter_tuner.fit(X, y)
+        self.hyperparameter_tuner.fit(X, y, **fit_params)
         self.cv_results = pd.DataFrame(self.hyperparameter_tuner.cv_results_)
 
         self.best_estimator = self.hyperparameter_tuner.best_estimator_
