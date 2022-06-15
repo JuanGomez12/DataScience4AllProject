@@ -75,19 +75,19 @@ def merge_classes(df):
 def word_count_feat_engineering(df):
     notas = df.copy()
     word_count_features = {
-        "acido:acido",
-        "antibio:antibio",
-        "asintoma:asintoma",
-        "diabet:diabet",
-        "diet:diet",
-        "gluco:gluco",
-        "insulin:insulin",
-        "keto:keto",
-        "penici:penici",
-        "preservativo:preservativo",
-        "sable:sable",
-        "sifili:sifili",
-        "test_reloj_orden:(test.*reloj)",
+        "acido":"acido",
+        "antibio":"antibio",
+        "asintoma":"asintoma",
+        "diabet":"diabet",
+        "diet":"diet",
+        "gluco":"gluco",
+        "insulin":"insulin",
+        "keto":"keto",
+        "penici":"penici",
+        "preservativo":"preservativo",
+        "sable":"sable",
+        "sifili":"sifili",
+        "test_reloj_orden":r"(test.*reloj)",
     }
     for word in word_count_features:
         notas[word] = notas.Plan.str.lower().str.count(word_count_features[word])
