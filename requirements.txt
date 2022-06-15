@@ -5,3 +5,8 @@ tensorflow
 jupyter
 seaborn
 xgboost
+wordcloud
+matplotlib
+missingno
+nltk
+spacy
