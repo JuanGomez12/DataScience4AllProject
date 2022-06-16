@@ -65,6 +65,8 @@ def find_top_k_words(string_value: str, k: int = 5) -> list:
 
 def merge_classes(df):
     notas = df.copy()
+    notas.loc[notas.Código == "A529", "Código"] = "A539"
+    notas.loc[notas.Código == "A539", "Nombre"] = "SIFILIS, NO ESPECIFICADA"
     notas.loc[notas.Código == "A510", "Código"] = "A51"
     notas.loc[notas.Código == "A511", "Código"] = "A51"
     notas.loc[notas.Código == "A514", "Código"] = "A51"
@@ -75,19 +77,24 @@ def merge_classes(df):
 def word_count_feat_engineering(df):
     notas = df.copy()
     word_count_features = {
-        "acido":"acido",
-        "antibio":"antibio",
-        "asintoma":"asintoma",
-        "diabet":"diabet",
-        "diet":"diet",
-        "gluco":"gluco",
-        "insulin":"insulin",
-        "keto":"keto",
-        "penici":"penici",
-        "preservativo":"preservativo",
-        "sable":"sable",
-        "sifili":"sifili",
-        "test_reloj_orden":r"(test.*reloj)",
+        "acido": "acido",
+        "antibio": "antibio",
+        "asintoma": "asintoma",
+        "cabeza": "cabeza",
+        "diabet": "diabet",
+        "diet": "diet",
+        "gluco": "gluco",
+        "hepat": "hepat",
+        "insulin": "insulin",
+        "keto": "keto",
+        "penici": "penici",
+        "preservativo": "preservativo",
+        "rpr": "rpr",
+        "sable": "sable",
+        "serolo": "serolo",
+        "sifili": "sifili",
+        "test_reloj_orden": r"(test.*reloj)",
+        "vih": "vih",
     }
     for word in word_count_features:
         notas[word] = notas.Plan.str.lower().str.count(word_count_features[word])
