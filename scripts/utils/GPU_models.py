@@ -20,6 +20,9 @@ from tensorflow.keras.layers import (
     concatenate,
 )
 from tensorflow.keras.optimizers import Adam
+import tensorflow as tf
+import tensorflow_hub as hub
+from tensorflow.keras import regularizers
 
 
 def gpu_model(
@@ -88,22 +91,66 @@ def gpu_model(
     return model
 
 
-def gpu_model_2(class_number):
-    embedding = "https://tfhub.dev/google/tf2-preview/nnlm-es-dim128/1"
-    embedding = "https://tfhub.dev/google/nnlm-es-dim128-with-normalization/2"
-    embedding = "https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
+def gpu_model_hub(class_number, embedding, dropout=0.5):
+    if embedding == "nnlm-es-dim128":
+        embedding = "https://tfhub.dev/google/nnlm-es-dim128/2"
+    if embedding == "nnlm-es-dim128-with-normalization":
+        embedding = "https://tfhub.dev/google/nnlm-es-dim128-with-normalization/2"
+    if embedding == "universal":
+        embedding = "https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
 
     hub_layer = hub.KerasLayer(
-        embedding, input_shape=[], dtype=tf.string, trainable=True
+        embedding,
+        input_shape=[],
+        dtype=tf.string,
+        # trainable=True,
+        output_shape=[128],
     )
     model = tf.keras.Sequential()
     model.add(hub_layer)
-    model.add(tf.keras.layers.Dense(16, activation="relu"))
-    model.add(tf.keras.layers.Dense(class_number))
+    model.add(
+        tf.keras.layers.Dense(
+            128, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(
+        tf.keras.layers.Dense(
+            1024, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(
+        tf.keras.layers.Dense(
+            512, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(
+        tf.keras.layers.Dense(
+            256, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(
+        tf.keras.layers.Dense(
+            128, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(
+        tf.keras.layers.Dense(
+            64, activation="relu", kernel_regularizer=regularizers.l2(0.001)
+        )
+    )
+    model.add(Dropout(dropout))
+    model.add(tf.keras.layers.Dense(class_number, activation="relu"))
     model.compile(
         optimizer="adam",
-        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-        metrics=["accuracy"],
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        # metrics=[tf.keras.metrics.AUC()],
+        metrics=[tf.keras.metrics.SparseCategoricalCrossentropy(from_logits=True)],
+        # metrics=[tf.keras.metrics.SparseCategoricalAccuracy(from_logits=True)],
     )
     return model
 
@@ -232,7 +279,7 @@ class KerasClassifierModel(KerasClassifier):
         X,
         Y,
         min_delta: float = 0,
-        patience: int = 30,
+        patience: int = 60,
         monitor: str = "val_loss",
         restore_best_weights: bool = True,
         *args,
@@ -316,7 +363,7 @@ def baseline_model(feature_number: int):
     return model
 
 
-def baseline_model(feature_number: int):
+def baseline_classifier_model(feature_number: int, class_number: int):
     # create model
     model = Sequential()
     model.add(
@@ -327,9 +374,13 @@ def baseline_model(feature_number: int):
             activation="relu",
         )
     )
-    model.add(Dense(1, kernel_initializer="normal"))
+    model.add(Dense(class_number))
     # Compile model
-    model.compile(loss="mean_squared_error", optimizer="adam")
+    model.compile(
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        optimizer="adam",
+        metrics=["accuracy"],
+    )
     return model
 
 
@@ -348,7 +399,7 @@ def test_gpu_model(**kwargs):
         build_fn=model_function,
         feature_number=X.shape[1],
         epochs=100,
-        batch_size=5,
+        batch_size=10,
         verbose=1,
         **kwargs,
     )
@@ -376,3 +427,5 @@ if __name__ == "__main__":
     print("Done!")
 
 
+# https://keras.io/examples/nlp/text_classification_from_scratch/
+# https://www.tensorflow.org/tutorials/keras/text_classification_with_hub
