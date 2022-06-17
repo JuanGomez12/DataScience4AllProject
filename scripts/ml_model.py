@@ -212,7 +212,7 @@ class PipelineManager:
                 TfidfTransformer(norm="l1", sublinear_tf=True),
             ],
             "feature_selector": [
-                SelectFromModel(Lasso()),
+                # SelectFromModel(Lasso()),
                 SelectFromModel(ElasticNet()),
                 SelectFromModel(Ridge()),
                 VarianceThreshold(),
