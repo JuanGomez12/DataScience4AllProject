@@ -9,5 +9,4 @@ wordcloud
 matplotlib
 missingno
 nltk
-spacy
 plotly
