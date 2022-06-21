@@ -294,10 +294,10 @@ class PipelineManager:
         if self.pipeline is None:
             self.set_basic_pipeline()
         param_grids = self.param_grids
-        
-        if kwargs.get('fit_params'):
-            fit_params = kwargs.get('fit_params')
-            del kwargs['fit_params']
+
+        if kwargs.get("fit_params"):
+            fit_params = kwargs.get("fit_params")
+            del kwargs["fit_params"]
         else:
             fit_params = {}
 
