@@ -5,24 +5,16 @@ from logging import handlers
 from typing import Optional
 
 import pandas as pd
+import tensorflow as tf
+import tensorflow_hub as hub
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import AlphaDropout, Dense, Dropout
 from keras.models import Model, Sequential
 from keras.wrappers.scikit_learn import KerasClassifier, KerasRegressor
 from sklearn.model_selection import KFold, cross_val_score
-from tensorflow.keras.layers import (
-    LSTM,
-    BatchNormalization,
-    Flatten,
-    Input,
-    MaxPooling2D,
-    MaxPooling3D,
-    concatenate,
-)
-from tensorflow.keras.optimizers import Adam
-import tensorflow as tf
-import tensorflow_hub as hub
 from tensorflow.keras import regularizers
+from tensorflow.keras.layers import LSTM, Input, SpatialDropout1D, concatenate
+from tensorflow.keras.optimizers import Adam
 
 
 def gpu_model(
@@ -90,7 +82,10 @@ def gpu_model(
     )
     return model
 
-def multi_input_embedded_model(feature_number, class_number, embedding, activation='relu', dropout=0.5):
+
+def multi_input_embedded_model(
+    feature_number, class_number, embedding, activation="relu", dropout=0.5
+):
     if embedding == "nnlm-es-dim128":
         embedding = "https://tfhub.dev/google/nnlm-es-dim128/2"
     if embedding == "nnlm-es-dim128-with-normalization":
@@ -115,40 +110,40 @@ def multi_input_embedded_model(feature_number, class_number, embedding, activati
     )
 
     # Define the inputs
-    non_text_input = Input(shape=(feature_number,)) # Categorical and numerical data
-    text_input = Input(shape=(), name="Input", dtype=tf.string) # Text data
+    non_text_input = Input(shape=(feature_number,))  # Categorical and numerical data
+    text_input = Input(shape=(), name="Input", dtype=tf.string)  # Text data
 
     # Branch A works on the non-text data
-    x = Dense(64, activation=activation,
-            kernel_initializer=kernel_initializer)(non_text_input)
+    x = Dense(64, activation=activation, kernel_initializer=kernel_initializer)(
+        non_text_input
+    )
     x = dropout_layer(dropout)(x)
-    x = Dense(128, activation=activation,
-            kernel_initializer=kernel_initializer)(x)
+    x = Dense(128, activation=activation, kernel_initializer=kernel_initializer)(x)
     x = dropout_layer(dropout)(x)
-    x = Dense(64, activation=activation,
-            kernel_initializer=kernel_initializer)(x)
+    x = Dense(64, activation=activation, kernel_initializer=kernel_initializer)(x)
     x = Model(inputs=non_text_input, outputs=x)
 
     # Branch B works on the text data
     y = hub_layer(text_input)
     y = Dense(embed_output, activation=activation,
             kernel_initializer=kernel_initializer)(y)
+    y = Dense(
+        embed_output * 2, activation=activation, kernel_initializer=kernel_initializer
+    )(y)
     y = dropout_layer(dropout)(y)
-    y = Dense(256, activation=activation,
-            kernel_initializer=kernel_initializer)(y)
-    y = dropout_layer(dropout)(y)
-    y = Dense(128, activation=activation,
-            kernel_initializer=kernel_initializer)(y)
+    y = Dense(
+        embed_output, activation=activation, kernel_initializer=kernel_initializer
+    )(y)
     y = Model(inputs=text_input, outputs=y)
 
     # combine the branches
     combined = concatenate([x.output, y.output])
 
-    z = Dense(64, activation=activation,
-            kernel_initializer=kernel_initializer)(combined)
+    z = Dense(64, activation=activation, kernel_initializer=kernel_initializer)(
+        combined
+    )
     z = dropout_layer(dropout)(z)
-    z = Dense(16, activation=activation,
-            kernel_initializer=kernel_initializer)(z)
+    z = Dense(16, activation=activation, kernel_initializer=kernel_initializer)(z)
     z = Dense(class_number, activation="relu")(z)
 
     model = Model(inputs=[x.input, y.input], outputs=z)
@@ -161,6 +156,7 @@ def multi_input_embedded_model(feature_number, class_number, embedding, activati
         # metrics=[tf.keras.metrics.SparseCategoricalAccuracy(from_logits=True)],
     )
     return model
+
 
 def gpu_model_hub(class_number, embedding, dropout=0.5):
     if embedding == "nnlm-es-dim128":
