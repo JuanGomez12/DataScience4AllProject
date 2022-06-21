@@ -101,7 +101,79 @@ def word_count_feat_engineering(df):
     return notas
 
 
-def preprocess_notas(df):
+def merge_labs_notas(df_lab, df_notas):
+    lab = df_lab.copy()
+    notas = df_notas.copy()
+
+    # Preprocess the lab data
+    preprocessed_labs = preprocess_labs(lab)
+
+    # Merge the data, dropping it beforehand if it was already merged to the notas DF
+    if not set(["top_lab_name", "top_lab_avg_value", "top_lab_count"]).issubset(
+        df_notas.columns
+    ):
+        df_merged = notas.merge(preprocessed_labs, how="left", on="IDRecord")
+    else:
+        df_merged = df_merged.drop(
+            columns=preprocessed_labs.columns, errors="ignore"
+        ).merge(preprocessed_labs, how="left", on="IDRecord")
+        # Fill NaNs
+        df_merged["top_lab_name"] = df_merged.top_lab_name.fillna(0)
+        df_merged["top_lab_avg_value"] = df_merged.top_lab_avg_value.fillna(0)
+        df_merged["top_lab_count"] = df_merged.top_lab_count.fillna("NA")
+        df_merged["total_lab_count"] = df_merged.total_lab_count.fillna(0)
+    return df_merged
+
+
+def clean_labs(df_lab):
+    lab = df_lab.copy()
+    lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
+    lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
+    lab = lab.dropna(subset=["IDRecord"])
+
+    return lab
+
+
+def preprocess_labs(df):
+    lab = df.copy()
+
+    # Group data by Lab name and IDRecord
+    lab = lab.groupby(["IDRecord", "Nombre"])
+
+    # Aggregate the data
+    labs_agg = lab.aggregate({"Valor": np.nanmean, "Nombre": "count"})
+    labs_agg = labs_agg.rename(
+        columns={"Nombre": "lab_count", "Valor": "top_lab_avg_value"}
+    ).reset_index()
+
+    # Get the top lab test per patient, by getting the lab with the highest count
+    top_lab_test_by_patient = labs_agg.merge(
+        labs_agg.loc[
+            labs_agg.groupby("IDRecord").lab_count.idxmax(), ["IDRecord", "Nombre"]
+        ]
+    ).rename(columns={"Nombre": "top_lab_name", "lab_count": "top_lab_count"})
+
+    # Get the total number of labs performed on each patient
+    total_lab_count_by_patient = (
+        labs_agg.groupby(["IDRecord"])
+        .aggregate({"lab_count": "sum"})
+        .rename(columns={"lab_count": "total_lab_count"})
+    )
+
+    preprocessed_labs = top_lab_test_by_patient.merge(
+        total_lab_count_by_patient, on="IDRecord"
+    )
+
+    return preprocessed_labs
+
+
+def clean_sociodemograficos(df):
+    demografico = df.copy()
+    demografico["IDRecord"] = pd.to_numeric(demografico["IDRecord"], errors="coerce")
+    return demografico
+
+
+def clean_notas(df):
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
