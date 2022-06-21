@@ -6,6 +6,7 @@ services:
       dockerfile: dockerfiles/cpu/dockerfile
     volumes:
     - ./data:/app/data
+    - ./scripts:/app/scripts
     command: >
       sh -c "tail -f /dev/null"
   gpu:
@@ -14,6 +15,7 @@ services:
       dockerfile: dockerfiles/gpu/dockerfile
     volumes:
     - ./data:/app/data
+    - ./scripts:/app/scripts
     command: >
       sh -c "tail -f /dev/null"
     deploy:

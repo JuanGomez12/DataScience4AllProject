@@ -4,4 +4,7 @@ numpy
 tensorflow
 jupyter
 seaborn
+missingno
 xgboost
+nltk
+wordcloud
