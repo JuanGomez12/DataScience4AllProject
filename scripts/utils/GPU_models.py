@@ -28,7 +28,7 @@ from tensorflow.keras import regularizers
 def gpu_model(
     feature_number, dropout, activation, optimizer, learning_rate, class_number
 ):
-    if activation.lwoer() == "selu":
+    if activation.lower() == "selu":
         dropout_layer = AlphaDropout
         kernel_initializer = "LecunNormalV2"
     else:
@@ -90,6 +90,77 @@ def gpu_model(
     )
     return model
 
+def multi_input_embedded_model(feature_number, class_number, embedding, activation='relu', dropout=0.5):
+    if embedding == "nnlm-es-dim128":
+        embedding = "https://tfhub.dev/google/nnlm-es-dim128/2"
+    if embedding == "nnlm-es-dim128-with-normalization":
+        embedding = "https://tfhub.dev/google/nnlm-es-dim128-with-normalization/2"
+
+    if activation.lower() == "selu":
+        dropout_layer = AlphaDropout
+        kernel_initializer = "LecunNormalV2"
+    elif activation.lower() == "relu":
+        dropout_layer = Dropout
+        kernel_initializer = "GlorotNormalV2"
+    else:
+        raise ValueError
+
+    embed_output = 128
+    hub_layer = hub.KerasLayer(
+        embedding,
+        input_shape=[],
+        dtype=tf.string,
+        # trainable=True,
+        output_shape=[embed_output],
+    )
+
+    # Define the inputs
+    non_text_input = Input(shape=(feature_number,)) # Categorical and numerical data
+    text_input = Input(shape=(), name="Input", dtype=tf.string) # Text data
+
+    # Branch A works on the non-text data
+    x = Dense(64, activation=activation,
+            kernel_initializer=kernel_initializer)(non_text_input)
+    x = dropout_layer(dropout)(x)
+    x = Dense(128, activation=activation,
+            kernel_initializer=kernel_initializer)(x)
+    x = dropout_layer(dropout)(x)
+    x = Dense(64, activation=activation,
+            kernel_initializer=kernel_initializer)(x)
+    x = Model(inputs=non_text_input, outputs=x)
+
+    # Branch B works on the text data
+    y = hub_layer(text_input)
+    y = Dense(embed_output, activation=activation,
+            kernel_initializer=kernel_initializer)(y)
+    y = dropout_layer(dropout)(y)
+    y = Dense(256, activation=activation,
+            kernel_initializer=kernel_initializer)(y)
+    y = dropout_layer(dropout)(y)
+    y = Dense(128, activation=activation,
+            kernel_initializer=kernel_initializer)(y)
+    y = Model(inputs=text_input, outputs=y)
+
+    # combine the branches
+    combined = concatenate([x.output, y.output])
+
+    z = Dense(64, activation=activation,
+            kernel_initializer=kernel_initializer)(combined)
+    z = dropout_layer(dropout)(z)
+    z = Dense(16, activation=activation,
+            kernel_initializer=kernel_initializer)(z)
+    z = Dense(class_number, activation="relu")(z)
+
+    model = Model(inputs=[x.input, y.input], outputs=z)
+
+    model.compile(
+        optimizer="adam",
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        # metrics=[tf.keras.metrics.AUC()],
+        metrics=[tf.keras.metrics.SparseCategoricalCrossentropy(from_logits=True)],
+        # metrics=[tf.keras.metrics.SparseCategoricalAccuracy(from_logits=True)],
+    )
+    return model
 
 def gpu_model_hub(class_number, embedding, dropout=0.5):
     if embedding == "nnlm-es-dim128":
@@ -425,7 +496,3 @@ def test_gpu_model(**kwargs):
 if __name__ == "__main__":
     test_gpu_model()
     print("Done!")
-
-
-# https://keras.io/examples/nlp/text_classification_from_scratch/
-# https://www.tensorflow.org/tutorials/keras/text_classification_with_hub
