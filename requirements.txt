@@ -4,7 +4,9 @@ numpy
 tensorflow
 jupyter
 seaborn
-missingno
 xgboost
-nltk
 wordcloud
+matplotlib
+missingno
+nltk
+plotly

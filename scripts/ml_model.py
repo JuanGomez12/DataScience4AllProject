@@ -1,6 +1,9 @@
+from typing import Any, Union
+
 import nltk
 import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.feature_extraction.text import (
@@ -8,9 +11,9 @@ from sklearn.feature_extraction.text import (
     TfidfTransformer,
     TfidfVectorizer,
 )
-from sklearn.feature_selection import SelectFromModel
+from sklearn.feature_selection import SelectFromModel, VarianceThreshold
 from sklearn.impute import KNNImputer, SimpleImputer
-from sklearn.linear_model import ElasticNet, Ridge, Lasso
+from sklearn.linear_model import ElasticNet, Lasso, Ridge
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -47,20 +50,44 @@ class PipelineManager:
         self.pipeline = None
         self.cat_features = []
         self.num_features = []
-        self.text_features = []
+        self.text_features = None
         self.param_grids = []
         self.best_estimator = None
 
     def set_categorical_features(self, cat_features: list):
+        """Sets the categorical features that can be used by the ML model.
+
+        Args:
+            cat_features (list): List of categorical features to be passed to
+            the model.
+        """
         self.cat_features = cat_features
 
     def set_numerical_features(self, num_features: list):
+        """Sets the numerical features that can be used by the ML model.
+
+        Args:
+            num_features (list): List of numerical features to be passed to the
+            model.
+        """
         self.num_features = num_features
 
-    def set_text_features(self, text_features: list):
+    def set_text_feature(self, text_features: str):
+        """Sets the text feature that will be used by the ML model
+
+        Args:
+            text_features (str): Name of the feature contianing the corpus.
+        """
         self.text_features = text_features
 
     def set_basic_pipeline(self):
+        """Defines the pipeline that will be used as the base on which to build
+        the rest of the pipeline parameters.
+
+        Raises:
+            ValueError: If the estimator, when the class was initialized, was
+            not regressor nor classifier.
+        """
         if self.estimator == "regressor":
             base_estimator = RandomForestRegressor()
         elif self.estimator == "classifier":
@@ -118,7 +145,15 @@ class PipelineManager:
             ]
         )
 
-    def get_default_param_grid(self):
+    def get_default_param_grid(self) -> dict:
+        """Creates the default parameter grid for the pipeline manager.
+
+        This default parameter grid contains the base hyperparameters to tune.
+
+        Returns:
+            dict: Dictionary containing the different named steps as the keys
+            and their respective tune values/methods.
+        """
         param_grid = {
             "preprocessor__numerical__imputer": [
                 SimpleImputer(missing_values=np.nan, strategy="mean"),
@@ -164,6 +199,11 @@ class PipelineManager:
                     stop_words=nltk.corpus.stopwords.words("spanish"),
                     ngram_range=(3, 3),
                 ),
+                CountVectorizer(
+                    strip_accents="unicode",
+                    stop_words=nltk.corpus.stopwords.words("spanish"),
+                    ngram_range=(4, 4),
+                ),
             ],
             "preprocessor__text__tfidf": [
                 TfidfTransformer(norm="l2", sublinear_tf=True),
@@ -172,32 +212,94 @@ class PipelineManager:
                 TfidfTransformer(norm="l1", sublinear_tf=True),
             ],
             "feature_selector": [
-                SelectFromModel(Lasso()),
+                # SelectFromModel(Lasso()),
                 SelectFromModel(ElasticNet()),
                 SelectFromModel(Ridge()),
+                VarianceThreshold(),
             ],
         }
         return param_grid
 
     @staticmethod
-    def convert_dict_names(param_grid):
+    def convert_dict_names(param_grid: dict) -> dict:
+        """Converts the dictionary keys into the named_steps format
+
+        Converts the keys of the passed dictionary into the named_steps format,
+        assuming that any key in the dictionary that does not contain a double
+        underscore ('__') is a parameter to be passed to the estimator. If the
+        key already contains a double score, it is left untouched assuming it
+        already is in the named steps format required for hyperparameter tuning.
+
+        Args:
+            param_grid (dict): Dictionary with the extra hyperparameters to add
+            to the default hyperparameter grid.
+
+        Returns:
+            dict: A copy of the modified keys in the named steps format.
+        """
         return {
             f"estimator__{key}": value
             for key, value in param_grid.items()
             if "__" not in key
         }
 
-    def add_estimator(self, estimator, param_grid: dict):
+    def add_estimator(self, estimator: BaseEstimator, param_grid: dict):
+        """Adds the estimator and its parameter grid to the list of estimators.
+
+        The keys of the param_grid dictionary will be converted into the
+        named_steps format, assuming that any key in the dictionary that does
+        not contain a double underscore ('__') is a parameter to be passed to
+        the estimator. If the key already contains a double score, it is left
+        untouched assuming it already is in the named steps format required for
+        hyperparameter tuning.
+
+        Args:
+            estimator (BaseEstimator): Estimator to be used as a
+                classifier/regressor.
+            param_grid (dict): Hyperparameter dictionary.
+        """
         param_dict = {}
         param_dict.update(self.get_default_param_grid())
         param_dict.update(self.convert_dict_names(param_grid))
         param_dict.update({"estimator": [estimator]})
         self.param_grids.append(param_dict)
 
-    def find_best_model(self, X, y, cv=5, n_jobs=-1, n_iter=-1, **kwargs):
+    def find_best_model(
+        self, X: Any, y: Any, cv: int = 5, n_jobs: int = -1, n_iter: int = -1, **kwargs
+    ) -> BaseEstimator:
+        """Finds the best estimator from the previousl passed hyperparameter space.
+
+        This function will run a full GridSearch or a RandomizedSearch, based on
+        the n_iter parameter, to find the best performing estimator from the
+        default hyperparameter space it has and any extra parameters passed when
+        adding estimators.
+
+        Args:
+            X (Any): {array-like, sparse matrix} of shape
+                (n_samples, n_features). Data to be used for training.
+            y (Any): array-like of shape (n_samples,). Data containing the
+                target values/classes.
+            cv (int, optional): Number of folds for the K-fold cross validation.
+                Defaults to 5.
+            n_jobs (int, optional): Number of workers to use for parallelization.
+                A negative value indicates an all but #, e.g. -1 means all
+                processors, -2 means all but 1 processor, etc. Defaults to -1.
+            n_iter (int, optional): Number of combinations to try for the
+                hyperparameter tuning. A value 0f -1 indicates that ALL of the
+                hyperparameter feature space will be tested. Defaults to -1.
+
+        Returns:
+            BaseEstimator: Best pipeline with the tuned hyperparameters.
+        """
         if self.pipeline is None:
             self.set_basic_pipeline()
         param_grids = self.param_grids
+
+        if kwargs.get("fit_params"):
+            fit_params = kwargs.get("fit_params")
+            del kwargs["fit_params"]
+        else:
+            fit_params = {}
 
         if n_iter == -1:
             # Do a full search of the feature space
@@ -219,13 +321,38 @@ class PipelineManager:
                 **kwargs,
             )
 
-        self.hyperparameter_tuner.fit(X, y)
+        self.hyperparameter_tuner.fit(X, y, **fit_params)
         self.cv_results = pd.DataFrame(self.hyperparameter_tuner.cv_results_)
 
         self.best_estimator = self.hyperparameter_tuner.best_estimator_
         return self.best_estimator
 
-    def score(self, X, y_true, as_frame=True):
+    def score(
+        self, X: Any, y_true: Any, as_frame: bool = True
+    ) -> Union[dict, pd.DataFrame]:
+        """Runs different metrics through the model to test its performance.
+
+        The metrics are defined based on if the model is a classifier or a
+        regressor. returns a DataFrame if as_frame is True, else it returns a
+        dictionary.
+
+        Args:
+            X (Any): {array-like, sparse matrix} of shape
+                (n_samples, n_features). Data to be used for predicting results.
+            y_true (Any): array-like of shape (n_samples,). Response data for
+                the passed X.
+            as_frame (bool, optional): If True, the return of the function will
+                be a DataFrame instead of a dictionary. Defaults to True.
+
+        Raises:
+            ValueError: If the pipeline has not been fitted, i.e. if
+                find_best_model() has not been run.
+
+        Returns:
+            Union[dict, pd.DataFrame]: Dictionary or DataFrame containing the
+                results of running the different metrics.
+        """
+
         if self.best_estimator is None:
             raise ValueError("Pipeline has not been fitted")
         score = {}
