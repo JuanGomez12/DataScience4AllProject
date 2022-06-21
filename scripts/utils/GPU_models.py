@@ -125,8 +125,9 @@ def multi_input_embedded_model(
 
     # Branch B works on the text data
     y = hub_layer(text_input)
-    y = Dense(embed_output, activation=activation,
-            kernel_initializer=kernel_initializer)(y)
+    y = dropout_layer(dropout)(y)
+    y = LSTM(embed_output, dropout=0.2, recurrent_dropout=0.2)(y)
+    y = SpatialDropout1D(0.2)(y)
     y = Dense(
         embed_output * 2, activation=activation, kernel_initializer=kernel_initializer
     )(y)
