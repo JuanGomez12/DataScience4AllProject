@@ -10,3 +10,4 @@ matplotlib
 missingno
 nltk
 plotly
+tensorflow_hub
