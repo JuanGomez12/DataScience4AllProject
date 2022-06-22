@@ -120,6 +120,7 @@ def merge_labs_notas(df_lab, df_notas):
         # Fill NaNs
         df_merged["top_lab_name"] = df_merged.top_lab_name.fillna(0)
         df_merged["top_lab_avg_value"] = df_merged.top_lab_avg_value.fillna(0)
+        df_merged["top_lab_max_value"] = df_merged.top_lab_max_value.fillna(0)
         df_merged["top_lab_count"] = df_merged.top_lab_count.fillna("NA")
         df_merged["total_lab_count"] = df_merged.total_lab_count.fillna(0)
     return df_merged
@@ -141,9 +142,14 @@ def preprocess_labs(df):
     lab = lab.groupby(["IDRecord", "Nombre"])
 
     # Aggregate the data
-    labs_agg = lab.aggregate({"Valor": np.nanmean, "Nombre": "count"})
+    labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Nombre": "count"})
+    labs_agg.columns = ["_".join(col) for col in labs_agg.columns.values]
     labs_agg = labs_agg.rename(
-        columns={"Nombre": "lab_count", "Valor": "top_lab_avg_value"}
+        columns={
+            "Nombre_count": "lab_count",
+            "Valor_nanmean": "top_lab_avg_value",
+            "Valor_nanmax": "top_lab_max_value",
+        }
     ).reset_index()
 
     # Get the top lab test per patient, by getting the lab with the highest count
