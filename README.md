@@ -1,3 +1,6 @@
+# DS4A-Project
+Repository of the final project of Team 24
+
 # Identification of patients with a specific observable feature
 
 Natural language processing (NLP) code to extract relevant information of the medical notes. 
