@@ -11,3 +11,4 @@ missingno
 nltk
 plotly
 tensorflow_hub
+imbalanced-learn
