@@ -130,7 +130,7 @@ def clean_labs(df_lab):
     lab = df_lab.copy()
     lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
     lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
-    lab['fecha'] = pd.to_datetime(lab['Fecha'])
+    lab["fecha"] = pd.to_datetime(lab["Fecha"])
     lab = lab.dropna(subset=["IDRecord"])
 
     return lab
@@ -172,13 +172,30 @@ def preprocess_labs(df):
     )
 
     # Get the average difference
-    merged_lab_date_calc = lab.sort_values(by=['IDRecord', 'Fecha']).copy()
-    merged_lab_datediff = merged_lab_date_calc[['IDRecord', 'date_diff']].groupby('IDRecord').agg([np.nanmean, np.nanmax])
-    merged_lab_datediff.columns = ["_".join(col) for col in merged_lab_datediff.columns.values]
-    merged_lab_datediff = merged_lab_datediff.rename(columns={'date_diff_nanmean':'date_diff_mean', 'date_diff_nanmax':'date_diff_max'})
-    merged_lab_datediff['date_diff_max'] = merged_lab_datediff['date_diff_max'].dt.days
-    merged_lab_datediff['date_diff_mean'] = merged_lab_datediff['date_diff_mean'].dt.days
-    preprocessed_labs = preprocessed_labs.merge(merged_lab_datediff[['date_diff_mean', 'date_diff_max']].reset_index(), how='left', on='IDRecord')
+    merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
+    merged_lab_datediff = (
+        merged_lab_date_calc[["IDRecord", "date_diff"]]
+        .groupby("IDRecord")
+        .agg([np.nanmean, np.nanmax])
+    )
+    merged_lab_datediff.columns = [
+        "_".join(col) for col in merged_lab_datediff.columns.values
+    ]
+    merged_lab_datediff = merged_lab_datediff.rename(
+        columns={
+            "date_diff_nanmean": "date_diff_mean",
+            "date_diff_nanmax": "date_diff_max",
+        }
+    )
+    merged_lab_datediff["date_diff_max"] = merged_lab_datediff["date_diff_max"].dt.days
+    merged_lab_datediff["date_diff_mean"] = merged_lab_datediff[
+        "date_diff_mean"
+    ].dt.days
+    preprocessed_labs = preprocessed_labs.merge(
+        merged_lab_datediff[["date_diff_mean", "date_diff_max"]].reset_index(),
+        how="left",
+        on="IDRecord",
+    )
 
     return preprocessed_labs
 
