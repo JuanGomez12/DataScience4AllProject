@@ -12,3 +12,4 @@ nltk
 plotly
 tensorflow_hub
 imbalanced-learn
+spacy
