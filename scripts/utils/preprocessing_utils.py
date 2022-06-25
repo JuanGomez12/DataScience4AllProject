@@ -109,7 +109,7 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     preprocessed_labs = preprocess_labs(lab)
 
     # Merge the data, dropping it beforehand if it was already merged to the notas DF
-    if not set(["top_lab_name", "top_lab_avg_value", "top_lab_count"]).issubset(
+    if not set(["top_lab_code", "top_lab_avg_value", "top_lab_count"]).issubset(
         df_notas.columns
     ):
         df_merged = notas.merge(preprocessed_labs, how="left", on="IDRecord")
@@ -118,7 +118,7 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
             columns=preprocessed_labs.columns, errors="ignore"
         ).merge(preprocessed_labs, how="left", on="IDRecord")
         # Fill NaNs
-        df_merged["top_lab_name"] = df_merged.top_lab_name.fillna(0)
+        df_merged["top_lab_code"] = df_merged.top_lab_code.fillna(0)
         df_merged["top_lab_avg_value"] = df_merged.top_lab_avg_value.fillna(0)
         df_merged["top_lab_max_value"] = df_merged.top_lab_max_value.fillna(0)
         df_merged["top_lab_count"] = df_merged.top_lab_count.fillna("NA")
@@ -130,14 +130,14 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     lab = df.copy()
 
     # Group data by Lab name and IDRecord
-    lab = lab.groupby(["IDRecord", "Nombre"])
+    lab = lab.groupby(["IDRecord", "Codigo"])
 
     # Aggregate the data
-    labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Nombre": "count"})
+    labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Codigo": "count"})
     labs_agg.columns = ["_".join(col) for col in labs_agg.columns.values]
     labs_agg = labs_agg.rename(
         columns={
-            "Nombre_count": "lab_count",
+            "Codigo_count": "lab_count",
             "Valor_nanmean": "top_lab_avg_value",
             "Valor_nanmax": "top_lab_max_value",
         }
@@ -146,9 +146,9 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Get the top lab test per patient, by getting the lab with the highest count
     top_lab_test_by_patient = labs_agg.merge(
         labs_agg.loc[
-            labs_agg.groupby("IDRecord").lab_count.idxmax(), ["IDRecord", "Nombre"]
+            labs_agg.groupby("IDRecord").lab_count.idxmax(), ["IDRecord", "Codigo"]
         ]
-    ).rename(columns={"Nombre": "top_lab_name", "lab_count": "top_lab_count"})
+    ).rename(columns={"Codigo": "top_lab_code", "lab_count": "top_lab_count"})
 
     # Get the total number of labs performed on each patient
     total_lab_count_by_patient = (
@@ -223,13 +223,14 @@ def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
     notas.dropna(subset=["IDRecord"], inplace=True)
 
     # Remove bad data from Nombre
-    index = notas[notas.Nombre == "Confirmado Repetido"].index
-    notas.loc[index, ["Nombre", "Tipo", "Plan"]] = notas.loc[
-        index, ["Código", "Nombre", "Tipo"]
-    ].to_numpy()
-    notas.loc[index, "Código"] = notas[
-        notas["Nombre"] == notas.loc[index, "Código"].iat[0]
-    ]["Código"].iloc[0]
+    if "Nombre" in notas.columns:
+        index = notas[notas.Nombre == "Confirmado Repetido"].index
+        notas.loc[index, ["Nombre", "Tipo", "Plan"]] = notas.loc[
+            index, ["Código", "Nombre", "Tipo"]
+        ].to_numpy()
+        notas.loc[index, "Código"] = notas[
+            notas["Nombre"] == notas.loc[index, "Código"].iat[0]
+        ]["Código"].iloc[0]
 
     # Remove accents from Plan
     notas["Plan"] = notas.Plan.astype(str).apply(lambda x: strip_accents(x))
@@ -264,3 +265,39 @@ def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
     df_merge = merge_labs_notas(df_labs, df_merge)
 
     return df_merge
+
+
+def preprocess_json(data_dict: dict) -> dict:
+    data_dict["IDRecord"] = 0
+    df_socio_cols = [
+        "IDRecord",
+        "Edad",
+        "Genero",
+        "GrupoEtnico",
+        "AreaResidencial",
+        "EstadoCivil",
+        "TSangre",
+    ]
+    df_labs_cols = ["IDRecord", "Codigo", "Nombre", "Fecha", "Valor"]
+    df_notas_cols = ["IDRecord", "Código", "Nombre", "Tipo", "Plan"]
+
+    socio_dict = {
+        key: data_dict[key] for key in data_dict.keys() if key in df_socio_cols
+    }
+    df_socio = pd.DataFrame(socio_dict, index=[0])
+
+    labs_dict = data_dict["Examenes"]
+    labs_dict["IDRecord"] = 0
+    df_labs = pd.DataFrame.from_dict(labs_dict)
+
+    notas_dict = {
+        key: data_dict[key] for key in data_dict.keys() if key in df_notas_cols
+    }
+    df_notas = pd.DataFrame(notas_dict, index=[0])
+
+    df_dict = {
+        "df_sociodemograficos": df_socio,
+        "df_laboratorios": df_labs,
+        "df_notas": df_notas,
+    }
+    return df_dict
