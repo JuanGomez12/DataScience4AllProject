@@ -6,11 +6,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.feature_extraction.text import (
-    CountVectorizer,
-    TfidfTransformer,
-    TfidfVectorizer,
-)
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.feature_selection import SelectFromModel, VarianceThreshold
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.linear_model import ElasticNet, Lasso, Ridge
@@ -38,12 +34,13 @@ from sklearn.preprocessing import (
 # Download the NLTK stopwords
 nltk.download("stopwords")
 
+
 class PredictionPipeline:
-    def __init(self, estimator, preprocessing_fn=None, label_encoder=None):
+    def __init__(self, estimator, preprocessing_fn=None, label_encoder=None):
         self.preprocessing_fn = preprocessing_fn
         self.label_encoder = label_encoder
-        self.estimator=estimator
-    
+        self.estimator = estimator
+
     def preprocess_data(self, data):
         if self.preprocessing_fn is not None:
             return self.preprocessing_fn(data)
@@ -55,10 +52,11 @@ class PredictionPipeline:
             preprocessed_X = self.preprocess_data(X)
         else:
             preprocessed_X = X
-        prediction = self.estimator.predict(X, **kwargs)
+        prediction = self.estimator.predict(preprocessed_X, **kwargs)
         if self.label_encoder is not None:
             prediction = self.label_encoder.inverse_transform(prediction)
         return prediction
+
 
 class PipelineManager:
     def __init__(self, estimator: str, use_feature_selector=True):
