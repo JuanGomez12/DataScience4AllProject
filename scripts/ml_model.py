@@ -30,6 +30,26 @@ from sklearn.preprocessing import (
     RobustScaler,
     StandardScaler,
 )
+from spacy.lang.es import Spanish
+from spacy.tokenizer import Tokenizer
+import spacy
+
+SPACY_MODEL_DEFAULT = "es_core_news_sm"
+# SPACY_MODEL_DEFAULT = 'es_core_news_md'
+# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
+
+# Load the default Spacy model
+try:
+    nlp = spacy.load(SPACY_MODEL_DEFAULT)
+except OSError:
+    print(
+        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+    )
+    from spacy.cli import download
+
+    download(SPACY_MODEL_DEFAULT)
+    nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
@@ -56,6 +76,38 @@ class PredictionPipeline:
         if self.label_encoder is not None:
             prediction = self.label_encoder.inverse_transform(prediction)
         return prediction
+
+
+class LemmaTokenizer:
+    def __init__(
+        self,
+        spacy_model=SPACY_MODEL_DEFAULT,
+        lemma=True,
+        remove_stopwords=True,
+        remove_punctuation=True,
+    ):
+        nlp = spacy.load(spacy_model)
+        self.tokenizer = nlp
+        self.lemma = lemma
+        self.remove_stopwords = remove_stopwords
+        self.remove_punctuation = remove_punctuation
+
+    def __call__(self, doc):
+        tokens = nlp(doc)
+
+        word_list = [token for token in tokens]
+        if self.remove_punctuation:
+            word_list = [token for token in word_list if not token.is_punct]
+        if self.remove_stopwords:
+            word_list = [token for token in word_list if not token.is_stop]
+        if self.lemma:
+            word_list = [token.lemma_ for token in word_list]
+        else:
+            word_list = [token.text for token in word_list]
+        return word_list
+
+    def __repr__(self):
+        return f"LemmaTokenizer with lemma {self.lemma}"
 
 
 class PipelineManager:
@@ -176,6 +228,23 @@ class PipelineManager:
 
         self.pipeline = Pipeline(pipeline_list)
 
+    def get_categorical_features(self):
+        return self.cat_features.copy()
+
+    def get_numerical_features(self):
+        return self.num_features.copy()
+
+    def get_text_features(self):
+        return [] if self.text_features is None else [self.text_features]
+
+    def get_features(self):
+        features_list = (
+            self.get_categorical_features()
+            + self.get_numerical_features()
+            + self.get_text_features()
+        )
+        return features_list
+
     def get_default_param_grid(self) -> dict:
         """Creates the default parameter grid for the pipeline manager.
 
@@ -221,8 +290,9 @@ class PipelineManager:
                 "preprocessor__text__vectorizer": [
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
                         ngram_range=(1, 1),
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        # tokenizer=LemmaTokenizer(lemma=True),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
