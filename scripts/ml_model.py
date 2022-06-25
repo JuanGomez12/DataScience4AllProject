@@ -6,11 +6,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.feature_extraction.text import (
-    CountVectorizer,
-    TfidfTransformer,
-    TfidfVectorizer,
-)
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.feature_selection import SelectFromModel, VarianceThreshold
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.linear_model import ElasticNet, Lasso, Ridge
@@ -39,8 +35,31 @@ from sklearn.preprocessing import (
 nltk.download("stopwords")
 
 
+class PredictionPipeline:
+    def __init__(self, estimator, preprocessing_fn=None, label_encoder=None):
+        self.preprocessing_fn = preprocessing_fn
+        self.label_encoder = label_encoder
+        self.estimator = estimator
+
+    def preprocess_data(self, data):
+        if self.preprocessing_fn is not None:
+            return self.preprocessing_fn(data)
+        else:
+            return data
+
+    def predict(self, X, preprocess_data=True, **kwargs):
+        if preprocess_data:
+            preprocessed_X = self.preprocess_data(X)
+        else:
+            preprocessed_X = X
+        prediction = self.estimator.predict(preprocessed_X, **kwargs)
+        if self.label_encoder is not None:
+            prediction = self.label_encoder.inverse_transform(prediction)
+        return prediction
+
+
 class PipelineManager:
-    def __init__(self, estimator: str):
+    def __init__(self, estimator: str, use_feature_selector=True):
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
             raise ValueError(
@@ -53,6 +72,7 @@ class PipelineManager:
         self.text_features = None
         self.param_grids = []
         self.best_estimator = None
+        self.use_feature_selector = use_feature_selector
 
     def set_categorical_features(self, cat_features: list):
         """Sets the categorical features that can be used by the ML model.
@@ -96,6 +116,7 @@ class PipelineManager:
             raise ValueError(
                 f"Estimator should be regressor or classifier, got: {self.estimator}"
             )
+
         numeric_preprocessor = Pipeline(
             steps=[
                 (
@@ -129,21 +150,31 @@ class PipelineManager:
             ]
         )
 
-        preprocessor = ColumnTransformer(
-            [
-                ("categorical", categorical_preprocessor, self.cat_features),
-                ("numerical", numeric_preprocessor, self.num_features),
-                ("text", text_preprocessor, self.text_features),
-            ]
-        )
+        preprocessor_list = []
+        if self.cat_features:
+            # Add categorical features preprocessor
+            preprocessor_list.append(
+                ("categorical", categorical_preprocessor, self.cat_features)
+            )
+        if self.num_features:
+            # Add numerical features preprocessor
+            preprocessor_list.append(
+                ("numerical", numeric_preprocessor, self.num_features)
+            )
+        if self.text_features is not None:
+            # Add the textual feature preprocessor
+            preprocessor_list.append(("text", text_preprocessor, self.text_features))
+        preprocessor = ColumnTransformer(preprocessor_list)
 
-        self.pipeline = Pipeline(
-            [
-                ("preprocessor", preprocessor),
-                ("feature_selector", SelectFromModel(RandomForestRegressor())),
-                ("estimator", base_estimator),
-            ]
-        )
+        pipeline_list = []
+        pipeline_list.append(("preprocessor", preprocessor))
+        if self.use_feature_selector:
+            pipeline_list.append(
+                ("feature_selector", SelectFromModel(RandomForestRegressor()))
+            )
+        pipeline_list.append(("estimator", base_estimator))
+
+        self.pipeline = Pipeline(pipeline_list)
 
     def get_default_param_grid(self) -> dict:
         """Creates the default parameter grid for the pipeline manager.
@@ -154,70 +185,96 @@ class PipelineManager:
             dict: Dictionary containing the different named steps as the keys
             and their respective tune values/methods.
         """
-        param_grid = {
-            "preprocessor__numerical__imputer": [
-                SimpleImputer(missing_values=np.nan, strategy="mean"),
-                SimpleImputer(missing_values=np.nan, strategy="median"),
-                SimpleImputer(missing_values=np.nan, strategy="most_frequent"),
-                KNNImputer(),
-            ],
-            "preprocessor__numerical__scaler": [
-                StandardScaler(),
-                RobustScaler(),
-                MinMaxScaler(),
-                Normalizer(),
-                # PowerTransformer(),
-            ],
-            "preprocessor__text__vectorizer": [
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(1, 1),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(1, 2),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(1, 3),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(2, 2),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(2, 3),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(3, 3),
-                ),
-                CountVectorizer(
-                    strip_accents="unicode",
-                    stop_words=nltk.corpus.stopwords.words("spanish"),
-                    ngram_range=(4, 4),
-                ),
-            ],
-            "preprocessor__text__tfidf": [
-                TfidfTransformer(norm="l2", sublinear_tf=True),
-                TfidfTransformer(norm="l2", sublinear_tf=False),
-                TfidfTransformer(norm="l1", sublinear_tf=False),
-                TfidfTransformer(norm="l1", sublinear_tf=True),
-            ],
-            "feature_selector": [
-                # SelectFromModel(Lasso()),
-                SelectFromModel(ElasticNet()),
-                SelectFromModel(Ridge()),
-                VarianceThreshold(),
-            ],
-        }
+        param_grid = {}
+        if self.cat_features:
+            # Add categorical parameters
+            categorical_params = {
+                "preprocessor__categorical__imputer": [
+                    SimpleImputer(missing_values=np.nan, strategy="most_frequent"),
+                    KNNImputer(n_neighbors=1),
+                ],
+            }
+            param_grid.update(categorical_params)
+
+        if self.num_features:
+            # Add numerical parameters
+            numerical_params = {
+                "preprocessor__numerical__imputer": [
+                    SimpleImputer(missing_values=np.nan, strategy="mean"),
+                    SimpleImputer(missing_values=np.nan, strategy="median"),
+                    SimpleImputer(missing_values=np.nan, strategy="most_frequent"),
+                    KNNImputer(),
+                ],
+                "preprocessor__numerical__scaler": [
+                    StandardScaler(),
+                    RobustScaler(),
+                    MinMaxScaler(),
+                    Normalizer(),
+                    # PowerTransformer(),
+                ],
+            }
+            param_grid.update(numerical_params)
+
+        if self.text_features is not None:
+            # Add textual parameters
+            text_param = {
+                "preprocessor__text__vectorizer": [
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(1, 1),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(1, 2),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(1, 3),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(2, 2),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(2, 3),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(3, 3),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        ngram_range=(4, 4),
+                    ),
+                ],
+                "preprocessor__text__tfidf": [
+                    TfidfTransformer(norm="l2", sublinear_tf=True),
+                    TfidfTransformer(norm="l2", sublinear_tf=False),
+                    TfidfTransformer(norm="l1", sublinear_tf=False),
+                    TfidfTransformer(norm="l1", sublinear_tf=True),
+                ],
+            }
+            param_grid.update(text_param)
+
+        if self.use_feature_selector:
+            feature_selector_params = {
+                "feature_selector": [
+                    # SelectFromModel(Lasso()),
+                    SelectFromModel(ElasticNet()),
+                    SelectFromModel(Ridge()),
+                    VarianceThreshold(),
+                ],
+            }
+            param_grid.update(feature_selector_params)
+
         return param_grid
 
     @staticmethod
@@ -427,14 +484,13 @@ if __name__ == "__main__":
     estimator = RandomForestClassifier()
     pipeline.add_estimator(estimator, param_grid)
 
-    # param_grid = {
-    #     "n_estimators": np.linspace(1, 100, 10, dtype=int),
-    #     "max_depth": list(np.linspace(1, 10, 5, dtype=int)) + [None],
-    #     "bootstrap": [True, False],
-    #     "learning_rate":[],
-    # }
-    # estimator = XGBClassifier()
-    # pipeline.add_estimator(estimator, param_grid)
+    param_grid = {
+        "n_estimators": np.linspace(1, 100, 10, dtype=int),
+        "max_depth": list(np.linspace(1, 10, 5, dtype=int)) + [None],
+        "bootstrap": [True, False],
+    }
+    estimator = XGBClassifier()
+    pipeline.add_estimator(estimator, param_grid)
 
     best_model = pipeline.find_best_model(X_train, y_train, cv=2, n_iter=5)
     score = pipeline.score(X_test, y_test)

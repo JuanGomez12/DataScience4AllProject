@@ -63,7 +63,7 @@ def find_top_k_words(string_value: str, k: int = 5) -> list:
     return most_common
 
 
-def merge_classes(df):
+def merge_classes(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     notas.loc[notas.Código == "A529", "Código"] = "A539"
     notas.loc[notas.Código == "A539", "Nombre"] = "SIFILIS, NO ESPECIFICADA"
@@ -74,7 +74,7 @@ def merge_classes(df):
     return notas
 
 
-def word_count_feat_engineering(df):
+def word_count_feat_engineering(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     word_count_features = {
         "acido": "acido",
@@ -101,7 +101,7 @@ def word_count_feat_engineering(df):
     return notas
 
 
-def merge_labs_notas(df_lab, df_notas):
+def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFrame:
     lab = df_lab.copy()
     notas = df_notas.copy()
 
@@ -126,16 +126,7 @@ def merge_labs_notas(df_lab, df_notas):
     return df_merged
 
 
-def clean_labs(df_lab):
-    lab = df_lab.copy()
-    lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
-    lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
-    lab = lab.dropna(subset=["IDRecord"])
-
-    return lab
-
-
-def preprocess_labs(df):
+def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     lab = df.copy()
 
     # Group data by Lab name and IDRecord
@@ -170,16 +161,56 @@ def preprocess_labs(df):
         total_lab_count_by_patient, on="IDRecord"
     )
 
+    # Get the average difference
+    merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
+    merged_lab_date_calc["date_diff"] = (
+        merged_lab_date_calc[["IDRecord", "Fecha"]].groupby("IDRecord").diff()
+    )
+    merged_lab_datediff = (
+        merged_lab_date_calc[["IDRecord", "date_diff"]]
+        .groupby("IDRecord")
+        .agg([np.nanmean, np.nanmax])
+    )
+    merged_lab_datediff.columns = [
+        "_".join(col) for col in merged_lab_datediff.columns.values
+    ]
+    merged_lab_datediff = merged_lab_datediff.rename(
+        columns={
+            "date_diff_nanmean": "date_diff_mean",
+            "date_diff_nanmax": "date_diff_max",
+        }
+    )
+    merged_lab_datediff["date_diff_max"] = merged_lab_datediff["date_diff_max"].dt.days
+    merged_lab_datediff["date_diff_mean"] = merged_lab_datediff[
+        "date_diff_mean"
+    ].dt.days
+    preprocessed_labs = preprocessed_labs.merge(
+        merged_lab_datediff[["date_diff_mean", "date_diff_max"]].reset_index(),
+        how="left",
+        on="IDRecord",
+    )
+
     return preprocessed_labs
 
 
-def clean_sociodemograficos(df):
+def clean_labs(df_lab: pd.DataFrame) -> pd.DataFrame:
+    lab = df_lab.copy()
+    lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
+    lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
+    lab["fecha"] = pd.to_datetime(lab["Fecha"])
+    lab = lab.dropna(subset=["IDRecord"])
+
+    return lab
+
+
+def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     demografico = df.copy()
     demografico["IDRecord"] = pd.to_numeric(demografico["IDRecord"], errors="coerce")
     return demografico
 
 
-def clean_notas(df):
+def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -206,3 +237,30 @@ def clean_notas(df):
     # Remove stop words from Plan
     notas["Plan"] = notas.Plan.astype(str).apply(lambda x: remove_stop_words(x))
     return notas
+
+
+def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
+    if {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(data_dict.keys()):
+        raise ValueError(
+            f"data_dict is missing {set(['df_laboratorios', 'df_notas', 'df_sociodemograficos']) - set(data_dict.keys())}"
+        )
+
+    df_socio = data_dict["df_sociodemograficos"].copy()
+    df_labs = data_dict["df_laboratorios"].copy()
+    df_notes = data_dict["df_notas"].copy()
+
+    # Clean the datasets
+    df_socio = clean_sociodemograficos(df_socio)
+    df_labs = clean_labs(df_labs)
+    df_notes = clean_notas(df_notes)
+
+    # Preprocess the datasets, add engineered features
+    df_merge = df_socio.merge(df_notes, how="inner", on="IDRecord")
+
+    # Perform word count feature engineering
+    df_merge = word_count_feat_engineering(df_merge)
+
+    # Preprocess the lab data and merge it with the sociodemographic data
+    df_merge = merge_labs_notas(df_labs, df_merge)
+
+    return df_merge

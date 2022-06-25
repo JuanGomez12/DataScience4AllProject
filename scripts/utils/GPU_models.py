@@ -114,20 +114,20 @@ def multi_input_embedded_model(
     text_input = Input(shape=(), name="Input", dtype=tf.string)  # Text data
 
     # Branch A works on the non-text data
-    x = Dense(64, activation=activation, kernel_initializer=kernel_initializer)(
+    x = Dense(128, activation=activation, kernel_initializer=kernel_initializer)(
         non_text_input
     )
     x = dropout_layer(dropout)(x)
-    x = Dense(128, activation=activation, kernel_initializer=kernel_initializer)(x)
+    x = Dense(256, activation=activation, kernel_initializer=kernel_initializer)(x)
     x = dropout_layer(dropout)(x)
-    x = Dense(64, activation=activation, kernel_initializer=kernel_initializer)(x)
+    x = Dense(128, activation=activation, kernel_initializer=kernel_initializer)(x)
     x = Model(inputs=non_text_input, outputs=x)
 
     # Branch B works on the text data
     y = hub_layer(text_input)
     y = dropout_layer(dropout)(y)
-    y = LSTM((None, embed_output), dropout=0.2, recurrent_dropout=0.2)(y)
-    y = SpatialDropout1D(0.2)(y)
+    # y = LSTM((None, embed_output), dropout=0.2, recurrent_dropout=0.2)(y)
+    # y = SpatialDropout1D(0.2)(y)
     y = Dense(
         embed_output * 2, activation=activation, kernel_initializer=kernel_initializer
     )(y)
