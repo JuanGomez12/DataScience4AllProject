@@ -173,6 +173,7 @@ def preprocess_labs(df):
 
     # Get the average difference
     merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
+    merged_lab_date_calc['date_diff'] = merged_lab_date_calc[['IDRecord', 'Fecha']].groupby('IDRecord').diff()
     merged_lab_datediff = (
         merged_lab_date_calc[["IDRecord", "date_diff"]]
         .groupby("IDRecord")
