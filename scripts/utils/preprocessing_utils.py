@@ -63,7 +63,7 @@ def find_top_k_words(string_value: str, k: int = 5) -> list:
     return most_common
 
 
-def merge_classes(df):
+def merge_classes(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     notas.loc[notas.Código == "A529", "Código"] = "A539"
     notas.loc[notas.Código == "A539", "Nombre"] = "SIFILIS, NO ESPECIFICADA"
@@ -74,7 +74,7 @@ def merge_classes(df):
     return notas
 
 
-def word_count_feat_engineering(df):
+def word_count_feat_engineering(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     word_count_features = {
         "acido": "acido",
@@ -101,7 +101,7 @@ def word_count_feat_engineering(df):
     return notas
 
 
-def merge_labs_notas(df_lab, df_notas):
+def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFrame:
     lab = df_lab.copy()
     notas = df_notas.copy()
 
@@ -126,7 +126,7 @@ def merge_labs_notas(df_lab, df_notas):
     return df_merged
 
 
-def preprocess_labs(df):
+def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     lab = df.copy()
 
     # Group data by Lab name and IDRecord
@@ -194,7 +194,7 @@ def preprocess_labs(df):
     return preprocessed_labs
 
 
-def clean_labs(df_lab):
+def clean_labs(df_lab: pd.DataFrame) -> pd.DataFrame:
     lab = df_lab.copy()
     lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
     lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
@@ -204,13 +204,13 @@ def clean_labs(df_lab):
     return lab
 
 
-def clean_sociodemograficos(df):
+def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     demografico = df.copy()
     demografico["IDRecord"] = pd.to_numeric(demografico["IDRecord"], errors="coerce")
     return demografico
 
 
-def clean_notas(df):
+def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -239,10 +239,15 @@ def clean_notas(df):
     return notas
 
 
-def clean_and_preprocess_datasets(df_sociodemograficos, df_laboratorios, df_notas):
-    df_socio = df_sociodemograficos.copy()
-    df_labs = df_laboratorios.copy()
-    df_notes = df_notas.copy()
+def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
+    if {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(data_dict.keys()):
+        raise ValueError(
+            f"data_dict is missing {set(['df_laboratorios', 'df_notas', 'df_sociodemograficos']) - set(data_dict.keys())}"
+        )
+
+    df_socio = data_dict["df_sociodemograficos"].copy()
+    df_labs = data_dict["df_laboratorios"].copy()
+    df_notes = data_dict["df_notas"].copy()
 
     # Clean the datasets
     df_socio = clean_sociodemograficos(df_socio)
@@ -256,6 +261,6 @@ def clean_and_preprocess_datasets(df_sociodemograficos, df_laboratorios, df_nota
     df_merge = word_count_feat_engineering(df_merge)
 
     # Preprocess the lab data and merge it with the sociodemographic data
-    df_merge = merge_labs_notas(df_laboratorios, df_merge)
+    df_merge = merge_labs_notas(df_labs, df_merge)
 
     return df_merge
