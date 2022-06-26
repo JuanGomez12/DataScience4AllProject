@@ -1,8 +1,11 @@
 import React from 'react'
+import {Container} from 'react-bootstrap'
 
 function Home() {
   return (
-    <div>Home</div>
+    <Container>
+      <div>Home</div>
+    </Container>
   )
 }
 
