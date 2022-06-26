@@ -132,6 +132,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Group data by Lab name and IDRecord
     lab = lab.groupby(["IDRecord", "Codigo"])
 
+    # Lab count and top lab code
     # Aggregate the data
     labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Codigo": "count"})
     labs_agg.columns = ["_".join(col) for col in labs_agg.columns.values]
@@ -157,34 +158,67 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"lab_count": "total_lab_count"})
     )
 
+    # Merge the data
     preprocessed_labs = top_lab_test_by_patient.merge(
         total_lab_count_by_patient, on="IDRecord"
     )
 
+    # Patient's date for first and last exam
+    merged_lab_date_calc = df.copy()[["IDRecord", "Fecha"]]
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
+    lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
+    lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
+
+    lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
+    lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
+
+    lab_dates = lab_date_first.merge(lab_date_last, on="IDRecord")
+    lab_dates["date_diff_first_last"] = abs(
+        (lab_dates["last_lab_date"] - lab_dates["first_lab_date"]).dt.days
+    )
+
+    # Convert them to Epoch seconds so we can feed them to the model
+    lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype(int)
+    lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype(int)
+
+    # Merge the data
+    preprocessed_labs = preprocessed_labs.merge(
+        lab_dates,
+        on="IDRecord",
+        how="left",
+    )
+
+    # Lab max and avg date difference
     # Get the average difference
     merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
     merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
     merged_lab_date_calc["date_diff"] = (
         merged_lab_date_calc[["IDRecord", "Fecha"]].groupby("IDRecord").diff()
     )
+    # Aggregate the data
     merged_lab_datediff = (
         merged_lab_date_calc[["IDRecord", "date_diff"]]
         .groupby("IDRecord")
         .agg([np.nanmean, np.nanmax])
     )
+    # Remove the column multiindex
     merged_lab_datediff.columns = [
         "_".join(col) for col in merged_lab_datediff.columns.values
     ]
+
+    # Rename the variables
     merged_lab_datediff = merged_lab_datediff.rename(
         columns={
             "date_diff_nanmean": "date_diff_mean",
             "date_diff_nanmax": "date_diff_max",
         }
     )
+    # Convert the values from a date format to number of days
     merged_lab_datediff["date_diff_max"] = merged_lab_datediff["date_diff_max"].dt.days
     merged_lab_datediff["date_diff_mean"] = merged_lab_datediff[
         "date_diff_mean"
     ].dt.days
+    # Merge the data together
     preprocessed_labs = preprocessed_labs.merge(
         merged_lab_datediff[["date_diff_mean", "date_diff_max"]].reset_index(),
         how="left",
@@ -216,7 +250,8 @@ def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
     notas.dropna(subset=["IDRecord"], inplace=True)
 
     # Drop samples where both Code and Name are null
-    notas.dropna(how="all", subset=["Código", "Nombre"], inplace=True)
+    if "Código" in notas.columns and "Nombre" in notas.columns:
+        notas.dropna(how="all", subset=["Código", "Nombre"], inplace=True)
 
     # Drop bad data form IDRecord
     notas["IDRecord"] = pd.to_numeric(notas["IDRecord"], errors="coerce")
