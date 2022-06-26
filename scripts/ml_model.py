@@ -260,7 +260,7 @@ class PipelineManager:
             categorical_params = {
                 "preprocessor__categorical__imputer": [
                     SimpleImputer(missing_values=np.nan, strategy="most_frequent"),
-                    KNNImputer(n_neighbors=1),
+                    # KNNImputer(n_neighbors=1),
                 ],
             }
             param_grid.update(categorical_params)
