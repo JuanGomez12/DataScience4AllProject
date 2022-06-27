@@ -1,0 +1,24 @@
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label class="col-form-label mb-1">Edad</label> <input class="form-control"  name="1" type="text">
+        <label class="col-form-label mb-1">Genero</label> <input class="form-control"  name="2" type="text">
+        <label class="col-form-label mb-1">Grupo etnico</label> <input class="form-control"  name="3" type="text">
+        <label class="col-form-label mb-1">Area residencial</label> <input class="form-control"  name="4" type="text">
+        <label class="col-form-label mb-1">estado civil</label> <input class="form-control"  name="5" type="text">
+        <label class="col-form-label mb-1">tipo de sangre</label> <input class="form-control"  name="6" type="text">
+        <label class="col-form-label mb-1">tipo</label> <input class="form-control"  name="7" type="text">
+        <label class="col-form-label mb-1">plan</label> <input class="form-control"  name="8" type="text">
+        
+        <label class="col-form-label mb-1">examenes realizados</label> <input class="form-control"  name="9" type="text">
+        <label class="col-form-label mb-1">valores obtenidos</label> <input class="form-control"  name="10" type="text">
+        <label class="col-form-label mb-1">fecha de examen</label> <input class="form-control"  name="11" type="text">
+
+    </div>
+
+
+    <button type="submit" class="btn btn-primary mt-2">Guardar</button>
+
+</form>
+
+{{data}}
