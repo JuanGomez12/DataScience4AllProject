@@ -34,9 +34,9 @@ from spacy.lang.es import Spanish
 from spacy.tokenizer import Tokenizer
 import spacy
 
-SPACY_MODEL_DEFAULT = "es_core_news_sm"
+# SPACY_MODEL_DEFAULT = "es_core_news_sm"
 # SPACY_MODEL_DEFAULT = 'es_core_news_md'
-# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+SPACY_MODEL_DEFAULT = 'es_core_news_lg'
 # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
 # Load the default Spacy model
@@ -288,6 +288,21 @@ class PipelineManager:
             # Add textual parameters
             text_param = {
                 "preprocessor__text__vectorizer": [
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        ngram_range=(1, 1),
+                        tokenizer=LemmaTokenizer(lemma=True),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        ngram_range=(1, 2),
+                        tokenizer=LemmaTokenizer(lemma=True),
+                    ),
+                    CountVectorizer(
+                        strip_accents="unicode",
+                        ngram_range=(1, 3),
+                        tokenizer=LemmaTokenizer(lemma=True),
+                    ),
                     CountVectorizer(
                         strip_accents="unicode",
                         ngram_range=(1, 1),
