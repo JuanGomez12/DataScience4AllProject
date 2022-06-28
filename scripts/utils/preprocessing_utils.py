@@ -129,11 +129,18 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
 def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     lab = df.copy()
 
-    # Group data by Lab name and IDRecord
-    lab = lab.groupby(["IDRecord", "Codigo"])
+    disease_tests = [("hepatitis", "hepatitis"), ("gluco", "glucosa")]
+    # This line will look for tests relating linfo (as in linfocitos/lymphocytes), CD3, CD4, and CD8
+    disease_tests.append(("linfo|cd3|cd4|cd8", "linfocitos"))
+    # This line will look for tests relating HIV and (immuno)deficiency
+    disease_tests.append(("deficiencia|vih", "vih"))
 
+    
+
+    # ------
     # Lab count and top lab code
     # Aggregate the data
+    lab = lab.groupby(["IDRecord", "Codigo"])
     labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Codigo": "count"})
     labs_agg.columns = ["_".join(col) for col in labs_agg.columns.values]
     labs_agg = labs_agg.rename(
@@ -163,6 +170,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         total_lab_count_by_patient, on="IDRecord"
     )
 
+    # -----
     # Patient's date for first and last exam
     merged_lab_date_calc = df.copy()[["IDRecord", "Fecha"]]
     merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
@@ -188,6 +196,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         how="left",
     )
 
+    # -----
     # Lab max and avg date difference
     # Get the average difference
     merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
@@ -225,6 +234,37 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         on="IDRecord",
     )
 
+    # -----
+    # Keyword-related lab name lookup using the disease_tests list
+
+    lab = df.copy()
+    df_idrecord = lab.IDRecord.drop_duplicates().to_frame("IDRecord")
+    for test in disease_tests:
+        df_test_count = (
+            lab.loc[
+                lab.Nombre.str.contains(test[0], case=False, regex=True),
+                ["IDRecord"],
+            ]
+            .value_counts()
+            .to_frame(f"{test[1]}_count")
+        )
+        df_test_max = (
+            lab.loc[
+                lab.Nombre.str.contains(test[0], case=False, regex=True),
+                ["IDRecord", "Valor"],
+            ]
+            .groupby("IDRecord")
+            .max()
+            .reset_index()
+            .rename(columns={"Valor": f"{test[1]}_max"})
+        )  # .value_counts().to_frame()
+        df_idrecord = df_idrecord.merge(
+            df_test_count, on="IDRecord", how="left"
+        ).merge(df_test_max, on="IDRecord", how="left")
+
+    preprocessed_labs = preprocessed_labs.drop(columns=df_idrecord.drop(columns=['IDRecord']).columns, errors='ignore').merge(df_idrecord, on="IDRecord", how="left")
+    for column in df_idrecord.drop(columns=['IDRecord']).columns:
+        preprocessed_labs[column] = preprocessed_labs[column].fillna(0)
     return preprocessed_labs
 
 
