@@ -35,8 +35,8 @@ from spacy.tokenizer import Tokenizer
 import spacy
 
 # SPACY_MODEL_DEFAULT = "es_core_news_sm"
-# SPACY_MODEL_DEFAULT = 'es_core_news_md'
-SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+SPACY_MODEL_DEFAULT = "es_core_news_md"
+# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
 # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
 # Load the default Spacy model
