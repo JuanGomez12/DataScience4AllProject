@@ -126,16 +126,24 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     return df_merged
 
 
+def disease_tests_list():
+    disease_tests = [
+        ("hepatitis|hepat|glutamico|bilirrub", "liver_damage"),
+        ("hemo", "hemoglobin"),
+    ]
+    # This line will look for tests relating linfo (as in linfocitos/lymphocytes), CD3, CD4, and CD8
+    disease_tests.append(("linfo|cd3|cd4|cd8", "lymphocytes"))
+    # This line will look for tests relating HIV and (immuno)deficiency
+    disease_tests.append(("deficiencia|vih", "vih"))
+    # Diabetes related keywords
+    disease_tests.append(("ayun|gluco|glico", "diabetes_tests"))
+    return disease_tests
+
+
 def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     lab = df.copy()
 
-    disease_tests = [("hepatitis", "hepatitis"), ("gluco", "glucosa")]
-    # This line will look for tests relating linfo (as in linfocitos/lymphocytes), CD3, CD4, and CD8
-    disease_tests.append(("linfo|cd3|cd4|cd8", "linfocitos"))
-    # This line will look for tests relating HIV and (immuno)deficiency
-    disease_tests.append(("deficiencia|vih", "vih"))
-
-    
+    disease_tests = disease_tests_list()
 
     # ------
     # Lab count and top lab code
@@ -258,12 +266,14 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
             .reset_index()
             .rename(columns={"Valor": f"{test[1]}_max"})
         )  # .value_counts().to_frame()
-        df_idrecord = df_idrecord.merge(
-            df_test_count, on="IDRecord", how="left"
-        ).merge(df_test_max, on="IDRecord", how="left")
+        df_idrecord = df_idrecord.merge(df_test_count, on="IDRecord", how="left").merge(
+            df_test_max, on="IDRecord", how="left"
+        )
 
-    preprocessed_labs = preprocessed_labs.drop(columns=df_idrecord.drop(columns=['IDRecord']).columns, errors='ignore').merge(df_idrecord, on="IDRecord", how="left")
-    for column in df_idrecord.drop(columns=['IDRecord']).columns:
+    preprocessed_labs = preprocessed_labs.drop(
+        columns=df_idrecord.drop(columns=["IDRecord"]).columns, errors="ignore"
+    ).merge(df_idrecord, on="IDRecord", how="left")
+    for column in df_idrecord.drop(columns=["IDRecord"]).columns:
         preprocessed_labs[column] = preprocessed_labs[column].fillna(0)
     return preprocessed_labs
 
