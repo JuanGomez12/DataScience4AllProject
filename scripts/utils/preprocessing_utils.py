@@ -1,19 +1,47 @@
 import re
-
+import unicodedata
 from typing import Optional
 
 import matplotlib
-
 import nltk
 import numpy as np
 import pandas as pd
-import unicodedata
-
 from nltk.corpus import stopwords
+import spacy
 
+# SPACY_MODEL_DEFAULT = "es_core_news_sm"
+# SPACY_MODEL_DEFAULT = "es_core_news_md"
+SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
+
+# Load the default Spacy model
+try:
+    default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
+except OSError:
+    print(
+        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+    )
+    from spacy.cli import download
+
+    download(SPACY_MODEL_DEFAULT)
+    default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 nltk.download("stopwords")
 
+def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=True):
+    tokens = nlp(doc)
+
+    word_list = [token for token in tokens]
+    if remove_punctuation:
+        word_list = [token for token in word_list if not token.is_punct]
+    if remove_stopwords:
+        word_list = [token for token in word_list if not token.is_stop]
+
+    word_list = [token.lemma_ for token in word_list]
+
+    lemmatized_string = ' '.join(word_list)
+
+    return lemmatized_string
 
 def remove_stop_words(string_data: str, extra_stop_words: list = []) -> str:
     stop_words = stopwords.words("spanish")
@@ -294,7 +322,7 @@ def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     return demografico
 
 
-def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
+def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -317,11 +345,15 @@ def clean_notas(df: pd.DataFrame) -> pd.DataFrame:
             notas["Nombre"] == notas.loc[index, "Código"].iat[0]
         ]["Código"].iloc[0]
 
-    # Remove accents from Plan
-    notas["Plan"] = notas.Plan.astype(str).apply(lambda x: strip_accents(x))
-
     # Remove stop words from Plan
-    notas["Plan"] = notas.Plan.astype(str).apply(lambda x: remove_stop_words(x))
+    # notas["Plan"] = notas.Plan.astype(str).apply(lambda x: remove_stop_words(x))
+
+    if apply_lemmatization:
+        notas["Plan"] = notas["Plan"].astype(str).apply(lemmatize, remove_stopwords=True, remove_punctuation=True)
+
+    # Remove accents from Plan
+    notas["Plan"] = notas.Plan.astype(str).apply(strip_accents)
+
     return notas
 
 
