@@ -1,17 +1,18 @@
+import json
 import re
 import unicodedata
+from pathlib import Path
 from typing import Optional
 
-import matplotlib
 import nltk
 import numpy as np
 import pandas as pd
-from nltk.corpus import stopwords
 import spacy
+from nltk.corpus import stopwords
 
-# SPACY_MODEL_DEFAULT = "es_core_news_sm"
+SPACY_MODEL_DEFAULT = "es_core_news_sm"
 # SPACY_MODEL_DEFAULT = "es_core_news_md"
-SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# SPACY_MODEL_DEFAULT = "es_core_news_lg"
 # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
 # Load the default Spacy model
@@ -19,7 +20,9 @@ try:
     default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
 except OSError:
     print(
-        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+        f"Spacy model {SPACY_MODEL_DEFAULT} not found,",
+        "downloading from the internet,",
+        "this might take some time",
     )
     from spacy.cli import download
 
@@ -27,6 +30,7 @@ except OSError:
     default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 nltk.download("stopwords")
+
 
 def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=True):
     tokens = nlp(doc)
@@ -39,9 +43,10 @@ def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=Tr
 
     word_list = [token.lemma_ for token in word_list]
 
-    lemmatized_string = ' '.join(word_list)
+    lemmatized_string = " ".join(word_list)
 
     return lemmatized_string
+
 
 def remove_stop_words(string_data: str, extra_stop_words: list = []) -> str:
     stop_words = stopwords.words("spanish")
@@ -159,7 +164,8 @@ def disease_tests_list():
         ("hepatitis|hepat|glutamico|bilirrub", "liver_damage"),
         ("hemo", "hemoglobin"),
     ]
-    # This line will look for tests relating linfo (as in linfocitos/lymphocytes), CD3, CD4, and CD8
+    # This line will look for tests relating linfo
+    # (as in linfocitos/lymphocytes), CD3, CD4, and CD8
     disease_tests.append(("linfo|cd3|cd4|cd8", "lymphocytes"))
     # This line will look for tests relating HIV and (immuno)deficiency
     disease_tests.append(("deficiencia|vih", "vih"))
@@ -306,11 +312,39 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     return preprocessed_labs
 
 
-def clean_labs(df_lab: pd.DataFrame) -> pd.DataFrame:
+def clean_test_names(test_names: pd.Series) -> pd.Series:
+    """
+    Input: Series of test names
+    Output: Series of standarized test names
+    """
+    cleaned = (
+        test_names.str.lower()
+        .str.strip()
+        .apply(lambda x: strip_accents(x))
+        .str.replace("[", "(")
+        .str.replace("]", ")")
+        .str.replace(r"\s(\.+)", "", regex=True)
+    )
+
+    return cleaned
+
+
+def clean_labs(df_lab: pd.DataFrame, aggregate_labs=True) -> pd.DataFrame:
     lab = df_lab.copy()
+    lab["Nombre"] = clean_test_names(lab.Nombre)
+    cleaning_dict_path = Path("scripts/utils/lab_test_name_aggregation.json")
+    if cleaning_dict_path.is_file() and aggregate_labs:
+        with open(cleaning_dict_path, "r") as in_file:
+            dict_tests = json.load(in_file)
+        lab["Nombre"] = lab.Nombre.replace(dict_tests)
+    elif not cleaning_dict_path.is_file():
+        print(
+            "Could not find lab_test_name_aggregation.json,",
+            "skipping dictionary aggregation step",
+        )
     lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
     lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
-    lab["fecha"] = pd.to_datetime(lab["Fecha"])
+    lab["fecha"] = pd.to_datetime(lab["Fecha"], errors="coerce")
     lab = lab.dropna(subset=["IDRecord"])
 
     return lab
@@ -322,7 +356,7 @@ def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     return demografico
 
 
-def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
+def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = True) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -349,7 +383,11 @@ def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
     # notas["Plan"] = notas.Plan.astype(str).apply(lambda x: remove_stop_words(x))
 
     if apply_lemmatization:
-        notas["Plan"] = notas["Plan"].astype(str).apply(lemmatize, remove_stopwords=True, remove_punctuation=True)
+        notas["Plan"] = (
+            notas["Plan"]
+            .astype(str)
+            .apply(lemmatize, remove_stopwords=True, remove_punctuation=True)
+        )
 
     # Remove accents from Plan
     notas["Plan"] = notas.Plan.astype(str).apply(strip_accents)
@@ -358,10 +396,11 @@ def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
 
 
 def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
-    if {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(data_dict.keys()):
-        raise ValueError(
-            f"data_dict is missing {set(['df_laboratorios', 'df_notas', 'df_sociodemograficos']) - set(data_dict.keys())}"
-        )
+    set_comparison = {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(
+        data_dict.keys()
+    )
+    if set_comparison:
+        raise ValueError(f"data_dict is missing {set_comparison}")
 
     df_socio = data_dict["df_sociodemograficos"].copy()
     df_labs = data_dict["df_laboratorios"].copy()
