@@ -163,12 +163,13 @@ def disease_tests_list():
     disease_tests = [
         ("hepatitis|hepat|glutamico|bilirrub", "liver_damage"),
         ("hemo", "hemoglobin"),
+        ("album|creat", "kidney_damage"),
     ]
     # This line will look for tests relating linfo
     # (as in linfocitos/lymphocytes), CD3, CD4, and CD8
     disease_tests.append(("linfo|cd3|cd4|cd8", "lymphocytes"))
     # This line will look for tests relating HIV and (immuno)deficiency
-    disease_tests.append(("deficiencia|vih", "vih"))
+    disease_tests.append(("deficiencia|vih|immuno", "vih"))
     # Diabetes related keywords
     disease_tests.append(("ayun|gluco|glico", "diabetes_tests"))
     return disease_tests
