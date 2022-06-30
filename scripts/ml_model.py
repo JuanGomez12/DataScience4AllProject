@@ -80,7 +80,21 @@ class PredictionPipeline:
         else:
             return data
 
-    def predict(self, X, preprocess_data=True, **kwargs):
+    def predict(
+        self, X: pd.DataFrame, preprocess_data: bool = True, **kwargs
+    ) -> np.array:
+        """Predicts labels for the samples passed into the function.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the data to predict on.
+            preprocess_data (bool, optional): If True, the data will be
+                preprocessed using preprocess_data before trying to predict on
+                it. Defaults to True.
+
+        Returns:
+            np.array: Array containing the labels for the predicted class of
+            each of the samples.
+        """
         if preprocess_data:
             preprocessed_X = self.preprocess_data(X)
         else:
@@ -93,7 +107,10 @@ class PredictionPipeline:
 
 class PipelineManager:
     def __init__(
-        self, estimator: str, use_feature_selector=True, use_text_preprocessor=False
+        self,
+        estimator: str,
+        use_feature_selector: bool = True,
+        use_text_preprocessor: bool = False,
     ):
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
@@ -212,16 +229,16 @@ class PipelineManager:
 
         self.pipeline = Pipeline(pipeline_list)
 
-    def get_categorical_features(self):
+    def get_categorical_features(self) ->list:
         return self.cat_features.copy()
 
-    def get_numerical_features(self):
+    def get_numerical_features(self)->list:
         return self.num_features.copy()
 
-    def get_text_features(self):
+    def get_text_features(self)->list:
         return [] if self.text_features is None else [self.text_features]
 
-    def get_features(self):
+    def get_features(self)->list:
         features_list = (
             self.get_categorical_features()
             + self.get_numerical_features()
@@ -269,7 +286,6 @@ class PipelineManager:
             param_grid.update(numerical_params)
 
         if self.text_features is not None:
-            # self.lemma = LemmaTokenizer(lemma=True)
             # Add textual parameters
             text_param = {
                 "preprocessor__text__vectorizer": [
