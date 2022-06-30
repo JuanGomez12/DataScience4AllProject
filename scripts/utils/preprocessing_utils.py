@@ -161,17 +161,26 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
 
 def disease_tests_list():
     disease_tests = [
-        ("hepatitis|hepat|glutamico|bilirrub", "liver_damage"),
-        ("hemo", "hemoglobin"),
-        ("album|creat", "kidney_damage"),
+        ("hepatitis|hepat|glutamic|bilirrub", "liver_damage"),
+        ("hemo|hema", "hematic_info"),
+        ("bacilo|bacter|colora", "bacterias"),
+        ("tiroi|protro|tirox", "hormones"),
+        ("herpes|tuberc", "other_diseases"),
+        ("album|creat|ureico|urico|uro|orina", "kidney_damage"),
+        ("colest|trigli|plaqu|protrom|trombo", "heart_damage"),
+        ("calcio|fofs|pot", "minerals"),
     ]
     # This line will look for tests relating linfo
     # (as in linfocitos/lymphocytes), CD3, CD4, and CD8
-    disease_tests.append(("linfo|cd3|cd4|cd8", "lymphocytes"))
+    disease_tests.append(
+        ("leuco|linfo|cd3|cd4|cd8|anticuerpo|antigen|neutrof", "white_cells")
+    )
     # This line will look for tests relating HIV and (immuno)deficiency
     disease_tests.append(("deficiencia|vih|immuno", "vih"))
     # Diabetes related keywords
     disease_tests.append(("ayun|gluco|glico", "diabetes_tests"))
+    # Syphilis related keywords
+    disease_tests.append(("trepo|anal|virus|viral", "syphilis_tests"))
     return disease_tests
 
 
