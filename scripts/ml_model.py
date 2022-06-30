@@ -1,4 +1,5 @@
 from typing import Any, Union
+import unicodedata
 
 import nltk
 import numpy as np
@@ -30,30 +31,37 @@ from sklearn.preprocessing import (
     RobustScaler,
     StandardScaler,
 )
-from spacy.lang.es import Spanish
-from spacy.tokenizer import Tokenizer
-import spacy
+# import spacy
 
-# SPACY_MODEL_DEFAULT = "es_core_news_sm"
-SPACY_MODEL_DEFAULT = "es_core_news_md"
-# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
-# SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
+# # SPACY_MODEL_DEFAULT = "es_core_news_sm"
+# SPACY_MODEL_DEFAULT = "es_core_news_md"
+# # SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
-# Load the default Spacy model
-try:
-    nlp = spacy.load(SPACY_MODEL_DEFAULT)
-except OSError:
-    print(
-        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
-    )
-    from spacy.cli import download
+# # Load the default Spacy model
+# try:
+#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
+# except OSError:
+#     print(
+#         f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+#     )
+#     from spacy.cli import download
 
-    download(SPACY_MODEL_DEFAULT)
-    nlp = spacy.load(SPACY_MODEL_DEFAULT)
+#     download(SPACY_MODEL_DEFAULT)
+#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
 
+def strip_accents(accented_string: str) -> str:
+    clean_string = (
+        unicodedata.normalize("NFD", accented_string)
+        .encode("ascii", "ignore")
+        .decode("utf-8")
+    )
+    return clean_string
+
+spanish_stop_words = [strip_accents(word) for word in nltk.corpus.stopwords.words("spanish")]
 
 class PredictionPipeline:
     def __init__(self, estimator, preprocessing_fn=None, label_encoder=None):
@@ -78,36 +86,34 @@ class PredictionPipeline:
         return prediction
 
 
-class LemmaTokenizer:
-    def __init__(
-        self,
-        spacy_model=SPACY_MODEL_DEFAULT,
-        lemma=True,
-        remove_stopwords=True,
-        remove_punctuation=True,
-    ):
-        nlp = spacy.load(spacy_model)
-        self.tokenizer = nlp
-        self.lemma = lemma
-        self.remove_stopwords = remove_stopwords
-        self.remove_punctuation = remove_punctuation
+# class LemmaTokenizer:
+#     def __init__(
+#         self,
+#         lemma=True,
+#         remove_stopwords=True,
+#         remove_punctuation=True,
+#     ):
+#         self.tokenizer = nlp
+#         self.lemma = lemma
+#         self.remove_stopwords = remove_stopwords
+#         self.remove_punctuation = remove_punctuation
 
-    def __call__(self, doc):
-        tokens = nlp(doc)
+#     def __call__(self, doc):
+#         tokens = nlp(doc)
 
-        word_list = [token for token in tokens]
-        if self.remove_punctuation:
-            word_list = [token for token in word_list if not token.is_punct]
-        if self.remove_stopwords:
-            word_list = [token for token in word_list if not token.is_stop]
-        if self.lemma:
-            word_list = [token.lemma_ for token in word_list]
-        else:
-            word_list = [token.text for token in word_list]
-        return word_list
+#         word_list = [token for token in tokens]
+#         if self.remove_punctuation:
+#             word_list = [token for token in word_list if not token.is_punct]
+#         if self.remove_stopwords:
+#             word_list = [token for token in word_list if not token.is_stop]
+#         if self.lemma:
+#             word_list = [token.lemma_ for token in word_list]
+#         else:
+#             word_list = [token.text for token in word_list]
+#         return word_list
 
-    def __repr__(self):
-        return f"LemmaTokenizer with lemma {self.lemma}"
+#     def __repr__(self):
+#         return f"LemmaTokenizer with lemma {self.lemma}"
 
 
 class PipelineManager:
@@ -195,7 +201,7 @@ class PipelineManager:
                     "vectorizer",
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                     ),
                 ),
                 ("tfidf", TfidfTransformer()),
@@ -285,58 +291,54 @@ class PipelineManager:
             param_grid.update(numerical_params)
 
         if self.text_features is not None:
+            # self.lemma = LemmaTokenizer(lemma=True)
             # Add textual parameters
             text_param = {
                 "preprocessor__text__vectorizer": [
+                    # CountVectorizer(
+                    #     strip_accents="unicode",
+                    #     ngram_range=(1, 1),
+                    #     tokenizer=LemmaTokenizer(lemma=True),
+                    # ),
+                    # CountVectorizer(
+                    #     strip_accents="unicode",
+                    #     ngram_range=(1, 2),
+                    #     tokenizer=LemmaTokenizer(lemma=True),
+                    # ),
                     CountVectorizer(
                         strip_accents="unicode",
                         ngram_range=(1, 1),
-                        tokenizer=LemmaTokenizer(lemma=True),
-                    ),
-                    CountVectorizer(
-                        strip_accents="unicode",
-                        ngram_range=(1, 2),
-                        tokenizer=LemmaTokenizer(lemma=True),
-                    ),
-                    CountVectorizer(
-                        strip_accents="unicode",
-                        ngram_range=(1, 3),
-                        tokenizer=LemmaTokenizer(lemma=True),
-                    ),
-                    CountVectorizer(
-                        strip_accents="unicode",
-                        ngram_range=(1, 1),
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         # tokenizer=LemmaTokenizer(lemma=True),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(1, 2),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(1, 3),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(2, 2),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(2, 3),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(3, 3),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
-                        stop_words=nltk.corpus.stopwords.words("spanish"),
+                        stop_words=spanish_stop_words,
                         ngram_range=(4, 4),
                     ),
                 ],
