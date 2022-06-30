@@ -1,13 +1,10 @@
-import multiprocessing as mp
-import string
 import unicodedata
 from typing import Any, Union
 
 import nltk
 import numpy as np
 import pandas as pd
-import spacy
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -30,86 +27,14 @@ from sklearn.preprocessing import (
     MinMaxScaler,
     Normalizer,
     OneHotEncoder,
-    PowerTransformer,
     RobustScaler,
     StandardScaler,
 )
 
-SPACY_MODEL_DEFAULT = "es_core_news_sm"
-# SPACY_MODEL_DEFAULT = "es_core_news_md"
-# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
-# SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
-
-# Load the default Spacy model
-try:
-    nlp = spacy.load(SPACY_MODEL_DEFAULT)
-except OSError:
-    print(
-        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
-    )
-    from spacy.cli import download
-
-    download(SPACY_MODEL_DEFAULT)
-    nlp = spacy.load(SPACY_MODEL_DEFAULT)
+from utils.text_preprocessor import TextPreprocessor
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
-
-
-class TextPreprocessor(BaseEstimator, TransformerMixin):
-    def __init__(self, nlp=nlp, n_jobs=1):
-        """
-        Text preprocessing transformer includes steps:
-            1. Punctuation removal
-            2. Stop words removal
-            3. Lemmatization
-
-        nlp  - spacy model
-        n_jobs - parallel jobs to run
-        """
-        self.nlp = nlp
-        self.n_jobs = n_jobs
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, *_):
-        X_copy = X.copy()
-
-        partitions = 1
-        cores = mp.cpu_count()
-        if self.n_jobs <= -1:
-            partitions = cores
-        elif self.n_jobs <= 0:
-            return X_copy.apply(self._preprocess_text)
-        else:
-            partitions = min(self.n_jobs, cores)
-
-        data_split = np.array_split(X_copy, partitions)
-        pool = mp.Pool(cores)
-        data = pd.concat(pool.map(self._preprocess_part, data_split))
-        pool.close()
-        pool.join()
-
-        return data
-
-    def _preprocess_part(self, part):
-        return part.apply(self._preprocess_text)
-
-    def _preprocess_text(self, text):
-        doc = self.nlp(text)
-        removed_punct = self._remove_punct(doc)
-        removed_stop_words = self._remove_stop_words(removed_punct)
-        return self._lemmatize(removed_stop_words)
-
-    def _remove_punct(self, doc):
-        return (t for t in doc if t.text not in string.punctuation)
-
-    def _remove_stop_words(self, doc):
-        return (t for t in doc if not t.is_stop)
-
-    def _lemmatize(self, doc):
-        return " ".join(t.lemma_ for t in doc)
 
 
 def strip_accents(accented_string: str) -> str:
@@ -140,7 +65,7 @@ class PredictionPipeline:
         self.label_encoder = label_encoder
         self.estimator = estimator
 
-    def preprocess_data(self, data:pd.DataFrame)->pd.DataFrame:
+    def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
         """Preprocesses the data according to the preprocessing function set
         when initializing the function.
 
@@ -167,7 +92,9 @@ class PredictionPipeline:
 
 
 class PipelineManager:
-    def __init__(self, estimator: str, use_feature_selector=True):
+    def __init__(
+        self, estimator: str, use_feature_selector=True, use_text_preprocessor=False
+    ):
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
             raise ValueError(
@@ -181,6 +108,7 @@ class PipelineManager:
         self.param_grids = []
         self.best_estimator = None
         self.use_feature_selector = use_feature_selector
+        self.use_text_preprocessor = use_text_preprocessor
 
     def set_categorical_features(self, cat_features: list):
         """Sets the categorical features that can be used by the ML model.
@@ -245,19 +173,18 @@ class PipelineManager:
             ]
         )
 
-        text_preprocessor = Pipeline(
-            steps=[
-                # ("normalizer": TextPreprocessor(n_jobs=-1)),
-                (
-                    "vectorizer",
-                    CountVectorizer(
-                        strip_accents="unicode",
-                        stop_words=spanish_stop_words,
-                    ),
-                ),
-                ("tfidf", TfidfTransformer()),
-            ]
+        # Build text preprocessor steps, with optional extra TextPreprocessor
+        text_steps = []
+        if self.use_text_preprocessor:
+            text_steps.append(("normalizer", TextPreprocessor(n_jobs=-1)))
+        text_steps.append(
+            (
+                "vectorizer",
+                CountVectorizer(strip_accents="unicode", stop_words=spanish_stop_words),
+            )
         )
+        text_steps.append(("tfidf", TfidfTransformer()))
+        text_preprocessor = Pipeline(steps=text_steps)
 
         preprocessor_list = []
         if self.cat_features:
@@ -394,7 +321,7 @@ class PipelineManager:
         if self.use_feature_selector:
             feature_selector_params = {
                 "feature_selector": [
-                    # SelectFromModel(Lasso()),
+                    SelectFromModel(Lasso()),
                     SelectFromModel(ElasticNet()),
                     SelectFromModel(Ridge()),
                     VarianceThreshold(),
