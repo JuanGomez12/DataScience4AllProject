@@ -1,10 +1,13 @@
-from typing import Any, Union
+import multiprocessing as mp
+import string
 import unicodedata
+from typing import Any, Union
 
 import nltk
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
+import spacy
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -31,29 +34,93 @@ from sklearn.preprocessing import (
     RobustScaler,
     StandardScaler,
 )
-# import spacy
 
-# # SPACY_MODEL_DEFAULT = "es_core_news_sm"
+SPACY_MODEL_DEFAULT = "es_core_news_sm"
 # SPACY_MODEL_DEFAULT = "es_core_news_md"
-# # SPACY_MODEL_DEFAULT = 'es_core_news_lg'
-# # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
+# SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
-# # Load the default Spacy model
-# try:
-#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
-# except OSError:
-#     print(
-#         f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
-#     )
-#     from spacy.cli import download
+# Load the default Spacy model
+try:
+    nlp = spacy.load(SPACY_MODEL_DEFAULT)
+except OSError:
+    print(
+        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+    )
+    from spacy.cli import download
 
-#     download(SPACY_MODEL_DEFAULT)
-#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
+    download(SPACY_MODEL_DEFAULT)
+    nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
 
+
+class TextPreprocessor(BaseEstimator, TransformerMixin):
+    def __init__(self, nlp=nlp, n_jobs=1):
+        """
+        Text preprocessing transformer includes steps:
+            1. Punctuation removal
+            2. Stop words removal
+            3. Lemmatization
+
+        nlp  - spacy model
+        n_jobs - parallel jobs to run
+        """
+        self.nlp = nlp
+        self.n_jobs = n_jobs
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, *_):
+        X_copy = X.copy()
+
+        partitions = 1
+        cores = mp.cpu_count()
+        if self.n_jobs <= -1:
+            partitions = cores
+        elif self.n_jobs <= 0:
+            return X_copy.apply(self._preprocess_text)
+        else:
+            partitions = min(self.n_jobs, cores)
+
+        data_split = np.array_split(X_copy, partitions)
+        pool = mp.Pool(cores)
+        data = pd.concat(pool.map(self._preprocess_part, data_split))
+        pool.close()
+        pool.join()
+
+        return data
+
+    def _preprocess_part(self, part):
+        return part.apply(self._preprocess_text)
+
+    def _preprocess_text(self, text):
+        doc = self.nlp(text)
+        removed_punct = self._remove_punct(doc)
+        removed_stop_words = self._remove_stop_words(removed_punct)
+        return self._lemmatize(removed_stop_words)
+
+    def _remove_punct(self, doc):
+        return (t for t in doc if t.text not in string.punctuation)
+
+    def _remove_stop_words(self, doc):
+        return (t for t in doc if not t.is_stop)
+
+    def _lemmatize(self, doc):
+        return " ".join(t.lemma_ for t in doc)
+
+
 def strip_accents(accented_string: str) -> str:
+    """Strips the accents of letters from a document, e.g. converts Á to A.
+
+    Args:
+        accented_string (str): String with accents
+
+    Returns:
+        str: String with letters converted to their accent-less version.
+    """
     clean_string = (
         unicodedata.normalize("NFD", accented_string)
         .encode("ascii", "ignore")
@@ -61,7 +128,11 @@ def strip_accents(accented_string: str) -> str:
     )
     return clean_string
 
-spanish_stop_words = [strip_accents(word) for word in nltk.corpus.stopwords.words("spanish")]
+
+spanish_stop_words = [
+    strip_accents(word) for word in nltk.corpus.stopwords.words("spanish")
+]
+
 
 class PredictionPipeline:
     def __init__(self, estimator, preprocessing_fn=None, label_encoder=None):
@@ -69,7 +140,16 @@ class PredictionPipeline:
         self.label_encoder = label_encoder
         self.estimator = estimator
 
-    def preprocess_data(self, data):
+    def preprocess_data(self, data:pd.DataFrame)->pd.DataFrame:
+        """Preprocesses the data according to the preprocessing function set
+        when initializing the function.
+
+        Args:
+            data (pd.DataFrame): Datafrmae with the data to preprocess
+
+        Returns:
+            pd.DataFrame: Dataframe with the preprocessed data.
+        """
         if self.preprocessing_fn is not None:
             return self.preprocessing_fn(data)
         else:
@@ -84,36 +164,6 @@ class PredictionPipeline:
         if self.label_encoder is not None:
             prediction = self.label_encoder.inverse_transform(prediction)
         return prediction
-
-
-# class LemmaTokenizer:
-#     def __init__(
-#         self,
-#         lemma=True,
-#         remove_stopwords=True,
-#         remove_punctuation=True,
-#     ):
-#         self.tokenizer = nlp
-#         self.lemma = lemma
-#         self.remove_stopwords = remove_stopwords
-#         self.remove_punctuation = remove_punctuation
-
-#     def __call__(self, doc):
-#         tokens = nlp(doc)
-
-#         word_list = [token for token in tokens]
-#         if self.remove_punctuation:
-#             word_list = [token for token in word_list if not token.is_punct]
-#         if self.remove_stopwords:
-#             word_list = [token for token in word_list if not token.is_stop]
-#         if self.lemma:
-#             word_list = [token.lemma_ for token in word_list]
-#         else:
-#             word_list = [token.text for token in word_list]
-#         return word_list
-
-#     def __repr__(self):
-#         return f"LemmaTokenizer with lemma {self.lemma}"
 
 
 class PipelineManager:
@@ -197,6 +247,7 @@ class PipelineManager:
 
         text_preprocessor = Pipeline(
             steps=[
+                # ("normalizer": TextPreprocessor(n_jobs=-1)),
                 (
                     "vectorizer",
                     CountVectorizer(
@@ -295,21 +346,10 @@ class PipelineManager:
             # Add textual parameters
             text_param = {
                 "preprocessor__text__vectorizer": [
-                    # CountVectorizer(
-                    #     strip_accents="unicode",
-                    #     ngram_range=(1, 1),
-                    #     tokenizer=LemmaTokenizer(lemma=True),
-                    # ),
-                    # CountVectorizer(
-                    #     strip_accents="unicode",
-                    #     ngram_range=(1, 2),
-                    #     tokenizer=LemmaTokenizer(lemma=True),
-                    # ),
                     CountVectorizer(
                         strip_accents="unicode",
                         ngram_range=(1, 1),
                         stop_words=spanish_stop_words,
-                        # tokenizer=LemmaTokenizer(lemma=True),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",
