@@ -131,3 +131,6 @@ dmypy.json
 # Data folder
 data/
 data.zip
+
+#VENV
+ds4a
