@@ -331,25 +331,22 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
         test_names.str.lower()
         .str.strip()
         .apply(lambda x: strip_accents(x))
-        .str.replace("[", "(")
-        .str.replace("]", ")")
+        .str.replace("[", "(", regex=True)
+        .str.replace("]", ")", regex=True)
         .str.replace(r"\s(\.+)", "", regex=True)
     )
 
     return cleaned
 
 
-def clean_labs(df_lab: pd.DataFrame, aggregate_labs=True) -> pd.DataFrame:
+def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) -> pd.DataFrame:
     lab = df_lab.copy()
     lab["Nombre"] = clean_test_names(lab.Nombre)
-    cleaning_dict_path = Path("scripts/utils/lab_test_name_aggregation.json")
-    if cleaning_dict_path.is_file() and aggregate_labs:
-        with open(cleaning_dict_path, "r") as in_file:
-            dict_tests = json.load(in_file)
-        lab["Nombre"] = lab.Nombre.replace(dict_tests)
-    elif not cleaning_dict_path.is_file():
+    if name_aggregation_dict is not None:
+        lab["Nombre"] = lab.Nombre.replace(name_aggregation_dict)
+    else:
         print(
-            "Could not find lab_test_name_aggregation.json,",
+            "lab_test_name_aggregation dictionary not passed,",
             "skipping dictionary aggregation step",
         )
     lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
@@ -366,7 +363,7 @@ def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     return demografico
 
 
-def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = True) -> pd.DataFrame:
+def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = False) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
