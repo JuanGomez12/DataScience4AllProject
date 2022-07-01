@@ -337,7 +337,7 @@ class PipelineManager:
         if self.use_feature_selector:
             feature_selector_params = {
                 "feature_selector": [
-                    SelectFromModel(Lasso()),
+                    # SelectFromModel(Lasso()),
                     SelectFromModel(ElasticNet()),
                     SelectFromModel(Ridge()),
                     VarianceThreshold(),
