@@ -159,7 +159,14 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     return df_merged
 
 
-def disease_tests_list():
+def disease_tests_list()->list:
+    """Creates a list with the group of sets of the regex keywords to search for
+    in the lab info, and the aggregation name under which to aggregate the
+    keywords.
+
+    Returns:
+        list: List of sets with the regex keywords and the aggregation name.
+    """
     disease_tests = [
         ("hepatitis|hepat|glutamic|bilirrub", "liver_damage"),
         ("hemo|hema", "hematic_info"),
@@ -185,6 +192,16 @@ def disease_tests_list():
 
 
 def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
+    """Preprocesses the labs dataframe
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the lab information as it is 
+            in the dataset.
+
+    Returns:
+        pd.DataFrame: Preprocessed lab data, with each row representing one
+        patient worth of data instead of the time series.
+    """
     lab = df.copy()
 
     disease_tests = disease_tests_list()
