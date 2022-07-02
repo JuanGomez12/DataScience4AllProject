@@ -1,5 +1,5 @@
-from typing import Any, Union
 import unicodedata
+from typing import Any, Union
 
 import nltk
 import numpy as np
@@ -27,33 +27,25 @@ from sklearn.preprocessing import (
     MinMaxScaler,
     Normalizer,
     OneHotEncoder,
-    PowerTransformer,
     RobustScaler,
     StandardScaler,
 )
-# import spacy
 
-# # SPACY_MODEL_DEFAULT = "es_core_news_sm"
-# SPACY_MODEL_DEFAULT = "es_core_news_md"
-# # SPACY_MODEL_DEFAULT = 'es_core_news_lg'
-# # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
-
-# # Load the default Spacy model
-# try:
-#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
-# except OSError:
-#     print(
-#         f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
-#     )
-#     from spacy.cli import download
-
-#     download(SPACY_MODEL_DEFAULT)
-#     nlp = spacy.load(SPACY_MODEL_DEFAULT)
+from utils.text_preprocessor import TextPreprocessor
 
 # Download the NLTK stopwords
 nltk.download("stopwords")
 
+
 def strip_accents(accented_string: str) -> str:
+    """Strips the accents of letters from a document, e.g. converts Á to A.
+
+    Args:
+        accented_string (str): String with accents
+
+    Returns:
+        str: String with letters converted to their accent-less version.
+    """
     clean_string = (
         unicodedata.normalize("NFD", accented_string)
         .encode("ascii", "ignore")
@@ -61,7 +53,11 @@ def strip_accents(accented_string: str) -> str:
     )
     return clean_string
 
-spanish_stop_words = [strip_accents(word) for word in nltk.corpus.stopwords.words("spanish")]
+
+spanish_stop_words = [
+    strip_accents(word) for word in nltk.corpus.stopwords.words("spanish")
+]
+
 
 class PredictionPipeline:
     def __init__(self, estimator, preprocessing_fn=None, label_encoder=None):
@@ -69,13 +65,36 @@ class PredictionPipeline:
         self.label_encoder = label_encoder
         self.estimator = estimator
 
-    def preprocess_data(self, data):
+    def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Preprocesses the data according to the preprocessing function set
+        when initializing the function.
+
+        Args:
+            data (pd.DataFrame): Datafrmae with the data to preprocess
+
+        Returns:
+            pd.DataFrame: Dataframe with the preprocessed data.
+        """
         if self.preprocessing_fn is not None:
             return self.preprocessing_fn(data)
         else:
             return data
 
-    def predict(self, X, preprocess_data=True, **kwargs):
+    def predict(
+        self, X: pd.DataFrame, preprocess_data: bool = True, **kwargs
+    ) -> np.array:
+        """Predicts labels for the samples passed into the function.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the data to predict on.
+            preprocess_data (bool, optional): If True, the data will be
+                preprocessed using preprocess_data before trying to predict on
+                it. Defaults to True.
+
+        Returns:
+            np.array: Array containing the labels for the predicted class of
+            each of the samples.
+        """
         if preprocess_data:
             preprocessed_X = self.preprocess_data(X)
         else:
@@ -86,38 +105,13 @@ class PredictionPipeline:
         return prediction
 
 
-# class LemmaTokenizer:
-#     def __init__(
-#         self,
-#         lemma=True,
-#         remove_stopwords=True,
-#         remove_punctuation=True,
-#     ):
-#         self.tokenizer = nlp
-#         self.lemma = lemma
-#         self.remove_stopwords = remove_stopwords
-#         self.remove_punctuation = remove_punctuation
-
-#     def __call__(self, doc):
-#         tokens = nlp(doc)
-
-#         word_list = [token for token in tokens]
-#         if self.remove_punctuation:
-#             word_list = [token for token in word_list if not token.is_punct]
-#         if self.remove_stopwords:
-#             word_list = [token for token in word_list if not token.is_stop]
-#         if self.lemma:
-#             word_list = [token.lemma_ for token in word_list]
-#         else:
-#             word_list = [token.text for token in word_list]
-#         return word_list
-
-#     def __repr__(self):
-#         return f"LemmaTokenizer with lemma {self.lemma}"
-
-
 class PipelineManager:
-    def __init__(self, estimator: str, use_feature_selector=True):
+    def __init__(
+        self,
+        estimator: str,
+        use_feature_selector: bool = True,
+        use_text_preprocessor: bool = False,
+    ):
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
             raise ValueError(
@@ -131,6 +125,7 @@ class PipelineManager:
         self.param_grids = []
         self.best_estimator = None
         self.use_feature_selector = use_feature_selector
+        self.use_text_preprocessor = use_text_preprocessor
 
     def set_categorical_features(self, cat_features: list):
         """Sets the categorical features that can be used by the ML model.
@@ -195,18 +190,18 @@ class PipelineManager:
             ]
         )
 
-        text_preprocessor = Pipeline(
-            steps=[
-                (
-                    "vectorizer",
-                    CountVectorizer(
-                        strip_accents="unicode",
-                        stop_words=spanish_stop_words,
-                    ),
-                ),
-                ("tfidf", TfidfTransformer()),
-            ]
+        # Build text preprocessor steps, with optional extra TextPreprocessor
+        text_steps = []
+        if self.use_text_preprocessor:
+            text_steps.append(("normalizer", TextPreprocessor(n_jobs=-1)))
+        text_steps.append(
+            (
+                "vectorizer",
+                CountVectorizer(strip_accents="unicode", stop_words=spanish_stop_words),
+            )
         )
+        text_steps.append(("tfidf", TfidfTransformer()))
+        text_preprocessor = Pipeline(steps=text_steps)
 
         preprocessor_list = []
         if self.cat_features:
@@ -234,16 +229,16 @@ class PipelineManager:
 
         self.pipeline = Pipeline(pipeline_list)
 
-    def get_categorical_features(self):
+    def get_categorical_features(self) ->list:
         return self.cat_features.copy()
 
-    def get_numerical_features(self):
+    def get_numerical_features(self)->list:
         return self.num_features.copy()
 
-    def get_text_features(self):
+    def get_text_features(self)->list:
         return [] if self.text_features is None else [self.text_features]
 
-    def get_features(self):
+    def get_features(self)->list:
         features_list = (
             self.get_categorical_features()
             + self.get_numerical_features()
@@ -291,25 +286,13 @@ class PipelineManager:
             param_grid.update(numerical_params)
 
         if self.text_features is not None:
-            # self.lemma = LemmaTokenizer(lemma=True)
             # Add textual parameters
             text_param = {
                 "preprocessor__text__vectorizer": [
-                    # CountVectorizer(
-                    #     strip_accents="unicode",
-                    #     ngram_range=(1, 1),
-                    #     tokenizer=LemmaTokenizer(lemma=True),
-                    # ),
-                    # CountVectorizer(
-                    #     strip_accents="unicode",
-                    #     ngram_range=(1, 2),
-                    #     tokenizer=LemmaTokenizer(lemma=True),
-                    # ),
                     CountVectorizer(
                         strip_accents="unicode",
                         ngram_range=(1, 1),
                         stop_words=spanish_stop_words,
-                        # tokenizer=LemmaTokenizer(lemma=True),
                     ),
                     CountVectorizer(
                         strip_accents="unicode",

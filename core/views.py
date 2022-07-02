@@ -15,8 +15,8 @@ from rest_framework.views import APIView
 sys.path.append('scripts')
 from utils.preprocessing_utils import preprocess_json
 
-ml_pipeline = load('scripts/data/output/prediction_pipeline.pickle')
-    
+ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
+
 
 class Post_APIView(APIView):
 
@@ -29,7 +29,19 @@ class Post_APIView(APIView):
 
     def post(self, request, format=None):
         post_data = request.GET
-        data = {'Edad':post_data['Edad'],'Genero':post_data['Genero'],'GrupoEtnico':post_data['GrupoEtnico'],'AreaResidencial':post_data['AreaResidencial'],'EstadoCivil':post_data['EstadoCivil'],'TSangre':post_data['TSangre'],'Tipo':post_data['Tipo'],'Plan':post_data['Plan'],'examenesRealizados':post_data['examenesRealizados'],'Valores':post_data['Valores'],'fecha':post_data['fecha']}
+        data = {
+            'Edad':post_data['Edad'],
+            'Genero':post_data['Genero'],
+            'GrupoEtnico':post_data['GrupoEtnico'],
+            'AreaResidencial':post_data['AreaResidencial'],
+            'EstadoCivil':post_data['EstadoCivil'],
+            'TSangre':post_data['TSangre'],
+            'Tipo':post_data['Tipo'],
+            'Plan':post_data['Plan'],
+            'Examenes':{'Nombre':post_data['examenesRealizados'],
+            'Valor':post_data['Valores'],
+            'Fecha':post_data['fecha']},
+            }
         
         prediction = ml_pipeline.predict(preprocess_json(data))
         prediction = {'respuesta':prediction[0]}
