@@ -1,17 +1,18 @@
+import json
 import re
 import unicodedata
+from pathlib import Path
 from typing import Optional
 
-import matplotlib
 import nltk
 import numpy as np
 import pandas as pd
-from nltk.corpus import stopwords
 import spacy
+from nltk.corpus import stopwords
 
-# SPACY_MODEL_DEFAULT = "es_core_news_sm"
+SPACY_MODEL_DEFAULT = "es_core_news_sm"
 # SPACY_MODEL_DEFAULT = "es_core_news_md"
-SPACY_MODEL_DEFAULT = 'es_core_news_lg'
+# SPACY_MODEL_DEFAULT = "es_core_news_lg"
 # SPACY_MODEL_DEFAULT = 'es_dep_news_trf'
 
 # Load the default Spacy model
@@ -19,7 +20,9 @@ try:
     default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
 except OSError:
     print(
-        f"Spacy model {SPACY_MODEL_DEFAULT} not found, downloading from the internet, this might take some time"
+        f"Spacy model {SPACY_MODEL_DEFAULT} not found,",
+        "downloading from the internet,",
+        "this might take some time",
     )
     from spacy.cli import download
 
@@ -27,6 +30,7 @@ except OSError:
     default_nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
 nltk.download("stopwords")
+
 
 def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=True):
     tokens = nlp(doc)
@@ -39,9 +43,10 @@ def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=Tr
 
     word_list = [token.lemma_ for token in word_list]
 
-    lemmatized_string = ' '.join(word_list)
+    lemmatized_string = " ".join(word_list)
 
     return lemmatized_string
+
 
 def remove_stop_words(string_data: str, extra_stop_words: list = []) -> str:
     stop_words = stopwords.words("spanish")
@@ -137,7 +142,7 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     preprocessed_labs = preprocess_labs(lab)
 
     # Merge the data, dropping it beforehand if it was already merged to the notas DF
-    if not set(["top_lab_code", "top_lab_avg_value", "top_lab_count"]).issubset(
+    if not set(["top_lab_name", "top_lab_avg_value", "top_lab_count"]).issubset(
         df_notas.columns
     ):
         df_merged = notas.merge(preprocessed_labs, how="left", on="IDRecord")
@@ -146,7 +151,7 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
             columns=preprocessed_labs.columns, errors="ignore"
         ).merge(preprocessed_labs, how="left", on="IDRecord")
         # Fill NaNs
-        df_merged["top_lab_code"] = df_merged.top_lab_code.fillna(0)
+        df_merged["top_lab_name"] = df_merged.top_lab_name.fillna(0)
         df_merged["top_lab_avg_value"] = df_merged.top_lab_avg_value.fillna(0)
         df_merged["top_lab_max_value"] = df_merged.top_lab_max_value.fillna(0)
         df_merged["top_lab_count"] = df_merged.top_lab_count.fillna("NA")
@@ -154,21 +159,49 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     return df_merged
 
 
-def disease_tests_list():
+def disease_tests_list()->list:
+    """Creates a list with the group of sets of the regex keywords to search for
+    in the lab info, and the aggregation name under which to aggregate the
+    keywords.
+
+    Returns:
+        list: List of sets with the regex keywords and the aggregation name.
+    """
     disease_tests = [
-        ("hepatitis|hepat|glutamico|bilirrub", "liver_damage"),
-        ("hemo", "hemoglobin"),
+        ("hepatitis|hepat|glutamic|bilirrub", "liver_damage"),
+        ("hemo|hema", "hematic_info"),
+        ("bacilo|bacter|colora", "bacterias"),
+        ("tiroi|protro|tirox", "hormones"),
+        ("herpes|tuberc", "other_diseases"),
+        ("album|creat|ureico|urico|uro|orina", "kidney_damage"),
+        ("colest|trigli|plaqu|protrom|trombo", "heart_damage"),
+        ("calcio|fofs|pot", "minerals"),
     ]
-    # This line will look for tests relating linfo (as in linfocitos/lymphocytes), CD3, CD4, and CD8
-    disease_tests.append(("linfo|cd3|cd4|cd8", "lymphocytes"))
+    # This line will look for tests relating linfo
+    # (as in linfocitos/lymphocytes), CD3, CD4, and CD8
+    disease_tests.append(
+        ("leuco|linfo|cd3|cd4|cd8|anticuerpo|antigen|neutrof", "white_cells")
+    )
     # This line will look for tests relating HIV and (immuno)deficiency
-    disease_tests.append(("deficiencia|vih", "vih"))
+    disease_tests.append(("deficiencia|vih|immuno", "vih"))
     # Diabetes related keywords
     disease_tests.append(("ayun|gluco|glico", "diabetes_tests"))
+    # Syphilis related keywords
+    disease_tests.append(("trepo|anal|virus|viral", "syphilis_tests"))
     return disease_tests
 
 
 def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
+    """Preprocesses the labs dataframe
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the lab information as it is 
+            in the dataset.
+
+    Returns:
+        pd.DataFrame: Preprocessed lab data, with each row representing one
+        patient worth of data instead of the time series.
+    """
     lab = df.copy()
 
     disease_tests = disease_tests_list()
@@ -176,12 +209,12 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # ------
     # Lab count and top lab code
     # Aggregate the data
-    lab = lab.groupby(["IDRecord", "Codigo"])
-    labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Codigo": "count"})
+    lab = lab.groupby(["IDRecord", "Nombre"])
+    labs_agg = lab.aggregate({"Valor": [np.nanmean, np.nanmax], "Nombre": "count"})
     labs_agg.columns = ["_".join(col) for col in labs_agg.columns.values]
     labs_agg = labs_agg.rename(
         columns={
-            "Codigo_count": "lab_count",
+            "Nombre_count": "lab_count",
             "Valor_nanmean": "top_lab_avg_value",
             "Valor_nanmax": "top_lab_max_value",
         }
@@ -190,9 +223,9 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Get the top lab test per patient, by getting the lab with the highest count
     top_lab_test_by_patient = labs_agg.merge(
         labs_agg.loc[
-            labs_agg.groupby("IDRecord").lab_count.idxmax(), ["IDRecord", "Codigo"]
+            labs_agg.groupby("IDRecord").lab_count.idxmax(), ["IDRecord", "Nombre"]
         ]
-    ).rename(columns={"Codigo": "top_lab_code", "lab_count": "top_lab_count"})
+    ).rename(columns={"Nombre": "top_lab_name", "lab_count": "top_lab_count"})
 
     # Get the total number of labs performed on each patient
     total_lab_count_by_patient = (
@@ -209,7 +242,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # -----
     # Patient's date for first and last exam
     merged_lab_date_calc = df.copy()[["IDRecord", "Fecha"]]
-    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"], errors='coerce')
     lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
     lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
 
@@ -236,7 +269,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Lab max and avg date difference
     # Get the average difference
     merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
-    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"])
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"], errors='coerce')
     merged_lab_date_calc["date_diff"] = (
         merged_lab_date_calc[["IDRecord", "Fecha"]].groupby("IDRecord").diff()
     )
@@ -306,11 +339,37 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     return preprocessed_labs
 
 
-def clean_labs(df_lab: pd.DataFrame) -> pd.DataFrame:
+def clean_test_names(test_names: pd.Series) -> pd.Series:
+    """
+    Input: Series of test names
+    Output: Series of standarized test names
+    """
+    cleaned = (
+        test_names.str.lower()
+        .str.strip()
+        .apply(lambda x: strip_accents(x))
+        .str.replace("[", "(", regex=True)
+        .str.replace("]", ")", regex=True)
+        .str.replace(r"\s(\.+)", "", regex=True)
+    )
+
+    return cleaned
+
+
+def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) -> pd.DataFrame:
     lab = df_lab.copy()
+    if 'Nombre' in lab.columns:
+        lab["Nombre"] = clean_test_names(lab.Nombre)
+        if name_aggregation_dict is not None:
+            lab["Nombre"] = lab.Nombre.replace(name_aggregation_dict)
+        else:
+            print(
+                "lab_test_name_aggregation dictionary not passed,",
+                "skipping dictionary aggregation step",
+            )
     lab["Valor"] = pd.to_numeric(lab.Valor, errors="coerce")
     lab["IDRecord"] = pd.to_numeric(lab.IDRecord, errors="coerce")
-    lab["fecha"] = pd.to_datetime(lab["Fecha"])
+    lab["fecha"] = pd.to_datetime(lab["Fecha"], errors="coerce")
     lab = lab.dropna(subset=["IDRecord"])
 
     return lab
@@ -322,7 +381,7 @@ def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
     return demografico
 
 
-def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
+def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = False) -> pd.DataFrame:
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -349,7 +408,11 @@ def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
     # notas["Plan"] = notas.Plan.astype(str).apply(lambda x: remove_stop_words(x))
 
     if apply_lemmatization:
-        notas["Plan"] = notas["Plan"].astype(str).apply(lemmatize, remove_stopwords=True, remove_punctuation=True)
+        notas["Plan"] = (
+            notas["Plan"]
+            .astype(str)
+            .apply(lemmatize, remove_stopwords=True, remove_punctuation=True)
+        )
 
     # Remove accents from Plan
     notas["Plan"] = notas.Plan.astype(str).apply(strip_accents)
@@ -358,10 +421,11 @@ def clean_notas(df: pd.DataFrame, apply_lemmatization=True) -> pd.DataFrame:
 
 
 def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
-    if {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(data_dict.keys()):
-        raise ValueError(
-            f"data_dict is missing {set(['df_laboratorios', 'df_notas', 'df_sociodemograficos']) - set(data_dict.keys())}"
-        )
+    set_comparison = {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(
+        data_dict.keys()
+    )
+    if set_comparison:
+        raise ValueError(f"data_dict is missing {set_comparison}")
 
     df_socio = data_dict["df_sociodemograficos"].copy()
     df_labs = data_dict["df_laboratorios"].copy()
@@ -385,6 +449,17 @@ def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
 
 
 def preprocess_json(data_dict: dict) -> dict:
+    """Receives a dictionary formatted as a JSON file and preprocesses so it 
+    mathces what the prediction_pipeline is expecting.
+
+    Args:
+        data_dict (dict): _description_
+
+    Returns:
+        dict: Dictionary containing the sample as three separate
+        datasets/dataframes, the same way the input data is supposed to look
+        for the prediction_pipeline.
+    """
     data_dict["IDRecord"] = 0
     df_socio_cols = [
         "IDRecord",
@@ -396,20 +471,25 @@ def preprocess_json(data_dict: dict) -> dict:
         "TSangre",
     ]
     df_labs_cols = ["IDRecord", "Codigo", "Nombre", "Fecha", "Valor"]
-    df_notas_cols = ["IDRecord", "Código", "Nombre", "Tipo", "Plan"]
+    df_notas_cols = ["IDRecord", "Tipo", "Plan"]
 
-    socio_dict = {
-        key: data_dict[key] for key in data_dict.keys() if key in df_socio_cols
-    }
+    missing_cols = [col for col in df_socio_cols+df_notas_cols if col not in data_dict.keys()]
+
+    socio_dict = {}
+    for key in df_socio_cols:
+        socio_dict[key] = data_dict.get(key, 'NA')
     df_socio = pd.DataFrame(socio_dict, index=[0])
 
     labs_dict = data_dict["Examenes"]
     labs_dict["IDRecord"] = 0
+    for key in df_labs_cols:
+        if key not in labs_dict:
+            labs_dict[key]= {'0': 'NA'}
     df_labs = pd.DataFrame.from_dict(labs_dict)
 
-    notas_dict = {
-        key: data_dict[key] for key in data_dict.keys() if key in df_notas_cols
-    }
+    notas_dict = {}
+    for key in df_notas_cols:
+        notas_dict[key] = data_dict.get(key, 'NA')
     df_notas = pd.DataFrame(notas_dict, index=[0])
 
     df_dict = {
