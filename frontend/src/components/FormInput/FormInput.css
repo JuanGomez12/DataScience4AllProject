@@ -1,4 +1,4 @@
-input{
+/* input{
   padding: .5rem;
   margin: 10px 0px;
   border-radius: 5px;
@@ -8,5 +8,4 @@ input{
 .formInput{
   display: flex;
   flex-direction: column;
-  /* width: 280px; */
-}
+} */

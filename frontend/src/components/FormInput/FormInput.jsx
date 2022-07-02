@@ -5,7 +5,8 @@ const FormInput = (props) => {
     <div className="formInput">
       <label>{props.label}</label>
       <input type={props.type} placeholder={props.placeholder}
-      onChange={e=>props.changeFunction(e.target.value)}/>
+      onChange={e=>props.changeFunction(e.target.value)}
+      />
     </div>
   )
 }

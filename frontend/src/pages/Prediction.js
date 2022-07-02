@@ -1,8 +1,10 @@
 import React from 'react'
 import { useState } from 'react'
 import FormInput from '../components/FormInput/FormInput'
-import FormSelectInput from '../components/FormSelectInput/FormSelectInput';
-import {Container, Row, Col, Table} from 'react-bootstrap'
+import FormSelectInput from '../components/FormSelectInput/FormSelectInput'
+import {Container, Row, Col, Table, Card, CardHeader, Button, CardBody, FormGroup, Form, Input} from 'reactstrap'
+import PredictionHeader from "../components/Headers/PredictionHeader.js"
+import Select from 'react-select'
 
 function Prediction() {
 
@@ -105,76 +107,210 @@ function Prediction() {
   }
 
   return (
-    <Container>
-      <Row>
-        <h2>Prediction form</h2>
-      </Row>
-      <form onSubmit={handleSubmit}>
-        <Row>
-          <FormInput placeholder="Name" type="text" label="Name:" changeFunction={handleChangeName}/>
-        </Row>
-        <Row>
-          <Col>
-            <FormInput placeholder="Age" type="number" label="Age:" changeFunction={handleChangeAge}/>
+    <>
+      <PredictionHeader />
+        {/* Page content */}
+      <Container className="mt-5" fluid>
+
+        <form onSubmit={handleSubmit}>
+          <Col className="order-xl-1" xl="12">
+            <Card className="bg-secondary shadow">
+              <CardHeader className="bg-white border-0">
+                <Row className="align-items-center">
+                  <Col xs="8">
+                    <h3 className="mb-0">Form to generate predictions</h3>
+                  </Col>
+                </Row>
+              </CardHeader>
+              <CardBody>
+                <Form>
+                  <h6 className="heading-small text-muted mb-4">
+                    User information
+                  </h6>
+                  <div className="pl-lg-4">
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-country"
+                          >
+                            Age
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="input-age"
+                            placeholder="Age of the pacient"
+                            type="number"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
+                            Sex
+                          </label>
+                          <Select id="input-sex" options={sexOptions} />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-marital-status"
+                          >
+                            Marital status
+                          </label>
+                          <Select id="input-marital-status" options={maritalOptions} />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-ethnic-group"
+                          >
+                            Ethnic group
+                          </label>
+                          <Select id="input-ethnic-group" options={ethnicOptions} />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-ethnic-group"
+                          >
+                            Residential Area
+                          </label>
+                          <Select id="input-ethnic-group" options={residentialOptions} />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-blood-type"
+                          >
+                            Blood type
+                          </label>
+                          <Select id="input-blood-type" options={bloodOptions} />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col lg="12">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-type"
+                          >
+                            Tipo
+                          </label>
+                          <Select id="input-type" options={planOptions} />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg="12">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-plan"
+                          >
+                            Plan
+                          </label>
+                          <Input
+                            id="input-plan"
+                            className="form-control-alternative"
+                            placeholder="Write the description"
+                            rows="2"
+                            type="textarea"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    
+                  </div>
+
+                  <hr className="my-4" />
+                  <h6 className="heading-small text-muted mb-4">Medical Exams</h6>
+                  <div className="pl-lg-4">
+                  <Row>
+                    <div className="col">
+                      <Card className="shadow">
+                        <CardHeader className="border-0">
+                          <Row className="align-items-center">
+                            <Col xs="8">
+                              <h3 className="mb-0">Medical Exams</h3>
+                            </Col>
+                            <Col className="text-right" xs="4">
+                              <Button
+                                color="info"
+                                href="#pablo"
+                                onClick={(e) => e.preventDefault()}
+                                size="sm"
+                              >
+                                Add new exam
+                              </Button>
+                            </Col>
+                          </Row>
+                        </CardHeader>
+                        <Table className="align-items-center table-flush" responsive>
+                          <thead className="thead-light">
+                            <tr>
+                              <th scope="col">Codigo</th>
+                              <th scope="col">Fecha</th>
+                              <th scope="col">Valor</th>
+                              <th scope="col">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">
+                                <span className="mb-0 text-sm">
+                                  CODIGO2020
+                                </span>
+                              </th>
+                              <td>April 15</td>
+                              <td>
+                                123
+                              </td>
+                              <td>
+                                <Button>Remove</Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card>
+                    </div>
+                  </Row>
+                  </div>
+
+                  <hr className="my-4" />
+                  <div className="pl-lg-4">
+                    <Row>
+                      <Button
+                      color="info"
+                      href="#pablo"
+                      >Submit</Button>
+                    </Row>
+                  </div>
+                </Form>
+              </CardBody>
+            </Card>
           </Col>
-          <Col>
-            <FormSelectInput label="Sex:" options={sexOptions} changeFunction={handleChangeSex}/>
-          </Col>
-          <Col>
-            <FormSelectInput label="Marital status:" options={maritalOptions} changeFunction={handleChangeMaritalStatus}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormSelectInput label="Ethnic group:" options={ethnicOptions} changeFunction={handleChangeEthnicGroup}/>
-          </Col>
-          <Col>
-            <FormSelectInput label="Residential Area:" options={residentialOptions} changeFunction={handleChangeResidentialArea}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormSelectInput label="Blood type:" options={bloodOptions} changeFunction={handleChangeBlood}/>
-          </Col>
-          <Col>
-            <FormSelectInput label="Plan:" options={planOptions} changeFunction={handleChangePlan}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col sm={8} className="col-label">
-            <label>Medical exams:</label>
-          </Col>
-          <Col sm={4}>
-            <button className='form-button'>Add Exam</button>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Code</th>
-                  <th>Date</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-        <Row>
-          <button>Submit</button>
-        </Row>
-      </form>
-    </Container>
+        </form>
+      </Container>
+    </>
   )
 }
 
