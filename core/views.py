@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 sys.path.append('scripts')
 from utils.preprocessing_utils import preprocess_json
 
-ml_pipeline = load('scripts/data/output/prediction_pipeline.pickle')
+ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
     
 
 class Post_APIView(APIView):
