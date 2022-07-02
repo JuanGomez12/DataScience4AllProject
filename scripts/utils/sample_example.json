@@ -6,9 +6,9 @@
   "EstadoCivil": "Separado",
   "TSangre": "NaN",
   "Examenes": {
-    "Codigo": {
-      "0": "902045",
-      "1": "902046"
+    "Nombre": {
+      "0": "Prueba de hematocritos",
+      "1": "Test de urologia"
     },
     "Fecha": {
       "0": "22/02/2022 18:43",
