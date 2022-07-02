@@ -1,4 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://cdn.syncfusion.com/ej2/material.css');
+
+.sidebar {
+  box-shadow: rgb(113 122 131 / 11%) 0px 7px 30px 0px;
+}
+.nav-item,
+.navbar {
+  z-index: 10000;
+}
+@media  screen and (max-width:800px) {
+  .sidebar{
+    z-index: 10000000;
+  }
+}
+
+.e-dlg-center-center, .e-quick-popup-wrapper.e-device{
+  z-index: 1000000 !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(216, 216, 216);
+  border-radius: 40px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* color-picker style  */
+
+ #preview {
+  background: transparent
+    url('https://ej2.syncfusion.com/react/demos/src/color-picker/images/pen.png')
+    no-repeat;
+  display: inline-block;
+  height: 80px;
+  margin: 10px 0;
+  min-width: 300px;
+  max-width: 600px;
+  background-color: #008000;
+}
+
+.e-input-group:not(.e-float-icon-left), .e-input-group.e-success:not(.e-float-icon-left), .e-input-group.e-warning:not(.e-float-icon-left), .e-input-group.e-error:not(.e-float-icon-left), .e-input-group.e-control-wrapper:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-success:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-warning:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-error:not(.e-float-icon-left){
+  border: none;
+}
 
 * {
   box-sizing: border-box;
@@ -7,18 +53,20 @@
   font-family: 'Work Sans', sans-serif;
 }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* height: 100vh; */
+.bg_gradient_personalized {
+  background: linear-gradient(90deg, rgba(0,4,40,1) 0%, rgba(0,78,146,1) 100%);
+  
+}
+
+.footer {
+  background: transparent !important;
+}
+/* .App {
   background: linear-gradient(
       rgba(255, 255, 255, 0.7),
       rgba(255, 255, 255, 0.3)
     ),
     url("https://img.freepik.com/free-photo/blur-hospital-clinic-interior_1203-8618.jpg?t=st=1656202136~exp=1656202736~hmac=99ad7119688a14fccff0f9f8cc24f0fdc13dee2b7553058e3ad467706793c272&w=740");
-    /* url("https://images.pexels.com/photos/114979/pexels-photo-114979.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"); */
   background-size: cover;
   background-position: center;
 }
@@ -44,9 +92,9 @@
   height: 100%;
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
+} */
 
-button{
+/* button{
   width: 100%;
   height: 3rem;
   border: none;
@@ -67,4 +115,4 @@ button{
 
 .col-label{
   align-self: center;
-}
+} */
