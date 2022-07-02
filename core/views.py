@@ -29,8 +29,8 @@ class Post_APIView(APIView):
 
     def post(self, request, format=None):
         post_data = request.GET
-        data = {'Edad':post_data['Edad'],'Genero':post_data['Genero'],'GrupoEtnico':post_data['GrupoEtnico'],'AreaResidencial':post_data['AreaResidencial'],'EstadoCivil':post_data['EstadoCivil'],'TSangre':post_data['TSangre'],'Tipo':post_data['Tipo'],'Plan':post_data['Plan'],'examenesRealizados':post_data['examenesRealizados'],'Valores':post_data['Valores'],'fecha':post_data['fecha']}
-        
+        data = {'Edad':post_data['Edad'],'Genero':post_data['Genero'],'GrupoEtnico':post_data['GrupoEtnico'],'AreaResidencial':post_data['AreaResidencial'],'EstadoCivil':post_data['EstadoCivil'],'TSangre':post_data['TSangre'],"Examenes": {"Codigo": { "0": post_data['examenesRealizados']},"Fecha": {"0": post_data['fecha']},"Valor": { "0": post_data['Valores'] } },'Tipo':post_data['Tipo'],'Plan':post_data['Plan']}
+        print(data)
         prediction = ml_pipeline.predict(preprocess_json(data))
         prediction = {'respuesta':prediction[0]}
         if data:
@@ -41,7 +41,7 @@ def prueba(request):
     data = ''
     if request.method == 'POST': 
         post_data = request.POST   
-        params = {'Edad':post_data['1'],'Genero':post_data['2'],'GrupoEtnico':post_data['3'],'AreaResidencial':post_data['4'],'EstadoCivil':post_data['5'],'TSangre':post_data['6'],'Tipo':post_data['7'],'Plan':post_data['8'],'examenesRealizados':post_data['9'],'Valores':post_data['10'],'fecha':post_data['11']}
+        params = {'Edad':post_data['1'],'Genero':post_data['2'],'GrupoEtnico':post_data['3'],'AreaResidencial':post_data['4'],'EstadoCivil':post_data['5'],'TSangre':post_data['6'],'Tipo':post_data['7'],'Plan':post_data['8'],'examenesRealizados':post_data['9'],'Valores':post_data['11'],'fecha':post_data['10']}
         url = 'http://127.0.0.1:8000/api/post'
         response = requests.post(url, params=params) 
         if response.status_code == 201:
