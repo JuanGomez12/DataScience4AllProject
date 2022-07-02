@@ -1,6 +1,8 @@
 FROM tensorflow/tensorflow:2.9.0rc2-jupyter
 
-WORKDIR /app 
+WORKDIR /app
+
+RUN apt-get update && apt-get install graphviz htop -y
 
 COPY requirements.txt /app/requirements.txt
 
