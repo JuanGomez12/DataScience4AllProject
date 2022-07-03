@@ -4,30 +4,9 @@ import BoxPlot from "../../components/Plots/BoxPlot";
 import StackedBarPlot from "../../components/Plots/StackedBarPlot";
 
 function SociodemographicBoard({ features }) {
-  //const { x_vals, y_vals } = values
-  //const x_vals = values.map((val) => val.x);
-  //const y_vals = values.map((val) => val.y);
-  //const genero = features.map((feat) => val.x)
-  //const genero = features[0].genero.enfermedad1.hombres
-  //const Edad = features[0].genero.enfermedad1.hombres
+
   const {genero,edad,estadoCivil,tipoSangre} = features[0]
-  /*let c=0
-  const traces = Object.entries(edad).map(([key, value]) => {
-    c ++
-    return( 
-      {
-        type: "box",
-        name: key,
-        offsetgroup: c,
-        //offsetgroup: "1",
-        q1: [value.q1],
-        median: [value.med],
-        q3: [value.q3],
-        lowerfence: [value.min],
-        upperfence: [value.max]
-      }
-    )
-    })*/
+  
   return (
     <div> SociodemographicBoard
       <ul>
@@ -79,7 +58,7 @@ function SociodemographicBoard({ features }) {
             q3: [ 3 ],
             lowerfence: [ 0 ],
             upperfence: [ 4],
-            mean: [ 2.2],
+            mean: [2.2],
             sd: [ 0.4],
             notchspan: [ 0.2]
             }]
@@ -95,19 +74,7 @@ function SociodemographicBoard({ features }) {
       }}
     x = {['day 1', 'day 2']}
     />
-      <Plot
-        data={[
-          {
-            x: [1, 2, 3],
-            y: [2, 6, 3],
-            type: 'scatter',
-            mode: 'lines+markers',
-            marker: {color: 'red'},
-          },
-          {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
-        ]}
-        layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
-      />
+
     </div>
   )
 }

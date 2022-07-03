@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import {Container} from 'react-bootstrap'
 import Sociodemographic from './SociodemographicBoard'
+import Laboratory from './LaboratoryBoard'
 
 function Dashboard() {
-  const [values, setPlot] = useState([
-    //{x:[1,2,3], y:[2,6,3]},
+  const [socioVals, setSocioVals] = useState([
     {"genero":{
       "enfermedad1":{
           "hombres":40,
@@ -52,9 +52,39 @@ function Dashboard() {
          }
       }
    }]);
+
+   const [labsVals, setLabsVals] = useState([
+    {"examenes":{
+        "enfermedad1":{
+          "min":0,
+          "q1":10,
+          "med":15,
+          "q3":45, 
+          "max":60
+        }
+      },
+    "tiempoExamenesPromedio": {
+      "enfermedad1":{
+        "min":0,
+        "q1":10,
+        "med":15,
+        "q3":45, 
+        "max":60}
+      },
+   "tiempoExamenesMaximo": {
+      "enfermedad1":{
+        "min":0,
+        "q1":10,
+        "med":15,
+        "q3":45, 
+        "max":60}
+      }
+   }
+   ]);
   return (
     <Container>
-      <Sociodemographic features={values}></Sociodemographic>
+      <Sociodemographic features={socioVals}></Sociodemographic>
+      <Laboratory features={labsVals}></Laboratory>
     </Container>
   )
 }
