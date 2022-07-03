@@ -31,6 +31,8 @@ function Prediction() {
   const [type, setType] = useState("");
   const [medicalExams, setMedicalExams] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalContent, setModalContent] = useState("exam");
+  const [resultPrediction, setResultPrediction] = useState();
 
   const sexOptions = [
     { value: 'Mujer', label: 'Female' },
@@ -129,13 +131,16 @@ function Prediction() {
     var json = createDataJson();
     console.log(json);
 
-    // axios.post(`https://jsonplaceholder.typicode.com/users`, json)
-    // .then(res => {
-    //   console.log(res);
-    // })
-    // .catch(e => {
-    //  console.log(e);
-    // })
+    axios.post(`https://jsonplaceholder.typicode.com/users`, { name:"Santiago"})
+    .then(res => {
+      setModalContent("prediction");
+      setResultPrediction(JSON.stringify(res.data));
+      console.log(res);
+      setIsOpen(true);
+    })
+    .catch(e => {
+     console.log(e);
+    })
   }
 
   function createDataJson(){
@@ -170,7 +175,10 @@ function Prediction() {
     return json;
   }
 
-  function openModal() {  setIsOpen(true);  }
+  function openModal(content) {
+    setModalContent(content);
+    setIsOpen(true);
+  }
 
   function closeModal() {
     //Get values of the form
@@ -345,7 +353,7 @@ function Prediction() {
                             <Button
                               color="info"
                               href="#pablo"
-                              onClick={(e) => openModal()}
+                              onClick={(e) => openModal("exam")}
                               size="sm"
                             >
                               Add new exam
@@ -411,60 +419,72 @@ function Prediction() {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <h6 className="heading-small text-muted mb-4">
-          New Medical Examn
-        </h6>
-        <div className="pl-lg-4">
-          <Row>
-            <FormGroup>
-              <label
-                className="form-control-label"
-                htmlFor="input-new-name"
-              >
-                Name
-              </label>
-              <Input
-                className="form-control-alternative"
-                id="input-new-name"
-                type="text"
-              />
-            </FormGroup>
-          </Row>
-          <Row>
-            <FormGroup>
-              <label
-                className="form-control-label"
-                htmlFor="input-new-date"
-              >
-                Date
-              </label>
-              <Input
-                className="form-control-alternative"
-                id="input-new-date"
-                type="date"
-              />
-            </FormGroup>
-          </Row>
-          <Row>
-            <FormGroup>
-              <label
-                className="form-control-label"
-                htmlFor="input-new-value"
-              >
-                Value
-              </label>
-              <Input
-                className="form-control-alternative"
-                id="input-new-value"
-                type="number"
-              />
-            </FormGroup>
-            
-          </Row>
-          <Row>
-            <Button color="info" onClick={closeModal}>Add</Button>
-          </Row>
-        </div>
+        {modalContent !== "prediction"?
+          <>
+            <h6 className="heading-small text-muted mb-4">
+              New Medical Examn
+            </h6>
+            <div className="pl-lg-4">
+              <Row>
+                <FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="input-new-name"
+                  >
+                    Name
+                  </label>
+                  <Input
+                    className="form-control-alternative"
+                    id="input-new-name"
+                    type="text"
+                  />
+                </FormGroup>
+              </Row>
+              <Row>
+                <FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="input-new-date"
+                  >
+                    Date
+                  </label>
+                  <Input
+                    className="form-control-alternative"
+                    id="input-new-date"
+                    type="date"
+                  />
+                </FormGroup>
+              </Row>
+              <Row>
+                <FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="input-new-value"
+                  >
+                    Value
+                  </label>
+                  <Input
+                    className="form-control-alternative"
+                    id="input-new-value"
+                    type="number"
+                  />
+                </FormGroup>
+                
+              </Row>
+              <Row>
+                <Button color="info" onClick={closeModal}>Add</Button>
+              </Row>
+            </div>
+          </>
+          :
+          <>
+            <p>El resultado de la prediction es:</p>
+            <p>{resultPrediction}</p>
+            <Button 
+              color='info'
+              onClick={() => setIsOpen(false)}>Cerrar</Button>
+          </>
+        }
       </Modal>
     </>
   )
