@@ -14,3 +14,4 @@ tensorflow_hub
 imbalanced-learn
 spacy
 graphviz
+kaleido
