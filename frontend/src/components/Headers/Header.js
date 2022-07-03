@@ -18,8 +18,17 @@
 
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
+import { useState } from 'react';
 
 const Header = () => {
+
+  const [dataSelected, setDataSelected] = useState();
+
+  function changeData(data){
+    console.log("Data changed to:", data);
+    setDataSelected(data);
+  }
+
   return (
     <>
       <div className="header bg_gradient_personalized pb-8 pt-5 pt-md-8">
@@ -29,7 +38,7 @@ const Header = () => {
             <Row>
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody>
+                  <CardBody onClick={() => changeData("sociodemographic")}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -57,7 +66,7 @@ const Header = () => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody>
+                  <CardBody onClick={() => changeData("laboratory")}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -79,7 +88,7 @@ const Header = () => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody>
+                  <CardBody onClick={() => changeData("notes")}>
                     <Row>
                       <div className="col">
                         <CardTitle
