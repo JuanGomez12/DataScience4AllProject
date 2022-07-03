@@ -76,6 +76,8 @@ def convert_to_long_string(series_data: pd.Series) -> str:
 
 
 def strip_accents(accented_string: str) -> str:
+    # Let's guarantee it's a string
+    accented_string = str(accented_string)
     clean_string = (
         unicodedata.normalize("NFD", accented_string)
         .encode("ascii", "ignore")
