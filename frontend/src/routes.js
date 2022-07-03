@@ -30,7 +30,7 @@ var routes = [
   {
     path: "/prediction",
     name: "Prediction",
-    icon: "ni ni-tv-2 text-primary",
+    icon: "ni ni-app text-primary",
     component: <Prediction/>,
     layout: "/admin",
   },
