@@ -17,7 +17,7 @@
 */
 import React from "react";
 import { useLocation, Route, Routes } from "react-router-dom";
-import { Container, Row, Card, CardTitle, CardText, CardGroup, CardBody, CardImg, CardSubtitle, Button } from "reactstrap";
+import { Container, Row, Card, CardTitle, CardText, CardGroup, CardBody, CardImg, CardSubtitle, Button, Col } from "reactstrap";
 
 // core components
 import HomepageNavbar from "../components/Navbars/HomepageNavbar";
@@ -66,193 +66,119 @@ const Homepage = (props) => {
         <div className="header bg_gradient_personalized py-7 py-lg-8">
 
           <Container>
-            <div className="header-body text-center mb-7">
+            <div className="header-body text-center">
               <Row className="justify-content-center">
-                <CardGroup>
-                  <Card>
-                    <CardBody>
-                      <CardTitle tag="h5">
-                        Background
-                      </CardTitle>
-                      <CardText>
-                        “1 in 5 patients who read a note reported finding a mistake and 40% perceived the mistake as serious”.
-                        <br />
-                        Doctor Disease addresses this issue analyzing Electronic Health Records (EHR) provided by IQVIA to identify and clean mistakes, extract relevant information and predict syphilis and diabetes diagnoses.
-                      </CardText>
-                    </CardBody>
-                  </Card>
-                  <Card>
-                    <CardBody>
-                      <CardTitle tag="h5">
-                        Methodology and results
-                      </CardTitle>
-                      <CardText>
-                        <ol type="1">
-                          <li>Feature Engineering: Find average and maximum differences between data for each patient</li>
-                          <li>Data Preprocessing: Normalize and scale numerical data, one-hot encode categories, and remove stop words, tokenize, and TDF-IF transform text</li>
-                          <li>Model training and selection: 80-20% train-test split</li>
-                          <li>Optimize final model (XGBoost): Oversampling, feature selection using Elastic Net and hyperparameter tuning using 5-fold CV</li>
-                        </ol>
-                      </CardText>
-                    </CardBody>
-                  </Card>
-                  <Card>
-                    <CardBody>
-                      <CardTitle tag="h5">
-                        Highlighst
-                      </CardTitle>
-                      <CardText>
-                        <ul>
-                          <li>Identification and cleaning of mistakes in medical notes</li>
-                          <li>XGBoost classification model with 88% of F1-score to distinguish between syphilis and diabetes diagnoses based on medical notes and patient info</li>
-                        </ul>
-                      </CardText>
-                    </CardBody>
-                  </Card>
-                </CardGroup>
+                <div className="home_section">
+                  <img src="/icons/icon_doctor.png" className="logo_home"></img>
+                  <div className="title-home-section">
+                    <h1 className="title_home">Doctor Disease</h1>
+                    <span className="subtitle_home">The power of Data Science and Machine Learning applied to Health data</span>
+                  </div>
+                </div>
               </Row>
-            </div>
-
-            <div>
-              <h2>Team 24 Members</h2>
-              <CardGroup>
-                <Card>
-                  <CardImg
-                    alt="Jorge Acevedo"
-                    src="img/members/jorge.jpeg"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                      Jorge Acevedo
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Charic Farinango"
-                    src="img/members/charic.jpg"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Charic Farinango
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Juan M Gómez"
-                    src="img/members/juan.jpg"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Juan M Gómez
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Santiago Garcia"
-                    src="img/members/santiago.png"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Santiago Garcia
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Daniel Montes"
-                    src="img/members/daniel.jpeg"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Daniel Montes
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Cristian Prieto"
-                    src="img/members/cristian.png"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Cristian Prieto
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-                <Card>
-                  <CardImg
-                    alt="Steven Ruiz"
-                    src="img/members/steven.jpeg"
-                    top
-                    width="100%"
-                  />
-                  <CardBody>
-                    <CardTitle tag="h5">
-                    Steven Ruiz
-                    </CardTitle>
-                    <CardSubtitle
-                      className="mb-2 text-muted"
-                      tag="h6"
-                    >
-                      Card subtitle
-                    </CardSubtitle>
-                  </CardBody>
-                </Card>
-              </CardGroup>
             </div>
           </Container>
 
+        </div>
+
+        <div className="header bg_white py-6 py-lg-8">
+          <Container>
+            <div className="header-body text-center mb-7">
+              <Row className="justify-content-center">
+                <h2 className="home-title-section">Background</h2>
+                <p className="home-text-section">
+                  “1 in 5 patients who read a note reported finding a mistake and 40% perceived the mistake as serious”.
+                  Doctor Disease addresses this issue analyzing Electronic Health Records (EHR) provided by IQVIA to identify and
+                  clean mistakes, extract relevant information and predict syphilis and diabetes diagnoses.
+                </p>
+              </Row>
+            </div>
+            <div className="header-body text-center">
+              <Row className="justify-content-center">
+                <h2 className="home-title-section">Methodology and Results</h2>
+              </Row>
+              <Row className="justify-content-center">
+                <Col>
+                  <img src="/icons/setting.png" className="home-icon-column"></img>
+                  <h3 className="home-title-column">Feature Engineering</h3>
+                  <p className="home-text-section">Find average and maximum differences between data for each patient</p>
+                </Col>
+                <Col>
+                  <img src="/icons/natural-language-processing.png" className="home-icon-column"></img>
+                  <h3 className="home-title-column">Data Preprocessing</h3>
+                  <p className="home-text-section">
+                    Normalize and scale numerical data, one-hot encode categories, 
+                    and remove stop words, tokenize, and TDF-IF transform text
+                  </p>
+                </Col>
+                <Col>
+                  <img src="/icons/brain.png" className="home-icon-column"></img>
+                  <h3 className="home-title-column">Model training</h3>
+                  <p className="home-text-section">
+                    80-20% train-test split
+                  </p>
+                </Col>
+                <Col>
+                  <img src="/icons/speed.png" className="home-icon-column"></img>
+                  <h3 className="home-title-column">Optimize final model</h3>
+                  <p className="home-text-section">
+                    Oversampling, feature selection using Elastic Net and hyperparameter tuning using 5-fold CV
+                  </p>
+                </Col>
+              </Row>
+            </div>
+          </Container>
+        </div>
+
+        <div className="header bg_gradient_personalized py-6 py-lg-8">
+          <Container>
+            <div className="header-body text-center mb-7">
+              <Row className="justify-content-center">
+                <h2 className="home-title-section light-text">About us</h2>
+              </Row>
+              <Row className="justify-content-center">
+                <Col>
+                  <img className="home-picture-team" src="img/members/charic.jpg"></img>
+                  <h2 className="home-title-column light-text">Charic Farinango</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+                <Col>
+                  <img className="home-picture-team" src="img/members/jorge.jpeg"></img>
+                  <h2 className="home-title-column light-text">Jorge Acevedo</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+                <Col>
+                  <img className="home-picture-team" src="img/members/juan.jpg"></img>
+                  <h2 className="home-title-column light-text">Juan M Gómez</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+                <Col>
+                  <img className="home-picture-team" src="img/members/santiago.png"></img>
+                  <h2 className="home-title-column light-text">Santiago Garcia</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+              </Row>
+            </div>
+            <div className="header-body text-center mb-7">
+              <Row className="justify-content-center">
+                <Col>
+                  <img className="home-picture-team" src="img/members/daniel.jpeg"></img>
+                  <h2 className="home-title-column light-text">Daniel Montes</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+                <Col>
+                  <img className="home-picture-team" src="img/members/cristian.png"></img>
+                  <h2 className="home-title-column light-text">Cristian Prieto</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+                <Col>
+                  <img className="home-picture-team" src="img/members/steven.jpeg"></img>
+                  <h2 className="home-title-column light-text">Steven Ruiz</h2>
+                  <p className="home-text-column light-text">Ingeniero</p>
+                </Col>
+              </Row>
+            </div>
+          </Container>
         </div>
 
         {/* Page content */}
