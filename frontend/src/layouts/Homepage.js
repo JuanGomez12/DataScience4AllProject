@@ -17,7 +17,7 @@
 */
 import React from "react";
 import { useLocation, Route, Routes } from "react-router-dom";
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Card, CardTitle, CardText, CardGroup, CardBody, CardImg, CardSubtitle, Button } from "reactstrap";
 
 // core components
 import HomepageNavbar from "../components/Navbars/HomepageNavbar";
@@ -68,18 +68,193 @@ const Homepage = (props) => {
           <Container>
             <div className="header-body text-center mb-7">
               <Row className="justify-content-center">
-                <Col lg="5" md="6">
-                  <h1 className="text-white">Welcome!</h1>
-                  <p className="text-lead text-light">
-                    Here is the homepage of our team project
-                  </p>
-                </Col>
+                <CardGroup>
+                  <Card>
+                    <CardBody>
+                      <CardTitle tag="h5">
+                        Background
+                      </CardTitle>
+                      <CardText>
+                        “1 in 5 patients who read a note reported finding a mistake and 40% perceived the mistake as serious”.
+                        <br />
+                        Doctor Disease addresses this issue analyzing Electronic Health Records (EHR) provided by IQVIA to identify and clean mistakes, extract relevant information and predict syphilis and diabetes diagnoses.
+                      </CardText>
+                    </CardBody>
+                  </Card>
+                  <Card>
+                    <CardBody>
+                      <CardTitle tag="h5">
+                        Methodology and results
+                      </CardTitle>
+                      <CardText>
+                        <ol type="1">
+                          <li>Feature Engineering: Find average and maximum differences between data for each patient</li>
+                          <li>Data Preprocessing: Normalize and scale numerical data, one-hot encode categories, and remove stop words, tokenize, and TDF-IF transform text</li>
+                          <li>Model training and selection: 80-20% train-test split</li>
+                          <li>Optimize final model (XGBoost): Oversampling, feature selection using Elastic Net and hyperparameter tuning using 5-fold CV</li>
+                        </ol>
+                      </CardText>
+                    </CardBody>
+                  </Card>
+                  <Card>
+                    <CardBody>
+                      <CardTitle tag="h5">
+                        Highlighst
+                      </CardTitle>
+                      <CardText>
+                        <ul>
+                          <li>Identification and cleaning of mistakes in medical notes</li>
+                          <li>XGBoost classification model with 88% of F1-score to distinguish between syphilis and diabetes diagnoses based on medical notes and patient info</li>
+                        </ul>
+                      </CardText>
+                    </CardBody>
+                  </Card>
+                </CardGroup>
               </Row>
+            </div>
+
+            <div>
+              <h2>Team 24 Members</h2>
+              <CardGroup>
+                <Card>
+                  <CardImg
+                    alt="Jorge Acevedo"
+                    src="img/members/jorge.jpeg"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                      Jorge Acevedo
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Charic Farinango"
+                    src="img/members/charic.jpg"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Charic Farinango
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Juan M Gómez"
+                    src="img/members/juan.jpg"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Juan M Gómez
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Santiago Garcia"
+                    src="img/members/santiago.png"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Santiago Garcia
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Daniel Montes"
+                    src="img/members/daniel.jpeg"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Daniel Montes
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Cristian Prieto"
+                    src="img/members/cristian.png"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Cristian Prieto
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardImg
+                    alt="Steven Ruiz"
+                    src="img/members/steven.jpeg"
+                    top
+                    width="100%"
+                  />
+                  <CardBody>
+                    <CardTitle tag="h5">
+                    Steven Ruiz
+                    </CardTitle>
+                    <CardSubtitle
+                      className="mb-2 text-muted"
+                      tag="h6"
+                    >
+                      Card subtitle
+                    </CardSubtitle>
+                  </CardBody>
+                </Card>
+              </CardGroup>
             </div>
           </Container>
 
         </div>
-        
+
         {/* Page content */}
         <Container className="mt--8 pb-5">
           <Row className="justify-content-center">
