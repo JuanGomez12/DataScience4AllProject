@@ -1,7 +1,5 @@
 import React from 'react'
 import { useState } from 'react'
-import FormInput from '../components/FormInput/FormInput'
-import FormSelectInput from '../components/FormSelectInput/FormSelectInput'
 import {Container, Row, Col, Table, Card, CardHeader, Button, CardBody, FormGroup, Form, Input} from 'reactstrap'
 import PredictionHeader from "../components/Headers/PredictionHeader.js"
 import Select from 'react-select'
@@ -121,6 +119,9 @@ function Prediction() {
 
   function removeMedicalExam(indice){
     console.log("Removing:", indice);
+    var copyMedicalExams = medicalExams;
+    copyMedicalExams.splice(indice, 1);
+    setMedicalExams(copyMedicalExams);
   }
 
   function handleSubmit(event){
