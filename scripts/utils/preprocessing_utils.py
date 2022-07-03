@@ -257,8 +257,8 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Convert them to Epoch seconds so we can feed them to the model
-    lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype(int)
-    lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype(int)
+    lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype(int, errors='ignore')
+    lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype(int, errors='ignore')
 
     # Merge the data
     preprocessed_labs = preprocessed_labs.merge(
