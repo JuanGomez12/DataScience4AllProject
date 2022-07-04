@@ -265,6 +265,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_dates = pd.DataFrame(columns=['IDRecord'], index=[-1])
         lab_dates["first_lab_date"] = 0
         lab_dates["last_lab_date"] = 0
+        lab_dates["date_diff_first_last"] = 0
 
 
     # Merge the data
@@ -353,6 +354,7 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
     Input: Series of test names
     Output: Series of standarized test names
     """
+    test_names = test_names.fillna('NaN')
     cleaned = (
         test_names.str.lower()
         .str.strip()
@@ -489,7 +491,10 @@ def preprocess_json(data_dict: dict) -> dict:
         socio_dict[key] = data_dict.get(key, 'NA')
     df_socio = pd.DataFrame(socio_dict, index=[0])
 
-    labs_dict = data_dict["Examenes"]
+    if isinstance(data_dict["Examenes"], list):
+        labs_dict = data_dict["Examenes"][0]
+    elif isinstance(data_dict["Examenes"], dict):
+        labs_dict = data_dict["Examenes"]
     labs_dict["IDRecord"] = 0
     for key in df_labs_cols:
         if key not in labs_dict:
