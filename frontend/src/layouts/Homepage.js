@@ -148,9 +148,9 @@ const Homepage = (props) => {
                   <p className="home-text-column light-text">Ingeniero</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/juan.jpg"></img>
+                  <img className="home-picture-team" src="img/members/juan.jpeg"></img>
                   <h2 className="home-title-column light-text">Juan M Gómez</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Biomedical Engineer</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/santiago.png"></img>
@@ -164,7 +164,7 @@ const Homepage = (props) => {
                 <Col>
                   <img className="home-picture-team" src="img/members/daniel.jpeg"></img>
                   <h2 className="home-title-column light-text">Daniel Montes</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Software Developer</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/cristian.png"></img>
