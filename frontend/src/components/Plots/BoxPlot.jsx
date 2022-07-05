@@ -20,32 +20,55 @@ const NewBoxPlot = ({props}) => {
             }
         )})
     return(
-        <Plot
+        <Plot 
         data={traces}
-        layout={ {width: 700, height: 500, title: props[1] + ' vs type of disease',
+        layout={ {width: 'width' in props[1] ? props[1].width : 586, height: 'height' in props[1] ? props[1].height : 480, 
+        title: !('title' in props[1]) ? '' : {
+          text: '<b>' + props[1].title + ' vs. Type of Disease</b>',
+          x: 0.05,
+          //y: 1, yanchor: 'bottom',
+          font: {
+            //family: 'Courier New, monospace',
+            size: 19,
+            color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
+          }
+        },
+        legend: {
+          legend_title: props[1].title,
+          font: {
+            size: 13
+          }
+        },
+        showlegend: true,
+        legend_title: props[1].title,
         boxmode: 'group',
-        paper_bgcolor: 'rgba(245,246,249,1)',
-        plot_bgcolor: 'rgba(245,246,249,1)',
+        paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
+        plot_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
         xaxis: {
             title: 'Type of Disease',
             titlefont: {
               size: 15,
-              color: 'rgb(107, 107, 107)'
+              //color: 'rgb(107, 107, 107)'
             },
             tickfont: {
             size: 14,
-            color: 'rgb(107, 107, 107)'
+            //color: 'rgb(107, 107, 107)'
           }},
           yaxis: {
             title: 'Count',
             titlefont: {
               size: 15,
-              color: 'rgb(107, 107, 107)'
+              //color: 'rgb(107, 107, 107)'
             },
             tickfont: {
               size: 14,
-              color: 'rgb(107, 107, 107)'
+              //color: 'rgb(107, 107, 107)'
             }
+          },
+          font: {
+            family: "helvetica",
+            //size: 18,
+            color: 'font_color' in props[1] ? props[1].font_color : 'rgb(149,163,179)'
           }
         }}
         x = {['day 1', 'day 2']}
