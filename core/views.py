@@ -84,20 +84,19 @@ def prueba(request):
     if request.method == 'POST': 
         post_data = request.POST   
         params = {'Edad':post_data['1'],'Genero':post_data['2'],'GrupoEtnico':post_data['3'],'AreaResidencial':post_data['4'],'EstadoCivil':post_data['5'],'TSangre':post_data['6'],'Tipo':post_data['7'],'Plan':post_data['8'],'Nombre':post_data['9'],'Valor':post_data['10'],'Fecha':post_data['11']}
-        url = 'http://127.0.0.1:8000/api/post'
-        params =  {'Edad': '39', 'Genero': 'Mujer', 'GrupoEtnico': 'Mestizo', 'AreaResidencial': 'Zona Urbana', 'EstadoCivil': 'Separado', 'TSangre': 'NaN', 'Nombre': ['902046', 'Test de urologia'], 'Fecha': ['22/02/2022 18:43', '24/02/2022 00:00'], 'Valor': ['6', '20'], 'Tipo': 'Confirmado Repetido', 'Plan': '- Paciente se remite para analisis de urologia...'}
+        url = 'http://52.90.58.67:8000/api/post'
         response = requests.post(url, params=params) 
         if response.status_code == 201:
             data =  response.json()
     else:
         data = []
-        url = 'http://127.0.0.1:8000/api/laboratory'
+        url = 'http://52.90.58.67:8000/api/laboratory'
         response = requests.get(url) 
         data.append(response.json())
-        url = 'http://127.0.0.1:8000/api/socio_economics'
+        url = 'http://52.90.58.67:8000/api/socio_economics'
         response = requests.get(url) 
         data.append(response.json())
-        url = 'http://127.0.0.1:8000/api/notes'
+        url = 'http://52.90.58.67:8000/api/notes'
         response = requests.get(url) 
         data.append(response.json())
     return render(request, "core/prueba.html", {'data':data})
