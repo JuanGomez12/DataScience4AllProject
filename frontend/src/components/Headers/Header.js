@@ -19,14 +19,116 @@
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const Header = () => {
+const Header = (props) => {
 
-  const [dataSelected, setDataSelected] = useState();
+  //const [dataSelected, setDataSelected] = useState();
+  const labs = {"examenes":{
+    "Diabetes":{
+      "min":0,
+      "q1":10,
+      "med":15,
+      "q3":45, 
+      "max":60
+    },
+    "Syphilis":{
+      "min":1,
+      "q1":11,
+      "med":16,
+      "q3":46, 
+      "max":61
+    }
+  },
+  "tiempoExamenesPromedio": {
+    "Diabetes":{
+      "min":0,
+      "q1":10,
+      "med":15,
+      "q3":45, 
+      "max":60}
+    },
+  "tiempoExamenesMaximo": {
+    "Diabetes":{
+      "min":0,
+      "q1":10,
+      "med":15,
+      "q3":45, 
+      "max":60},
+      "Syphilis":{
+        "min":0,
+        "q1":20,
+        "med":36,
+        "q3":50, 
+        "max":80}
+    }
+  };
+  const socio = {"genero":{
+      "Diabetes":{
+          "hombres":40,
+          "mujeres":60
+        },
+      "Syphilis":{
+        "hombres":70,
+        "mujeres":30
+      }
+      },
+    "edad":{
+      "Diabetes":{
+        "min":0,
+        "q1":10,
+        "med":15,
+        "q3":45, 
+        "max":60
+      },
+      "Syphilis":{
+        "min":1,
+        "q1":11,
+        "med":16,
+        "q3":46, 
+        "max":61
+      }
+    },
+    "estadoCivil":{
+        "Diabetes":{
+          "soltero":12,
+          "casado":32
+        }
+    },
+    "tipoSangre":{
+        "Diabetes":{
+          "O+":12,
+          "AB":32,
+          "O-":28,
+          "A+":10
+         },
+         "Syphilis":{
+          "O+":15,
+          "AB":30,
+          "O-":25,
+          "A+":20
+         }
+      }
+   };
+  //const [dataLabs, setDataLabs] = useState([labs]);
+  const navigate = useNavigate();
 
   function changeData(data){
-    console.log("Data changed to:", data);
-    setDataSelected(data);
+    
+    console.log("Data changed to:", data[1]);
+    console.log("Data changed to:", data[0]);
+    //setDataSelected(data);
+    //setDataLabs(data[0])
+    if (data[1] === "sociodemographic"){
+      navigate('/admin/index', { state:  data[0]})
+    }
+    else if (data[1] === "laboratory"){
+      navigate('/admin/labs', { state:  data[0]})
+    }
+    else if (data[1] === "notes"){
+      navigate('/admin/notes', { state:  data[0]})
+    }
   }
 
   return (
@@ -38,7 +140,7 @@ const Header = () => {
             <Row>
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData("sociodemographic")}>
+                  <CardBody onClick={() => changeData([socio, "sociodemographic"])}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -66,7 +168,7 @@ const Header = () => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData("laboratory")}>
+                  <CardBody onClick={() => changeData([labs, "laboratory"])}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -88,7 +190,7 @@ const Header = () => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData("notes")}>
+                  <CardBody onClick={() => changeData([labs, "notes"])}>
                     <Row>
                       <div className="col">
                         <CardTitle

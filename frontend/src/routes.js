@@ -18,6 +18,8 @@
 import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Prediction from "./pages/Prediction";
+import LaboratoryBoard from "./pages/Dashboard/LaboratoryBoard";
+import NotesBoard from "./pages/Dashboard/NotesBoard";
 
 var routes = [
   {
@@ -25,6 +27,20 @@ var routes = [
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
     component: <Index/>,
+    layout: "/admin",
+  },
+  {
+    path: "/labs",
+    name: "Laboratories",
+    icon: "ni ni-tv-2 text-primary",
+    component: <LaboratoryBoard/>,
+    layout: "/admin",
+  },
+  {
+    path: "/notes",
+    name: "Notes",
+    icon: "ni ni-tv-2 text-primary",
+    component: <NotesBoard/>,
     layout: "/admin",
   },
   {
