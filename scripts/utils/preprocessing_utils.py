@@ -245,20 +245,35 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Patient's date for first and last exam
     merged_lab_date_calc = df.copy()[["IDRecord", "Fecha"]]
     merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"], errors='coerce')
-    lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
-    lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
+    merged_lab_date_calc = merged_lab_date_calc.dropna()
+    if len(merged_lab_date_calc["Fecha"])>0:
+        lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
+        lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
 
-    lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
-    lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
+        lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
+        lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
 
-    lab_dates = lab_date_first.merge(lab_date_last, on="IDRecord")
-    lab_dates["date_diff_first_last"] = abs(
-        (lab_dates["last_lab_date"] - lab_dates["first_lab_date"]).dt.days
-    )
+        lab_dates = lab_date_first.merge(lab_date_last, on="IDRecord")
+        lab_dates["date_diff_first_last"] = abs(
+            (lab_dates["last_lab_date"] - lab_dates["first_lab_date"]).dt.days
+        )
+                # Convert them to Epoch seconds so we can feed them to the model
+        lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype('int64')//1e9
+        lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype('int64')//1e9
+    else:
+        lab_dates = pd.DataFrame(columns=['IDRecord'], index=[-1])
+        lab_dates["first_lab_date"] = 0
+        lab_dates["last_lab_date"] = 0
+        lab_dates["date_diff_first_last"] = 0
 
-    # Convert them to Epoch seconds so we can feed them to the model
-    lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype(int)
-    lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype(int)
+
+
+
+
+
+
+
+
 
     # Merge the data
     preprocessed_labs = preprocessed_labs.merge(
@@ -346,6 +361,7 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
     Input: Series of test names
     Output: Series of standarized test names
     """
+    test_names = test_names.fillna('NaN')
     cleaned = (
         test_names.str.lower()
         .str.strip()
