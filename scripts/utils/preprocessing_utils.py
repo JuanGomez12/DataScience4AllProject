@@ -266,7 +266,7 @@ def disease_tests_list()->list:
     disease_tests = [
         ("hepatitis|hepat|glutamic|bilirrub", "liver_damage"),
         ("hemo|hema", "hematic_info"),
-        ("bacilo|bacter|colora", "bacterias"),
+        ("bacilo|bacter|colora|gram|tinc", "bacterias"),
         ("tiroi|protro|tirox", "hormones"),
         ("herpes|tuberc", "other_diseases"),
         ("album|creat|ureico|urico|uro|orina", "kidney_damage"),
