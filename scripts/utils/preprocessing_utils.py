@@ -250,6 +250,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
         lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
 
+
         lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
         lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
 
@@ -265,14 +266,6 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_dates["first_lab_date"] = 0
         lab_dates["last_lab_date"] = 0
         lab_dates["date_diff_first_last"] = 0
-
-
-
-
-
-
-
-
 
 
     # Merge the data
@@ -498,7 +491,10 @@ def preprocess_json(data_dict: dict) -> dict:
         socio_dict[key] = data_dict.get(key, 'NA')
     df_socio = pd.DataFrame(socio_dict, index=[0])
 
-    labs_dict = data_dict["Examenes"]
+    if isinstance(data_dict["Examenes"], list):
+        labs_dict = data_dict["Examenes"][0]
+    elif isinstance(data_dict["Examenes"], dict):
+        labs_dict = data_dict["Examenes"]
     labs_dict["IDRecord"] = 0
     for key in df_labs_cols:
         if key not in labs_dict:
