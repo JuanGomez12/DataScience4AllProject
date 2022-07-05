@@ -112,6 +112,19 @@ class PipelineManager:
         use_feature_selector: bool = True,
         use_text_preprocessor: bool = False,
     ):
+        """_summary_
+
+        Args:
+            estimator (str): Type of estimator to use. Either regressor or
+                classifier
+            use_feature_selector (bool, optional): If true, adds a feature
+                selection step to the pipeline. Defaults to True.
+            use_text_preprocessor (bool, optional): If true, adds a text
+                preprocessing transformer to the pipeline. Defaults to False.
+
+        Raises:
+            ValueError: _description_
+        """
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
             raise ValueError(
@@ -230,15 +243,35 @@ class PipelineManager:
         self.pipeline = Pipeline(pipeline_list)
 
     def get_categorical_features(self) ->list:
+        """Returns the categorical features of the pipeline
+
+        Returns:
+            list: Categorical features.
+        """
         return self.cat_features.copy()
 
     def get_numerical_features(self)->list:
+        """Returns the numerical features of the pipeline
+
+        Returns:
+            list: numerical features.
+        """
         return self.num_features.copy()
 
     def get_text_features(self)->list:
+        """Returns the text feature of the pipeline
+
+        Returns:
+            list: Text feature.
+        """
         return [] if self.text_features is None else [self.text_features]
 
     def get_features(self)->list:
+        """Returns the features of the pipeline
+
+        Returns:
+            list: List containing all the features in the pipeline.
+        """
         features_list = (
             self.get_categorical_features()
             + self.get_numerical_features()
