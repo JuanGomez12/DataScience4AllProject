@@ -11,7 +11,7 @@ Syphilis is a disease which can present a multitude of different symptoms, for w
 Similarly, diabetes is an incurable disease affecting more than 400 million people worldwide, where 25% of the Colombians who are afflicted by it may go undiagnosed until it’s too late. Even though there is no cure for diabetes, it is still a disease which can be managed through the use of clinical treatments as well as diet and exercise, and for which the earlier a diagnosis is done, the better prognosis the patient will have.
 Leveraging the use of medical notes taken by multiple examiners, combined with the different laboratory testing performed on a patient, could help raise a flag in order for another medical expert to give their informed second opinion to a prior diagnosis and prevent a further onset of these diseases.
 
-More information about the proble mcan be found in th Project Report
+More information about the problem can be found in the [Project Report](Project_Report_Team24.pdf).
 
 ## Motivation
 Despite the use of diagnostic code related to each health care service, it has been detected that in clinical practice errors can be introduced in said coding. These errors can impact the results obtained in clinical research by having patients that do not correspond to the pathology under study, or on the contrary, failing to identify all relevant patients.
