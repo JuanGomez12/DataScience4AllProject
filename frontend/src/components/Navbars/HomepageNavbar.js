@@ -30,7 +30,59 @@ import {
 } from "reactstrap";
 
 const HomepageNavbar = () => {
-
+  const socio = {"genero":{
+    "Diabetes":{
+        "hombres":40,
+        "mujeres":60
+      },
+    "Syphilis":{
+      "hombres":70,
+      "mujeres":30
+    }
+    },
+  "edad":{
+    "Diabetes":{
+      "min":0,
+      "q1":10,
+      "med":15,
+      "q3":45, 
+      "max":60,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    },
+    "Syphilis":{
+      "min":1,
+      "q1":11,
+      "med":16,
+      "q3":46, 
+      "max":61,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    }
+  },
+  "estadoCivil":{
+      "Diabetes":{
+        "soltero":12,
+        "casado":32
+      }
+  },
+  "tipoSangre":{
+      "Diabetes":{
+        "O+":12,
+        "AB":32,
+        "O-":28,
+        "A+":10
+       },
+       "Syphilis":{
+        "O+":15,
+        "AB":30,
+        "O-":25,
+        "A+":20
+       }
+    }
+ };
   return (
     <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
       <Container className="px-4">

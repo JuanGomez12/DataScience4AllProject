@@ -68,6 +68,8 @@ import {
 import Header from "../../components/Headers/Header.js";
 import { useLocation } from 'react-router-dom';
 import BoxPlot from "../../components/Plots/BoxPlot";
+import ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
 
 const LaboratoryBoard = (props) => {
 
@@ -77,6 +79,11 @@ const LaboratoryBoard = (props) => {
   const { state } = useLocation();
   console.log(state)
   const {examenes,tiempoExamenesPromedio,tiempoExamenesMaximo} = state
+  let outs_states =  {'exam':[true, null], 'exam-avg':[true, null], 'exam-max':[true, null]}
+  //let showOuts = true
+  //let outliers
+  //let container = null;
+
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -87,6 +94,31 @@ const LaboratoryBoard = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+
+  function showOutliers(plot_info){
+    console.log('el-id', plot_info)
+    let root
+    if (!root) {
+      root = ReactDOMClient.createRoot(document.getElementById(plot_info[0]));
+    }
+    outs_states[plot_info[0]] = outs_states[plot_info[0]] ? false : true
+    //showOuts = showOuts ? false : true
+    console.log('old', plot_info[1])
+    Object.entries(plot_info[1]).map(([key, value]) => {
+      if (!outs_states[plot_info[0]]) {
+        outs_states[plot_info[1]] = value.outliers
+        value.outliers = []
+      } 
+      else {
+        value.outliers = outs_states[plot_info[1]]
+      }
+      root.render(<div id={plot_info[0]}>
+      <BoxPlot props={[plot_info[1], plot_info[2]]}></BoxPlot>
+    </div>)
+    })
+    console.log('new', plot_info[1])
+    root = null
+  }
 
   // Get the data
   //const {examenes,tiempoExamenesPromedio,tiempoExamenesMaximo} = features[0];
@@ -102,32 +134,58 @@ const LaboratoryBoard = (props) => {
         <Row>
           <Col className="mb-5 mb-xl-0" xl="6">
             <Card className="bg-gradient-default shadow">
-                <CardHeader className="bg-transparent">
-                  <Row className="align-items-center">
-                    <div className="col">
-                      <h6 className="text-uppercase text-light ls-1 mb-1">
-                        Overview
-                      </h6>
-                      <h2 className="text-white mb-0">Exams vs. Type of Disease</h2>
+              <CardHeader className="bg-transparent">
+                <Row className="align-items-center">
+                  <Col xl="10">
+                    <h6 className="text-uppercase text-light ls-1 mb-1">
+                      Overview
+                    </h6>
+                    <h2 className="text-white mb-0">Exams vs. Type of Disease</h2>
+                  </Col>
+                  <Col xl="2">
+                    <div className="text-right">
+                      <Button
+                        color="primary"
+                        onClick={() => showOutliers(["exam", examenes, {bck_color:"rgba(0,0,0,0)", font_color:'white'}])}
+                        size="sm"
+                      >
+                        Outliers
+                      </Button>
                     </div>
-                  </Row>
-                </CardHeader>
-                <BoxPlot props={[examenes, {bck_color:"rgba(0,0,0,0)", font_color:'white', height:430}]}></BoxPlot>
-              </Card>
+                  </Col>
+                </Row>
+              </CardHeader>
+              <div id="exam">
+                <BoxPlot props={[examenes, {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></BoxPlot>
+              </div>
+            </Card>
           </Col>
           <Col xl="6">
             <Card className="shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
-                  <div className="col">
+                  <Col xl="10">
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
                       Performance
                     </h6>
-                    <h2 className="mb-0">Average Time between exams vs. Type of Disease</h2>
-                  </div>
+                    <h2 className="mb-0">Average Time bet. exams vs. Type of Disease</h2>
+                  </Col>
+                  <Col xl="2">
+                    <div className="text-right">
+                      <Button
+                        color="primary"
+                        onClick={() => showOutliers(["exam-avg", tiempoExamenesPromedio, {bck_color:"rgba(0,0,0,0)"}])}
+                        size="sm"
+                      >
+                        Outliers
+                      </Button>
+                    </div>
+                  </Col>
                 </Row>
               </CardHeader>
-              <BoxPlot props={[tiempoExamenesPromedio, {bck_color:"rgba(0,0,0,0)",  height:430}]}></BoxPlot>
+              <div id="exam-avg">
+                <BoxPlot props={[tiempoExamenesPromedio, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>   
+              </div>           
             </Card>
           </Col>
         </Row>
@@ -136,15 +194,28 @@ const LaboratoryBoard = (props) => {
             <Card className="shadow">
             <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
-                  <div className="col">
+                  <Col xl="10">
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
                       Performance
                     </h6>
                     <h2 className="mb-0">Maximum Time between exams vs. Type of Disease</h2>
-                  </div>
+                  </Col>
+                  <Col xl="2">
+                    <div className="text-right">
+                      <Button
+                        color="primary"
+                        onClick={() => showOutliers(["exam-max", tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)", width:800, height: 380}])}
+                        size="sm"
+                      >
+                        Outliers
+                      </Button>
+                    </div>
+                  </Col>
                 </Row>
               </CardHeader>
-              <BoxPlot props={[tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)", width:800, height: 380}]}></BoxPlot>
+              <div id="exam-max">
+                <BoxPlot props={[tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)", width:800, height: 380}]}></BoxPlot>
+              </div>
             </Card>
           </Col>
           <Col xl="4">

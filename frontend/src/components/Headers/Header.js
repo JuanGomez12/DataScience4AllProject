@@ -31,14 +31,20 @@ const Header = (props) => {
       "q1":10,
       "med":15,
       "q3":45, 
-      "max":60
+      "max":60,
+      "mean": 20,
+      "sd": 10,
+      "outliers": [100, 80]
     },
     "Syphilis":{
-      "min":1,
-      "q1":11,
-      "med":16,
-      "q3":46, 
-      "max":61
+      "min":10,
+      "q1":21,
+      "med":26,
+      "q3":56, 
+      "max":71,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
     }
   },
   "tiempoExamenesPromedio": {
@@ -47,7 +53,11 @@ const Header = (props) => {
       "q1":10,
       "med":15,
       "q3":45, 
-      "max":60}
+      "max":60,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    }
     },
   "tiempoExamenesMaximo": {
     "Diabetes":{
@@ -55,13 +65,20 @@ const Header = (props) => {
       "q1":10,
       "med":15,
       "q3":45, 
-      "max":60},
-      "Syphilis":{
-        "min":0,
-        "q1":20,
-        "med":36,
-        "q3":50, 
-        "max":80}
+      "max":60,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    },
+    "Syphilis":{
+      "min":0,
+      "q1":20,
+      "med":36,
+      "q3":50, 
+      "max":80,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]}
     }
   };
   const socio = {"genero":{
@@ -80,14 +97,20 @@ const Header = (props) => {
         "q1":10,
         "med":15,
         "q3":45, 
-        "max":60
+        "max":60,
+        "mean": 30,
+        "sd": 1,
+        "outliers": [0, -50, 85, 100 ]
       },
       "Syphilis":{
         "min":1,
         "q1":11,
         "med":16,
         "q3":46, 
-        "max":61
+        "max":61,
+        "mean": 30,
+        "sd": 40,
+        "outliers": [0, -50, 85, 100 ]
       }
     },
     "estadoCivil":{
