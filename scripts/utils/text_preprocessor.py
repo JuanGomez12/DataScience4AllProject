@@ -1,10 +1,10 @@
-import numpy as np
 import multiprocessing as mp
-
 import string
-import spacy 
-from sklearn.base import TransformerMixin, BaseEstimator
 
+import numpy as np
+import pandas as pd
+import spacy
+from sklearn.base import BaseEstimator, TransformerMixin
 
 SPACY_MODEL_DEFAULT = "es_core_news_sm"
 # SPACY_MODEL_DEFAULT = "es_core_news_md"
@@ -23,10 +23,9 @@ except OSError:
     download(SPACY_MODEL_DEFAULT)
     nlp = spacy.load(SPACY_MODEL_DEFAULT)
 
+
 class TextPreprocessor(BaseEstimator, TransformerMixin):
-    def __init__(self,
-                 nlp = nlp,
-                 n_jobs=1):
+    def __init__(self, nlp=nlp, n_jobs=1):
         """
         Text preprocessing transformer includes steps:
             1. Punctuation removal
@@ -78,4 +77,4 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         return (t for t in doc if not t.is_stop)
 
     def _lemmatize(self, doc):
-        return ' '.join(t.lemma_ for t in doc)
+        return " ".join(t.lemma_ for t in doc)
