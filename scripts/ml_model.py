@@ -242,7 +242,7 @@ class PipelineManager:
 
         self.pipeline = Pipeline(pipeline_list)
 
-    def get_categorical_features(self) ->list:
+    def get_categorical_features(self) -> list:
         """Returns the categorical features of the pipeline
 
         Returns:
@@ -250,7 +250,7 @@ class PipelineManager:
         """
         return self.cat_features.copy()
 
-    def get_numerical_features(self)->list:
+    def get_numerical_features(self) -> list:
         """Returns the numerical features of the pipeline
 
         Returns:
@@ -258,7 +258,7 @@ class PipelineManager:
         """
         return self.num_features.copy()
 
-    def get_text_features(self)->list:
+    def get_text_features(self) -> list:
         """Returns the text feature of the pipeline
 
         Returns:
@@ -266,7 +266,7 @@ class PipelineManager:
         """
         return [] if self.text_features is None else [self.text_features]
 
-    def get_features(self)->list:
+    def get_features(self) -> list:
         """Returns the features of the pipeline
 
         Returns:
