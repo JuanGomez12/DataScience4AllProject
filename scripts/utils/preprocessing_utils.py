@@ -1,6 +1,7 @@
 import json
 import re
 import unicodedata
+from collections import Counter
 from pathlib import Path
 from typing import Optional
 
@@ -32,7 +33,20 @@ except OSError:
 nltk.download("stopwords")
 
 
-def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=True):
+def lemmatize(doc:str, nlp=default_nlp, remove_punctuation:bool=True, remove_stopwords:bool=True)->str:
+    """Lemmatizes a string using the selected nlp model
+
+    Args:
+        doc (str): Document to lemmatize.
+        nlp (_type_, optional): _description_. Defaults to default_nlp model.
+        remove_punctuation (bool, optional): If true, removes punctuation from
+            the document. Defaults to True.
+        remove_stopwords (bool, optional): If true, removes stopwords from the
+            document. Defaults to True.
+
+    Returns:
+        str: Lemmatized string
+    """
     tokens = nlp(doc)
 
     word_list = [token for token in tokens]
@@ -49,6 +63,16 @@ def lemmatize(doc, nlp=default_nlp, remove_punctuation=True, remove_stopwords=Tr
 
 
 def remove_stop_words(string_data: str, extra_stop_words: list = []) -> str:
+    """Removes stopwords from the string. Case insensitive.
+
+    Args:
+        string_data (str): String from which to remove the stopwords.
+        extra_stop_words (list, optional): Extra words to remove from the
+            string. Defaults to [].
+
+    Returns:
+        str: String with the stopwords removed.
+    """
     stop_words = stopwords.words("spanish")
     stop_words.extend(extra_stop_words)
     string_data = re.sub(
@@ -58,12 +82,31 @@ def remove_stop_words(string_data: str, extra_stop_words: list = []) -> str:
 
 
 def remove_characters(string_data: str, character_list: list) -> str:
+    """Removes any characters passed in the list from the passed string.
+
+    Args:
+        string_data (str): String from which to remove the characters.
+        character_list (list): List of characters to remove from the string.
+
+    Returns:
+        str: String, with the characters removed.
+    """
     for character in character_list:
         string_data = string_data.replace(character, "")
     return string_data
 
 
 def convert_to_long_string(series_data: pd.Series) -> str:
+    """Converts the passed series of strings into one long string.
+    Additionally, removes stop words and special characters like dashes and
+    commas.
+
+    Args:
+        series_data (pd.Series): Pandas series from which to extract the strings.
+
+    Returns:
+        str: Concatenation of the strings from the pandas series, after cleaning.
+    """
     regex_compile = re.compile(r"[^A-Za-z ]")
     string_data = (
         series_data.str.replace(regex_compile, "", regex=True).str.cat(sep=" ").lower()
@@ -76,6 +119,14 @@ def convert_to_long_string(series_data: pd.Series) -> str:
 
 
 def strip_accents(accented_string: str) -> str:
+    """Removes accents, like Á or ó, from the passed string.
+
+    Args:
+        accented_string (str): String containing accents.
+
+    Returns:
+        str: String without accents.
+    """
     # Let's guarantee it's a string
     accented_string = str(accented_string)
     clean_string = (
@@ -87,6 +138,15 @@ def strip_accents(accented_string: str) -> str:
 
 
 def find_top_k_words(string_value: str, k: int = 5) -> list:
+    """Finds the k most repeated words in the string.
+
+    Args:
+        string_value (str): String from which to obtain the words.
+        k (int, optional): Number of words to return. Defaults to 5.
+
+    Returns:
+        list: _description_
+    """
     string_value = str(string_value).lower()
     # Some text cleaning
     string_value = remove_stop_words(string_value)
@@ -99,6 +159,17 @@ def find_top_k_words(string_value: str, k: int = 5) -> list:
 
 
 def merge_classes(df: pd.DataFrame) -> pd.DataFrame:
+    """Merges ICD-10 code A529 into A539, and A510, A511, and A514 into A51. 
+    Additionally, it merges the names of the classes so they are consistent.
+
+    Args:
+        df (pd.DataFrame): Pandas dataframe containing a column called 'Código'
+            with the ICD10 classes, and a column 'Nombre' with the name of the
+            diseases.
+
+    Returns:
+        pd.DataFrame: Dataframe with the Merged classes and names.
+    """
     notas = df.copy()
     notas.loc[notas.Código == "A529", "Código"] = "A539"
     notas.loc[notas.Código == "A539", "Nombre"] = "SIFILIS, NO ESPECIFICADA"
@@ -110,6 +181,17 @@ def merge_classes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def word_count_feat_engineering(df: pd.DataFrame) -> pd.DataFrame:
+    """Performs the word-count feature engineering on the passed dataframe.
+    Expects that the dataframe contains a Plan feature where it will count for
+    the specific words.
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the Plan feature from which to
+            extract information.
+
+    Returns:
+        pd.DataFrame: Same input dataframe, with the extra features.
+    """
     notas = df.copy()
     word_count_features = {
         "acido": "acido",
@@ -137,6 +219,18 @@ def word_count_feat_engineering(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFrame:
+    """Preprocesses and merges the lab dataframe to the notas dataframe.
+    Converts the time-series format lab dataframe into a one-sample-per row
+    format like the notas dataframe, by extracting relevant information from
+    the lab dataframe.
+
+    Args:
+        df_lab (pd.DataFrame): Laboratory information dataframe
+        df_notas (pd.DataFrame): Notas information dataframe.
+
+    Returns:
+        pd.DataFrame: Merged dataframe
+    """
     lab = df_lab.copy()
     notas = df_notas.copy()
 
@@ -172,7 +266,7 @@ def disease_tests_list()->list:
     disease_tests = [
         ("hepatitis|hepat|glutamic|bilirrub", "liver_damage"),
         ("hemo|hema", "hematic_info"),
-        ("bacilo|bacter|colora", "bacterias"),
+        ("bacilo|bacter|colora|gram|tinc", "bacterias"),
         ("tiroi|protro|tirox", "hormones"),
         ("herpes|tuberc", "other_diseases"),
         ("album|creat|ureico|urico|uro|orina", "kidney_damage"),
@@ -368,6 +462,20 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
 
 
 def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) -> pd.DataFrame:
+    """Cleans the laboratory dataframe
+    Removes bad names and converting valor and IDRecord to numeric, and fecha to
+    datetime. Also drops NaN values from IDRecord.
+
+    Args:
+        df_lab (pd.DataFrame): Laboratory dataframe
+        name_aggregation_dict (Optional[dict], optional): Dictionary contianing
+            the names on which to replace the names found on Nombre in the lab
+            dataset, in order to facilitate aggregation. If None, this step is
+            skipped. Defaults to None.
+
+    Returns:
+        pd.DataFrame: Cleaned laboratory dataframe.
+    """
     lab = df_lab.copy()
     if 'Nombre' in lab.columns:
         lab["Nombre"] = clean_test_names(lab.Nombre)
@@ -387,12 +495,34 @@ def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) 
 
 
 def clean_sociodemograficos(df: pd.DataFrame) -> pd.DataFrame:
+    """Cleans the sociodemografico dataset.
+    Converts IDRecord and Edad to numeric.
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the sociodemografico information.
+
+    Returns:
+        pd.DataFrame: Cleaned dataframe.
+    """
     demografico = df.copy()
     demografico["IDRecord"] = pd.to_numeric(demografico["IDRecord"], errors="coerce")
+    demografico["Edad"] = pd.to_numeric(demografico["Edad"], errors="coerce")
     return demografico
 
 
 def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = False) -> pd.DataFrame:
+    """Cleans the notas dataframe.
+    Drops null data, removes accents from Plan, and can also apply lemmatization
+    to it.
+
+    Args:
+        df (pd.DataFrame): Notas dataframe
+        apply_lemmatization (bool, optional): If true, applies lemmatization to
+            Plan. Defaults to False.
+
+    Returns:
+        pd.DataFrame: Clean dataset.
+    """
     notas = df.copy()
     # Dropping null values from IDRecord
     notas.dropna(subset=["IDRecord"], inplace=True)
@@ -432,6 +562,21 @@ def clean_notas(df: pd.DataFrame, apply_lemmatization: bool = False) -> pd.DataF
 
 
 def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
+    """Cleans and preprocesses the three datasets.
+    Returns one preprocessed dataset where each row represents one sample of
+    data, with the engineered features and lab information.
+    
+
+    Args:
+        data_dict (dict): Dictionary containing three dataframes, each under its
+            own key: df_sociodemograficos, df_laboratorios, and df_notas.
+
+    Raises:
+        ValueError: If any of the three datasets is missing.
+
+    Returns:
+        pd.DataFrame: Merged and cleaned dataframe with engineered features.
+    """
     set_comparison = {"df_laboratorios", "df_notas", "df_sociodemograficos"} - set(
         data_dict.keys()
     )
@@ -461,16 +606,17 @@ def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
 
 def preprocess_json(data_dict: dict) -> dict:
     """Receives a dictionary formatted as a JSON file and preprocesses so it 
-    mathces what the prediction_pipeline is expecting.
+    matches what the prediction_pipeline is expecting.
 
     Args:
         data_dict (dict): _description_
 
     Returns:
         dict: Dictionary containing the sample as three separate
-        datasets/dataframes, the same way the input data is supposed to look
+        datasets/dataframes, the same way the input data is expected to look
         for the prediction_pipeline.
     """
+    # Add an IDRecord on which to merge all the data
     data_dict["IDRecord"] = 0
     df_socio_cols = [
         "IDRecord",
@@ -486,21 +632,26 @@ def preprocess_json(data_dict: dict) -> dict:
 
     missing_cols = [col for col in df_socio_cols+df_notas_cols if col not in data_dict.keys()]
 
+    # Add NA for any missing keys in sociodemografico
     socio_dict = {}
     for key in df_socio_cols:
         socio_dict[key] = data_dict.get(key, 'NA')
     df_socio = pd.DataFrame(socio_dict, index=[0])
 
+    # Take out the examenes dictionary if it's inside of a list
     if isinstance(data_dict["Examenes"], list):
         labs_dict = data_dict["Examenes"][0]
     elif isinstance(data_dict["Examenes"], dict):
         labs_dict = data_dict["Examenes"]
+    
     labs_dict["IDRecord"] = 0
+    # Add NA for any missing keys in laboratorio
     for key in df_labs_cols:
         if key not in labs_dict:
             labs_dict[key]= {'0': 'NA'}
     df_labs = pd.DataFrame.from_dict(labs_dict)
 
+    # Add NA for any missing keys in notas
     notas_dict = {}
     for key in df_notas_cols:
         notas_dict[key] = data_dict.get(key, 'NA')
