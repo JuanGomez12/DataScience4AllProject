@@ -104,6 +104,42 @@ class PredictionPipeline:
             prediction = self.label_encoder.inverse_transform(prediction)
         return prediction
 
+    def predict_proba(
+        self, X: pd.DataFrame, preprocess_data: bool = True, **kwargs
+    ) -> list:
+        """Predicts the probabilities for each label for the samples passed into
+        the function.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the data to predict on.
+            preprocess_data (bool, optional): If True, the data will be
+                preprocessed using preprocess_data before trying to predict on
+                it. Defaults to True.
+
+        Returns:
+            np.array: List of dictionaries, where each dictionary represents one
+            sample of the prediction, with its keys being the class and the
+            value the probability of the class being the correct class.
+        """
+        if preprocess_data:
+            preprocessed_X = self.preprocess_data(X)
+        else:
+            preprocessed_X = X
+        predictions = self.estimator.predict_proba(preprocessed_X, **kwargs)
+        predictions_preprocessed = []
+        for i in range(len(predictions)):
+            sample = predictions[i]
+            predictions_dict = {}
+            for idx, j in enumerate(sample):
+                if self.label_encoder is not None:
+                    predictions_dict[
+                        self.label_encoder.inverse_transform([idx])[0]
+                    ] = np.round(float(j), 3)
+                else:
+                    predictions_dict[idx] = np.round(float(j), 3)
+            predictions_preprocessed.append(predictions_dict.copy())
+        return predictions_preprocessed
+
 
 class PipelineManager:
     def __init__(
