@@ -28,7 +28,7 @@ class Post_APIView(APIView):
         return Response(data)
 
     def post(self, request, format=None):
-        post_data = request.GET
+        post_data = dict(request.GET)
         data = post_data.copy()
         print('****************************************')
         print(data)
@@ -55,6 +55,7 @@ class Post_APIView(APIView):
         data_clean['Examenes'] = Examenes
         print(data_clean)
         prediction = ml_pipeline.predict(preprocess_json(data_clean))
+        print(f'Prediction: {prediction}')
         prediction = {'respuesta':prediction[0]}
         if data_clean:
             return Response(prediction, status=status.HTTP_201_CREATED)
