@@ -15,24 +15,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState } from "react";
-// node.js library that concatenates classes (strings)
-import classnames from "classnames";
+import { useState, useEffect } from "react";
 // javascipt plugin for creating charts
 import Chart from "chart.js";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import {
-  Button,
   Card,
-  CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
-  Table,
   Container,
   Row,
   Col,
@@ -42,8 +30,6 @@ import {
 import {
   chartOptions,
   parseOptions,
-  chartExample1,
-  chartExample2,
 } from "../variables/charts.js";
 
 import Header from "../components/Headers/Header.js";
@@ -53,22 +39,75 @@ import StackedBarPlot from "../components/Plots/StackedBarPlot";
 
 const Index = (props) => {
 
-  console.log("Cargo index");
+  const socio = {
+    "genero":{
+      "Diabetes":{
+          "hombres":40,
+          "mujeres":60
+        },
+      "Syphilis":{
+        "hombres":70,
+        "mujeres":30
+      }
+    },
+    "edad":{
+      "Diabetes":{
+        "min":0,
+        "q1":10,
+        "med":15,
+        "q3":45, 
+        "max":60
+      },
+      "Syphilis":{
+        "min":1,
+        "q1":11,
+        "med":16,
+        "q3":46, 
+        "max":61
+      }
+    },
+    "estadoCivil":{
+        "Diabetes":{
+          "soltero":12,
+          "casado":32
+        }
+    },
+    "tipoSangre":{
+        "Diabetes":{
+          "O+":12,
+          "AB":32,
+          "O-":28,
+          "A+":10
+        },
+        "Syphilis":{
+          "O+":15,
+          "AB":30,
+          "O-":25,
+          "A+":20
+        }
+    }
+  }
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const { state } = useLocation();
-  console.log(state)
-  const {genero,edad,estadoCivil,tipoSangre} = state
-
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
+  const [dataState, setDataState] = useState(socio);
 
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+
+  useEffect(() => {
+    console.log(state);
+    if(state !== null){
+      setDataState(state);
+    }
+
+    if (window.Chart) {
+      parseOptions(Chart, chartOptions());
+    }
+  });
   
   return (
     <>
@@ -78,24 +117,40 @@ const Index = (props) => {
         <Row>
           <Col className="mb-5 mb-xl-0" xl="6">
             <Card className="bg-gradient-default shadow" style={{padding: '0.5px'}}>
-              <StackedBarPlot props={[genero, {title:"Gender", bck_color:"rgba(23,41,77,1)", font_color:'white'}]}></StackedBarPlot>
+              {dataState?
+                <StackedBarPlot props={[dataState.genero, {title:"Gender", bck_color:"rgba(23,41,77,1)", font_color:'white'}]}></StackedBarPlot>
+                :
+                <></>
+              }
             </Card>
           </Col>
           <Col xl="6">
             <Card className="shadow" style={{padding: '0.5px'}}>
-            <BoxPlot props={[edad, {title: "Age"}]} style={{borderRadius: '5px'}}></BoxPlot>
+              {dataState?
+                <BoxPlot props={[dataState.edad, {title: "Age"}]} style={{borderRadius: '5px'}}></BoxPlot>
+                :
+                <></>
+              }
             </Card>
           </Col>
         </Row>
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="6">
             <Card className="shadow" style={{padding: '0.5px'}}>
-              <StackedBarPlot props={[estadoCivil, {title:"Marital status"}]}></StackedBarPlot>
+              {dataState?
+                <StackedBarPlot props={[dataState.estadoCivil, {title:"Marital status"}]}></StackedBarPlot>
+                :
+                <></>
+              }
             </Card>
           </Col>
           <Col xl="6">
             <Card className="shadow" style={{padding: '0.5px'}}>
-              <StackedBarPlot props={[tipoSangre, {title:"Blood type"}]}></StackedBarPlot>
+              {dataState?
+                <StackedBarPlot props={[dataState.tipoSangre, {title:"Blood type"}]}></StackedBarPlot>
+                :
+                <></>
+              }
             </Card>
           </Col>
         </Row>

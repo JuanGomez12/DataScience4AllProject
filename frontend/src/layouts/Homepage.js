@@ -153,9 +153,9 @@ const Homepage = (props) => {
                   <p className="home-text-column light-text">Biomedical Engineer</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/santiago.png"></img>
+                  <img className="home-picture-team" src="img/members/santiago.jpg"></img>
                   <h2 className="home-title-column light-text">Santiago Garcia</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Systems Engineer, Web Developer and Assitant Professor</p>
                 </Col>
               </Row>
             </div>
