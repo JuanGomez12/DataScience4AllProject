@@ -30,6 +30,9 @@ class Post_APIView(APIView):
     def post(self, request, format=None):
         post_data = request.GET
         data = post_data.copy()
+        print('****************************************')
+        print(data)
+        print('****************************************')
         nombres = (data['Nombre'])
         valores = data['Valor']
         fechas = data['Fecha']
@@ -80,25 +83,7 @@ class Notes_APIView(APIView):
 
 
 def prueba(request):
-    data = ''
-    if request.method == 'POST': 
-        post_data = request.POST   
-        params = {'Edad':post_data['1'],'Genero':post_data['2'],'GrupoEtnico':post_data['3'],'AreaResidencial':post_data['4'],'EstadoCivil':post_data['5'],'TSangre':post_data['6'],'Tipo':post_data['7'],'Plan':post_data['8'],'Nombre':post_data['9'],'Valor':post_data['10'],'Fecha':post_data['11']}
-        url = 'http://52.90.58.67:8000/api/post'
-        response = requests.post(url, params=params) 
-        if response.status_code == 201:
-            data =  response.json()
-    else:
-        data = []
-        url = 'http://52.90.58.67:8000/api/laboratory'
-        response = requests.get(url) 
-        data.append(response.json())
-        url = 'http://52.90.58.67:8000/api/socio_economics'
-        response = requests.get(url) 
-        data.append(response.json())
-        url = 'http://52.90.58.67:8000/api/notes'
-        response = requests.get(url) 
-        data.append(response.json())
+    data = ''    
     return render(request, "core/prueba.html", {'data':data})
 
 def test_ml_model(sample_path:Optional[str] = None) -> np.array:
