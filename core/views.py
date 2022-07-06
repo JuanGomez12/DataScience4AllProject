@@ -15,6 +15,18 @@ from rest_framework.views import APIView
 sys.path.append('scripts')
 from utils.preprocessing_utils import preprocess_json
 
+condition_name_dict = {
+    'A510':'Primary genital syphilis' ,
+    'A511':'Primary anal syphilis',
+    'A514':'Other secondary syphilis',
+    'A529':'Late syphilis, unspecified',
+    'A530':'Latent syphilis, unspecified as early or late',
+    'A539':'Syphilis, unspecified',
+    'E109':'Type I diabetes mellitus',
+    'E119':'Type II diabetes mellitus',
+    'E149':'Unspecified diabetes mellitus',
+}
+
 ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
 
 
@@ -55,8 +67,8 @@ class Post_APIView(APIView):
         data_clean['Examenes'] = Examenes
         print(data_clean)
         prediction = ml_pipeline.predict(preprocess_json(data_clean))
-        print(f'Prediction: {prediction}')
-        prediction = {'respuesta':prediction[0]}
+        print(f"Prediction: {prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}")
+        prediction = {'respuesta':f"{prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"}
         if data_clean:
             return Response(prediction, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
