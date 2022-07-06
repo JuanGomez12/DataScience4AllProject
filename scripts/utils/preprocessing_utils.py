@@ -33,7 +33,12 @@ except OSError:
 nltk.download("stopwords")
 
 
-def lemmatize(doc:str, nlp=default_nlp, remove_punctuation:bool=True, remove_stopwords:bool=True)->str:
+def lemmatize(
+    doc: str,
+    nlp=default_nlp,
+    remove_punctuation: bool = True,
+    remove_stopwords: bool = True,
+) -> str:
     """Lemmatizes a string using the selected nlp model
 
     Args:
@@ -159,7 +164,7 @@ def find_top_k_words(string_value: str, k: int = 5) -> list:
 
 
 def merge_classes(df: pd.DataFrame) -> pd.DataFrame:
-    """Merges ICD-10 code A529 into A539, and A510, A511, and A514 into A51. 
+    """Merges ICD-10 code A529 into A539, and A510, A511, and A514 into A51.
     Additionally, it merges the names of the classes so they are consistent.
 
     Args:
@@ -255,7 +260,7 @@ def merge_labs_notas(df_lab: pd.DataFrame, df_notas: pd.DataFrame) -> pd.DataFra
     return df_merged
 
 
-def disease_tests_list()->list:
+def disease_tests_list() -> list:
     """Creates a list with the group of sets of the regex keywords to search for
     in the lab info, and the aggregation name under which to aggregate the
     keywords.
@@ -291,7 +296,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the labs dataframe
 
     Args:
-        df (pd.DataFrame): Dataframe containing the lab information as it is 
+        df (pd.DataFrame): Dataframe containing the lab information as it is
             in the dataset.
 
     Returns:
@@ -338,12 +343,15 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # -----
     # Patient's date for first and last exam
     merged_lab_date_calc = df.copy()[["IDRecord", "Fecha"]]
-    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"], errors='coerce')
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(
+        merged_lab_date_calc["Fecha"], errors="coerce"
+    )
     merged_lab_date_calc = merged_lab_date_calc.dropna()
-    if len(merged_lab_date_calc["Fecha"])>0:
-        lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
+    if len(merged_lab_date_calc["Fecha"]) > 0:
+        lab_date_first = (
+            merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
+        )
         lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
-
 
         lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
         lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
@@ -352,15 +360,14 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_dates["date_diff_first_last"] = abs(
             (lab_dates["last_lab_date"] - lab_dates["first_lab_date"]).dt.days
         )
-                # Convert them to Epoch seconds so we can feed them to the model
-        lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype('int64')//1e9
-        lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype('int64')//1e9
+        # Convert them to Epoch seconds so we can feed them to the model
+        lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype("int64") // 1e9
+        lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype("int64") // 1e9
     else:
-        lab_dates = pd.DataFrame(columns=['IDRecord'], index=[-1])
+        lab_dates = pd.DataFrame(columns=["IDRecord"], index=[-1])
         lab_dates["first_lab_date"] = 0
         lab_dates["last_lab_date"] = 0
         lab_dates["date_diff_first_last"] = 0
-
 
     # Merge the data
     preprocessed_labs = preprocessed_labs.merge(
@@ -373,7 +380,9 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
     # Lab max and avg date difference
     # Get the average difference
     merged_lab_date_calc = df.copy().sort_values(by=["IDRecord", "Fecha"]).copy()
-    merged_lab_date_calc["Fecha"] = pd.to_datetime(merged_lab_date_calc["Fecha"], errors='coerce')
+    merged_lab_date_calc["Fecha"] = pd.to_datetime(
+        merged_lab_date_calc["Fecha"], errors="coerce"
+    )
     merged_lab_date_calc["date_diff"] = (
         merged_lab_date_calc[["IDRecord", "Fecha"]].groupby("IDRecord").diff()
     )
@@ -448,7 +457,7 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
     Input: Series of test names
     Output: Series of standarized test names
     """
-    test_names = test_names.fillna('NaN')
+    test_names = test_names.fillna("NaN")
     cleaned = (
         test_names.str.lower()
         .str.strip()
@@ -461,7 +470,9 @@ def clean_test_names(test_names: pd.Series) -> pd.Series:
     return cleaned
 
 
-def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) -> pd.DataFrame:
+def clean_labs(
+    df_lab: pd.DataFrame, name_aggregation_dict: Optional[dict] = None
+) -> pd.DataFrame:
     """Cleans the laboratory dataframe
     Removes bad names and converting valor and IDRecord to numeric, and fecha to
     datetime. Also drops NaN values from IDRecord.
@@ -477,7 +488,7 @@ def clean_labs(df_lab: pd.DataFrame, name_aggregation_dict:Optional[dict]=None) 
         pd.DataFrame: Cleaned laboratory dataframe.
     """
     lab = df_lab.copy()
-    if 'Nombre' in lab.columns:
+    if "Nombre" in lab.columns:
         lab["Nombre"] = clean_test_names(lab.Nombre)
         if name_aggregation_dict is not None:
             lab["Nombre"] = lab.Nombre.replace(name_aggregation_dict)
@@ -565,7 +576,7 @@ def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
     """Cleans and preprocesses the three datasets.
     Returns one preprocessed dataset where each row represents one sample of
     data, with the engineered features and lab information.
-    
+
 
     Args:
         data_dict (dict): Dictionary containing three dataframes, each under its
@@ -605,7 +616,7 @@ def clean_and_preprocess_datasets(data_dict: dict) -> pd.DataFrame:
 
 
 def preprocess_json(data_dict: dict) -> dict:
-    """Receives a dictionary formatted as a JSON file and preprocesses so it 
+    """Receives a dictionary formatted as a JSON file and preprocesses so it
     matches what the prediction_pipeline is expecting.
 
     Args:
@@ -630,12 +641,14 @@ def preprocess_json(data_dict: dict) -> dict:
     df_labs_cols = ["IDRecord", "Codigo", "Nombre", "Fecha", "Valor"]
     df_notas_cols = ["IDRecord", "Tipo", "Plan"]
 
-    missing_cols = [col for col in df_socio_cols+df_notas_cols if col not in data_dict.keys()]
+    missing_cols = [
+        col for col in df_socio_cols + df_notas_cols if col not in data_dict.keys()
+    ]
 
     # Add NA for any missing keys in sociodemografico
     socio_dict = {}
     for key in df_socio_cols:
-        socio_dict[key] = data_dict.get(key, 'NA')
+        socio_dict[key] = data_dict.get(key, "NA")
     df_socio = pd.DataFrame(socio_dict, index=[0])
 
     # Take out the examenes dictionary if it's inside of a list
@@ -643,18 +656,18 @@ def preprocess_json(data_dict: dict) -> dict:
         labs_dict = data_dict["Examenes"][0]
     elif isinstance(data_dict["Examenes"], dict):
         labs_dict = data_dict["Examenes"]
-    
+
     # Add NA for any missing keys in laboratorio
     for key in df_labs_cols:
         if key not in labs_dict:
-            labs_dict[key] = {0: 'NA'}
+            labs_dict[key] = {0: "NA"}
     df_labs = pd.DataFrame.from_dict(labs_dict)
-    df_labs['IDRecord'] = 0
+    df_labs["IDRecord"] = 0
 
     # Add NA for any missing keys in notas
     notas_dict = {}
     for key in df_notas_cols:
-        notas_dict[key] = data_dict.get(key, 'NA')
+        notas_dict[key] = data_dict.get(key, "NA")
     df_notas = pd.DataFrame(notas_dict, index=[0])
 
     df_dict = {
