@@ -1,6 +1,7 @@
 
 import sys
 from typing import Optional
+import json
 
 import numpy as np
 import requests
@@ -55,7 +56,11 @@ class Post_APIView(APIView):
         data_clean['Examenes'] = Examenes
         print(data_clean)
         prediction = ml_pipeline.predict(preprocess_json(data_clean))
-        print(f'Prediction: {prediction}')
+        print('****************************************')
+        print(f'Prediction probabilities:')
+        print(json.dumps(ml_pipeline.predict_proba(preprocess_json(data_clean))[0], sort_keys=True, indent=4))
+        print(f'Final Prediction: {prediction}')
+        print('****************************************')
         prediction = {'respuesta':prediction[0]}
         if data_clean:
             return Response(prediction, status=status.HTTP_201_CREATED)
@@ -101,7 +106,6 @@ def test_ml_model(sample_path:Optional[str] = None) -> np.array:
     Returns:
         np.array: Numpy array containing the prediction for the supplied example.
     """
-    import json
     if sample_path is None:
         sample_path = 'scripts/utils/sample_example.json'
     with open(sample_path) as in_file:
