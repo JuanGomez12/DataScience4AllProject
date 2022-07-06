@@ -344,6 +344,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_date_first = merged_lab_date_calc.groupby(["IDRecord"]).first().reset_index()
         lab_date_first = lab_date_first.rename(columns={"Fecha": "first_lab_date"})
 
+
         lab_date_last = merged_lab_date_calc.groupby(["IDRecord"]).last().reset_index()
         lab_date_last = lab_date_last.rename(columns={"Fecha": "last_lab_date"})
 
@@ -351,8 +352,7 @@ def preprocess_labs(df: pd.DataFrame) -> pd.DataFrame:
         lab_dates["date_diff_first_last"] = abs(
             (lab_dates["last_lab_date"] - lab_dates["first_lab_date"]).dt.days
         )
-
-        # Convert them to Epoch seconds so we can feed them to the model
+                # Convert them to Epoch seconds so we can feed them to the model
         lab_dates["first_lab_date"] = lab_dates["first_lab_date"].astype('int64')//1e9
         lab_dates["last_lab_date"] = lab_dates["last_lab_date"].astype('int64')//1e9
     else:

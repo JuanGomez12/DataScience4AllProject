@@ -35,7 +35,7 @@ The scripts and notebooks required to train the ML pipeline can be found inside 
 Exploratory Data Analysis (EDA)
 
 ## Acknowledgements
-Many thanks to IQVia for sharing with us the data that allowed us to create this predictive model and Correlation One for teaching us the tools that made it possible  
+Many thanks to IQVia Solutions for sharing with us the data that allowed us to create this predictive model and Correlation One for teaching us the tools that made it possible  
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
