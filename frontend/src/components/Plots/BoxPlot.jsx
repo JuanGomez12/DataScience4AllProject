@@ -20,40 +20,45 @@ const NewBoxPlot = ({props}) => {
             }
         )})
     return(
+      <div className='plot-class'>
         <Plot 
         data={traces}
-        layout={ {width: 'width' in props[1] ? props[1].width : 586, height: 'height' in props[1] ? props[1].height : 480, 
-        title: !('title' in props[1]) ? '' : {
-          text: '<b>' + props[1].title + ' vs. Type of Disease</b>',
-          x: 0.05,
-          //y: 1, yanchor: 'bottom',
-          font: {
-            //family: 'Courier New, monospace',
-            size: 19,
-            color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
-          }
-        },
-        legend: {
+        layout={
+          {
+            // width: 'width' in props[1] ? props[1].width : 586,
+            // height: 'height' in props[1] ? props[1].height : 480, 
+            title: !('title' in props[1]) ? '' : {
+            text: '<b>' + props[1].title + ' vs. Type of Disease</b>',
+            x: 0.05,
+            //y: 1, yanchor: 'bottom',
+            font: {
+              //family: 'Courier New, monospace',
+              size: 19,
+              color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
+            }
+          },
+          legend: {
+            legend_title: props[1].title,
+            font: {
+              size: 13
+            }
+          },
+          showlegend: true,
           legend_title: props[1].title,
-          font: {
-            size: 13
-          }
-        },
-        showlegend: true,
-        legend_title: props[1].title,
-        boxmode: 'group',
-        paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
-        plot_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
-        xaxis: {
+          boxmode: 'group',
+          paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
+          plot_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
+          xaxis: {
             title: 'Type of Disease',
             titlefont: {
               size: 15,
               //color: 'rgb(107, 107, 107)'
             },
             tickfont: {
-            size: 14,
-            //color: 'rgb(107, 107, 107)'
-          }},
+              size: 14,
+              //color: 'rgb(107, 107, 107)'
+            }
+          },
           yaxis: {
             title: 'Count',
             titlefont: {
@@ -72,7 +77,10 @@ const NewBoxPlot = ({props}) => {
           }
         }}
         x = {['day 1', 'day 2']}
+        useResizeHandler={true}
+        style={{width: "100%", height: "100%"}}
         />
+      </div>
     )
 }
 export default NewBoxPlot;

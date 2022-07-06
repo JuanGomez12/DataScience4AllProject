@@ -116,7 +116,7 @@ const Index = (props) => {
       <Container className="mt--7" fluid>
         <Row>
           <Col className="mb-5 mb-xl-0" xl="6">
-            <Card className="bg-gradient-default shadow" style={{padding: '0.5px'}}>
+            <Card className="bg-gradient-default shadow">
               {dataState?
                 <StackedBarPlot props={[dataState.genero, {title:"Gender", bck_color:"rgba(23,41,77,1)", font_color:'white'}]}></StackedBarPlot>
                 :
