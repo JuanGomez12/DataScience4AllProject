@@ -644,12 +644,12 @@ def preprocess_json(data_dict: dict) -> dict:
     elif isinstance(data_dict["Examenes"], dict):
         labs_dict = data_dict["Examenes"]
     
-    labs_dict["IDRecord"] = 0
     # Add NA for any missing keys in laboratorio
     for key in df_labs_cols:
         if key not in labs_dict:
-            labs_dict[key]= {'0': 'NA'}
+            labs_dict[key] = {0: 'NA'}
     df_labs = pd.DataFrame.from_dict(labs_dict)
+    df_labs['IDRecord'] = 0
 
     # Add NA for any missing keys in notas
     notas_dict = {}
