@@ -20,7 +20,9 @@ import { useState, useEffect } from "react";
 import Chart from "chart.js";
 // reactstrap components
 import {
+  Button,
   Card,
+  CardHeader,
   Container,
   Row,
   Col,
@@ -40,60 +42,64 @@ import * as ReactDOMClient from 'react-dom/client';
 
 const Index = (props) => {
 
-  const socio = {
-    "genero":{
-      "Diabetes":{
-          "hombres":40,
-          "mujeres":60
-        },
-      "Syphilis":{
-        "hombres":70,
-        "mujeres":30
-      }
-    },
-    "edad":{
-      "Diabetes":{
-        "min":0,
-        "q1":10,
-        "med":15,
-        "q3":45, 
-        "max":60
+  const socio = {"genero":{
+    "Diabetes":{
+        "hombres":40,
+        "mujeres":60
       },
-      "Syphilis":{
-        "min":1,
-        "q1":11,
-        "med":16,
-        "q3":46, 
-        "max":61
-      }
-    },
-    "estadoCivil":{
-        "Diabetes":{
-          "soltero":12,
-          "casado":32
-        }
-    },
-    "tipoSangre":{
-        "Diabetes":{
-          "O+":12,
-          "AB":32,
-          "O-":28,
-          "A+":10
-        },
-        "Syphilis":{
-          "O+":15,
-          "AB":30,
-          "O-":25,
-          "A+":20
-        }
+    "Syphilis":{
+      "hombres":70,
+      "mujeres":30
     }
-  }
+    },
+  "edad":{
+    "Diabetes":{
+      "min":0,
+      "q1":10,
+      "med":15,
+      "q3":45, 
+      "max":60,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    },
+    "Syphilis":{
+      "min":1,
+      "q1":11,
+      "med":16,
+      "q3":46, 
+      "max":61,
+      "mean": 30,
+      "sd": 20,
+      "outliers": [0, -50, 85, 100 ]
+    }
+  },
+  "estadoCivil":{
+      "Diabetes":{
+        "soltero":12,
+        "casado":32
+      }
+  },
+  "tipoSangre":{
+      "Diabetes":{
+        "O+":12,
+        "AB":32,
+        "O-":28,
+        "A+":10
+       },
+       "Syphilis":{
+        "O+":15,
+        "AB":30,
+        "O-":25,
+        "A+":20
+       }
+    }
+  };
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const { state } = useLocation();
   const [dataState, setDataState] = useState(socio);
-  console.log(state)
-  const {genero,edad,estadoCivil,tipoSangre} = state
+  //const {genero,edad,estadoCivil,tipoSangre} = state
   let outs_states =  {'edad':[true, null]}
 
   const toggleNavs = (e, index) => {
@@ -112,6 +118,7 @@ const Index = (props) => {
       parseOptions(Chart, chartOptions());
     }
   });
+
   function showOutliers(plot_info){
     let root
     if (!root) {
@@ -178,7 +185,7 @@ const Index = (props) => {
                     <div className="text-right">
                       <Button
                         color="primary"
-                        onClick={() => showOutliers(["edad", edad, {bck_color:"rgba(0,0,0,0)"}])}
+                        onClick={() => showOutliers(["edad", dataState.edad, {bck_color:"rgba(0,0,0,0)"}])}
                         size="sm"
                       >
                         Outliers
