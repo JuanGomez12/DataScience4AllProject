@@ -157,10 +157,10 @@ const Index = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
+                    <h2 className="text-white mb-1">Gender vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-light ls-1 mb-0">
+                      PROPORTIONS OF GENDERS PER TYPE OF DISEASE
                     </h6>
-                    <h2 className="text-white mb-0">Gender vs. Type of Disease</h2>
                   </Col>
                 </Row>
               </CardHeader>
@@ -176,10 +176,10 @@ const Index = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                    <h2 className="mb-1">Age vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-muted ls-1 mb-0">
+                      DISTRIBUTIONS OF AGES PER TYPE OF DISEASE
                     </h6>
-                    <h2 className="mb-0">Age vs. Type of Disease</h2>
                   </Col>
                   <Col xl="2">
                     <div className="text-right">
@@ -210,10 +210,10 @@ const Index = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
+                    <h2 className="mb-1">Marital Status vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-light ls-1 mb-0">
+                      DISTRIBUTIONS OF MARITAL STATUS PER TYPE OF DISEASE
                     </h6>
-                    <h2 className="mb-0">Marital Status vs. Type of Disease</h2>
                   </Col>
                 </Row>
               </CardHeader>
@@ -229,10 +229,10 @@ const Index = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
-                    </h6>
                     <h2 className="mb-0">Blood Type vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-light ls-1 mb-1">
+                      DISTRIBUTIONS OF BLOOD TYPES PER TYPE OF DISEASE
+                    </h6>
                   </Col>
                 </Row>
               </CardHeader>

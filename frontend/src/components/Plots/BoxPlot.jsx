@@ -50,11 +50,16 @@ const NewBoxPlot = ({props}) => {
               color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
             }
           },
+          margin:{
+            t:50
+          },
           showlegend: true,
           legend: {
-            legend_title: props[1].title,
-            font: {
-              size: 13
+            title: {
+              text: props[1].title,
+              font: {
+                size: 13
+              }
             }
           },
           legend_title: props[1].title,
