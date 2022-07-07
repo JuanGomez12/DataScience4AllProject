@@ -15,3 +15,5 @@ imbalanced-learn
 spacy
 graphviz
 kaleido
+djangorestframework
+django
