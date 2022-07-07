@@ -53,7 +53,6 @@ import {
 
 import Header from "../../components/Headers/Header.js";
 import { useLocation } from 'react-router-dom';
-import BoxPlot from "../../components/Plots/BoxPlot";
 import BarPlot from "../../components/Plots/BarPlot";
 import * as ReactDOMClient from 'react-dom/client';
 
@@ -70,12 +69,25 @@ const NotesBoard = (props) => {
   const [dropdownOpenSif, setDropdownOpenSif] = React.useState(false);
   const toggleSif = () => setDropdownOpenSif(prevState => !prevState);
   //let dropdown = {"isOpen": false, "toggle": }
-  //console.log(notes)
+  console.log('notes',notes)
 
   const diabetes= {} 
   const sifilis = {}
+  const desease_type = {
+    'A510': 'Primary Genital Syphilis.',
+    'A511': 'Primary Anal Syphilis',
+    'A514': 'Other Secondary Syphilis',
+    'A529': 'Late Syphilis, unspecified',
+    'A530': 'Latent Syph., unspecified as Early or Late',
+    'A539': 'Syphilis, unspecified',
+    'E109': 'Type 1 Diabetes Mellitus',
+    'E119': 'Type 2 Diabetes Mellitus',
+    'E149': 'Unspecified Diabetes Mellitus',
+    'A51': 'Other Secondary Syphilis' // ?
+  }
+
   Object.entries(notes).map(([key, value]) => {
-    if (key.includes('DIABETES')) {
+    if (key.includes('E')) {
       diabetes[key] = value
     }else{
       sifilis[key] = value
@@ -124,35 +136,45 @@ const NotesBoard = (props) => {
                   <Col xl="9">
                     <h2 className="text-white ls-1 mb-1">Most Relevant Terms for Diabetes in the EHR</h2>
                     <h6 className="text-uppercase text-light mb-0">
-                      <div id='diab-subt'>TOP TERMS FOR DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION</div>
+                      <div id='diab-subt'>TOP TERMS FOR {desease_type["E109"]}</div>
                     </h6>
                   </Col>
                   <Col xl="3">
-                    <div className="text-right">
-                      <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm">
-                        <DropdownToggle caret>Type of Diabetes</DropdownToggle>
-                        <DropdownMenu size="sm" left='true'>
-                          { Object.keys(diabetes).map(function (type) {
-                            return(
-                              <div key={type}>
-                                <DropdownItem onClick={() => handleChangeDropdown(['diabetes', diabetes[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"},
-                                 'diab-subt', type])} dropdownvalue={type} size="sm">
-                                  {type}
-                                </DropdownItem>
-                              </div>
-                            )
-                          })
-                          }
-                        </DropdownMenu>
-                      </Dropdown>
-                    </div>
+                    {Object.keys(state).length !== 0 ?
+                      <div className="text-right">
+                        <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm">
+                          <DropdownToggle caret>Type of Diabetes</DropdownToggle>
+                          <DropdownMenu size="sm" left='true'>
+                            { Object.keys(diabetes).map(function (type) {
+                              return(
+                                <div key={type}>
+                                  <DropdownItem onClick={() => handleChangeDropdown(['diabetes', diabetes[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"},
+                                  'diab-subt', desease_type[type]])} dropdownvalue={type} size="sm">
+                                    {desease_type[type]}
+                                  </DropdownItem>
+                                </div>
+                              )
+                            })
+                            }
+                          </DropdownMenu>
+                        </Dropdown>
+                      </div>
+                      :
+                      <></>
+                    }
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <div id="diabetes">
-                  <BarPlot props={[notes["DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
-                </div>
+                {Object.keys(state).length !== 0 ?
+                  <div id="diabetes">
+                    <BarPlot props={[notes["E109"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
+                  </div>
+                  :
+                  <CardHeader className="bg-transparent">
+                    <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                  </CardHeader>
+                }
               </CardBody>
             </Card>
           </Col>
@@ -188,35 +210,45 @@ const NotesBoard = (props) => {
                   <Col xl="9">
                     <h2 className="ls-1 mb-1">Most Relevant Terms for Syphilis in the EHR</h2>
                     <h6 className="text-uppercase text-muted mb-0">
-                      <div id='sifi-subt'>TOP TERMS FOR OTRAS SIFILIS SECUNDARIAS</div>
+                      <div id='sifi-subt'>TOP TERMS FOR {desease_type['A51']}</div>
                     </h6>
                   </Col>
                   <Col xl="3">
-                    <div className="text-right">
-                      <Dropdown isOpen={dropdownOpenSif} toggle={toggleSif} size="sm" color="primary">
-                        <DropdownToggle caret color="primary">Type of Syphilis</DropdownToggle>
-                        <DropdownMenu size="sm" left='true'>
-                          { Object.keys(sifilis).map(function (type) {
-                            return(
-                              <div key={type}>
-                                <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)"}, 
-                                'sifi-subt', type])} dropdownvalue={type} size="sm">
-                                  {type}
-                                </DropdownItem>
-                              </div>
-                            )
-                          })
-                          }
-                        </DropdownMenu>
-                      </Dropdown>
-                    </div>
+                    {Object.keys(state).length !== 0 ?
+                      <div className="text-right">
+                        <Dropdown isOpen={dropdownOpenSif} toggle={toggleSif} size="sm" color="primary">
+                          <DropdownToggle caret color="primary">Type of Syphilis</DropdownToggle>
+                          <DropdownMenu size="sm" left='true'>
+                            { Object.keys(sifilis).map(function (type) {
+                              return(
+                                <div key={type}>
+                                  <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)"}, 
+                                  'sifi-subt', desease_type[type]])} dropdownvalue={type} size="sm">
+                                    {desease_type[type]}
+                                  </DropdownItem>
+                                </div>
+                              )
+                            })
+                            }
+                          </DropdownMenu>
+                        </Dropdown>
+                      </div>
+                      :
+                      <></>
+                    }
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                <div id="sifilis">
-                  <BarPlot props={[notes["OTRAS SIFILIS SECUNDARIAS"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)0"}]}></BarPlot>
-                </div>
+                {Object.keys(state).length !== 0 ?
+                  <div id="sifilis">
+                    <BarPlot props={[notes["A51"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)0"}]}></BarPlot>
+                  </div>
+                  :
+                  <CardHeader className="bg-transparent">
+                    <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                  </CardHeader>
+                }
               </CardBody>
             </Card>
           </Col>
