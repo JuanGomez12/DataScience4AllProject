@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="imgs/DoctorDiseaseHeader.png" alt="Doctor Disease Header"/>
+</p>
+
 # DS4A-Project
 Repository of the final project of Team 24
 
@@ -17,14 +21,18 @@ More information about the problem can be found in the [Project Report](Project_
 Despite the use of diagnostic code related to each health care service, it has been detected that in clinical practice errors can be introduced in said coding. These errors can impact the results obtained in clinical research by having patients that do not correspond to the pathology under study, or on the contrary, failing to identify all relevant patients.
 
 ## Technologies Used
-The frontend was developed using React, with the backend built in django. The Exploratory Data Analysis (EDA) was done with the help of Jupyter, Pandas, Matplotlib, Seaborn and Plotly. The Machine Learning (ML) pipeline training process was built using the previously mentioned libraries in addition to Scikit-learn, XGBoost, NLTK, Spacy, and imb-learn. The deep learning models use Tensorflow in conunction with the libraries used by the ML proccess.
+The frontend was developed using Javascript, specifically the React framework, with the backend built in Django. The Exploratory Data Analysis (EDA) was done with the help of Jupyter, Pandas, Matplotlib, Seaborn and Plotly. The Machine Learning (ML) pipeline training process was built using the previously mentioned libraries in addition to Scikit-learn, XGBoost, NLTK, Spacy, and imb-learn. The deep learning models use Tensorflow in conunction with the libraries used by the ML proccess.
 
 ## Features
 - Automatic preprocessor, feature selection and estimator hyperparameter tuning with the possibility of easily adding more parameters or estimators.
-- Automatically selects the best performing estimator using the F1-measure to rank the different models and incorporates it into the prediction piepline, to be used directly in any prediction task.
+- NLP preprocessing of the Electronic Health REcords to extract information from natural text.
+- Automatically selects the best performing estimator using 5-fold cross-validation, using the F1-measure to rank the different models, and incorporates the best estimator into the prediction pipeline, to be used directly in any prediction task.
+- Frontend with a responsive design in mind.
+- REST API built on top of Django.
+- Capabilities of getting predictions through the Frontend prediction form or from an API call.
 
 ## Installation
-The [requirements file](requirements.txt) contains the libraries needed to run the scripts for the ML and Deep Learning training. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510) will automatically be placed in the correct folder for the backend to load and use to predict values being passed from the frontend. The datasets (sociodemografico.csv, laboratorios.csv, and notas.csv) to train the model need to be placed in a data directory inside of the scripts directory (so it looks like scripts/data/).
+The [requirements file](requirements.txt) contains the libraries needed to run the scripts for the ML and Deep Learning training. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510). The datasets (sociodemografico.csv, laboratorios.csv, and notas.csv) to train the model need to be placed in a data directory inside of the scripts directory (so it looks like scripts/data/).
 
 ## How to use
 ### Frontend and backend deployment
@@ -55,16 +63,15 @@ url = "http://localhost:8000/api/post"
 response = requests.post(url, data=params)
 response.json()
 ```
-The server should respond with a JSON file containing the prediction with the ICD10 code and the name of the predicted diagnosis (e.g. 'E109 : Type I diabetes mellitus')
+The server should respond with a JSON file containing the prediction with the ICD10 code and the name of the predicted diagnosis (e.g. 'E109 : Type I diabetes mellitus').
+
+Additionally, there is a [API test](scripts/utils/API_test.ipynb) notebook that can help with testing the different APIs
 #### Frontend
 Detailed instructions for launching the Frontend can be found in the [README](/frontend/README.md) file inside of the frontend directory.
 
 ### EDA and ML training Notebooks
 The scripts and notebooks required to train the ML pipeline can be found inside the [scripts](scripts/) directory. Inside of this directory there is another [README](scripts/README.md) with extra information on how to use the scripts. This step is not necessary as there is already a trained pipeline_predictor located [here](scripts/model/prediction_pipeline.pickle). The backend should automatically load it and be avaialble for predictions.
 The [docker-compose](docker-compose.yml) file contains the structure necessary
-
-## Build Status
-Exploratory Data Analysis (EDA)
 
 ## Acknowledgements
 Many thanks to IQVia Solutions for sharing with us the data that allowed us to create this predictive model and Correlation One for teaching us the tools that made it possible  
