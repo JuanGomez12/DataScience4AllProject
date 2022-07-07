@@ -41,7 +41,7 @@ class Post_APIView(APIView):
         return Response(data)
 
     def post(self, request, format=None):
-        post_data = dict(request.GET)
+        post_data = dict(request.data)
         data = post_data.copy()
         print('****************************************')
         print(data)
