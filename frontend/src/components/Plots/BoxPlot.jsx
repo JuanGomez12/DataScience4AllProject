@@ -3,14 +3,25 @@ import Plot from 'react-plotly.js';
 
 const NewBoxPlot = ({props}) => {
     let c=0
+    const desease_type = {
+      'A510': 'Primary genital Syph.',
+      'A511': 'Primary anal Syph.',
+      'A514': 'Other secondary Syph.',
+      'A529': 'Late Syph, unspecif.',
+      'A530': 'Latent Syph, unsp. early/late',
+      'A539': 'Syphilis, unspecif.',
+      'E109': 'Type 1 Diabetes M.',
+      'E119': 'Type 2 Diabetes M.',
+      'E149': 'Unspecif. Diabetes M.'
+    }
     let traces = Object.entries(props[0]).map(([key, value]) => {
         c ++
-        const std = (value.q3-value.mean)/(0.675)
-        console.log('std:', value.sd ? [value.sd] : [std])
+        const std = ((value.q3-value.mean)/(0.675)).toFixed(3)
+        //console.log('std:', value.sd ? [value.sd] : [std])
         return( 
             {
             type: "box",
-            name: key,
+            name: desease_type[key],
             offsetgroup: c,
             boxmean: 'sd',
             //offsetgroup: "1",
@@ -21,7 +32,7 @@ const NewBoxPlot = ({props}) => {
             upperfence: [value.max],
             mean: [value.mean],
             sd: value.sd ? [value.sd] : [std],
-            y : (value.outliers.length > 0) ? [value.outliers] : [[value.med]],
+            y : (value.fliers.length > 0) ? [value.fliers] : [[value.med]],
             boxpoints: 'outliers', //'suspectedoutliers'
             marker: {
               //outliercolor: 'rgba(219, 64, 82, 0.6)',
