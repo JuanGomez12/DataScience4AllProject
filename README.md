@@ -65,7 +65,7 @@ response.json()
 ```
 The server should respond with a JSON file containing the prediction with the ICD10 code and the name of the predicted diagnosis (e.g. 'E109 : Type I diabetes mellitus').
 
-Additionally, there is a [API test](scripts/utils/API_test.ipynb) notebook that can help with testing the different APIs
+Additionally, there is an [API test](scripts/utils/API_test.ipynb) notebook that can help with testing the different APIs
 #### Frontend
 Detailed instructions for launching the Frontend can be found in the [README](/frontend/README.md) file inside of the frontend directory.
 
