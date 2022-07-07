@@ -24,12 +24,44 @@ The frontend was developed using React, with the backend built in django. The Ex
 - Automatically selects the best performing estimator using the F1-measure to rank the different models and incorporates it into the prediction piepline, to be used directly in any prediction task.
 
 ## Installation
-The requirements file contains the libraries needed to run the scripts for the ML and Deep Learning training. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510) will automatically be placed in the correct folder for the backend to load and use to predict values being passed from the frontend. The datasets to train the model need to be placed in a data directory inside of the scripts directory.
+The [requirements file](requirements.txt) contains the libraries needed to run the scripts for the ML and Deep Learning training. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510) will automatically be placed in the correct folder for the backend to load and use to predict values being passed from the frontend. The datasets (sociodemografico.csv, laboratorios.csv, and notas.csv) to train the model need to be placed in a data directory inside of the scripts directory (so it looks like scripts/data/).
 
 ## How to use
 ### Frontend and backend deployment
-### EDA and ML training
-The scripts and notebooks required to train the ML pipeline can be found inside the [scripts](scripts/) directory. Inside of this directory there is another [README](scripts/README.md) with extra information on how to use the scripts. This step is not necessary as there is already a trained pipeline_predictor located [here](scripts/model/prediction_pipeline.pickle).
+#### Backend
+To run the backend, it is necessary to run in the command line from the root directory of this repository:
+```
+python manage.py runserver
+```
+
+The server should now be  running, and should be accesible through localhost. It is possible to test the server's POST capability and the capacity to predict based on data passed by passing the parameters as a json file in the body of the request, with the data similar to what is shown in the [sample_example](scripts/utils/sample_example.json) JSON file. The following example shows how to do this:
+```
+import requests
+
+params = {
+    "Edad": "40",
+    "Genero": "Mujer",
+    "GrupoEtnico": "Mestizo",
+    "AreaResidencial": "Zona Urbana",
+    "EstadoCivil": "Separado",
+    "TSangre": "NaN",
+    "Nombre": ["902046", "Test de urologia"],
+    "Fecha": ["22/02/2022 18:43", "24/02/2022 00:00"],
+    "Valor": ["6", "20"],
+    "Tipo": "Confirmado Repetido",
+    "Plan": "- Paciente se remite para analisis de urologia...",
+}
+url = "http://localhost:8000/api/post"
+response = requests.post(url, data=params)
+response.json()
+```
+The server should respond with a JSON file containing the prediction with the ICD10 code and the name of the predicted diagnosis (e.g. 'E109 : Type I diabetes mellitus')
+#### Frontend
+Detailed instructions for launching the Frontend can be found in the [README](/frontend/README.md) file inside of the frontend directory.
+
+### EDA and ML training Notebooks
+The scripts and notebooks required to train the ML pipeline can be found inside the [scripts](scripts/) directory. Inside of this directory there is another [README](scripts/README.md) with extra information on how to use the scripts. This step is not necessary as there is already a trained pipeline_predictor located [here](scripts/model/prediction_pipeline.pickle). The backend should automatically load it and be avaialble for predictions.
+The [docker-compose](docker-compose.yml) file contains the structure necessary
 
 ## Build Status
 Exploratory Data Analysis (EDA)
