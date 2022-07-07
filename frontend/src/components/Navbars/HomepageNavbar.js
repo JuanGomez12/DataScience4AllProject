@@ -30,7 +30,7 @@ import {
 } from "reactstrap";
 
 const HomepageNavbar = () => {
-  const socio = {"genero":{
+  const socio = {"Genero":{
     "Diabetes":{
         "hombres":40,
         "mujeres":60
@@ -40,7 +40,7 @@ const HomepageNavbar = () => {
       "mujeres":30
     }
     },
-  "edad":{
+  "Edad":{
     "Diabetes":{
       "min":0,
       "q1":10,
@@ -49,7 +49,7 @@ const HomepageNavbar = () => {
       "max":60,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     },
     "Syphilis":{
       "min":1,
@@ -59,16 +59,16 @@ const HomepageNavbar = () => {
       "max":61,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     }
   },
-  "estadoCivil":{
+  "EstadoCivil":{
       "Diabetes":{
         "soltero":12,
         "casado":32
       }
   },
-  "tipoSangre":{
+  "TSangre":{
       "Diabetes":{
         "O+":12,
         "AB":32,

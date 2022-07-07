@@ -21,6 +21,7 @@ import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios'
 
 const Header = (props) => {
 
@@ -34,7 +35,7 @@ const Header = (props) => {
       "max":60,
       "mean": 20,
       "sd": 10,
-      "outliers": [100, 80]
+      "fliers": [100, 80]
     },
     "Syphilis":{
       "min":10,
@@ -44,7 +45,7 @@ const Header = (props) => {
       "max":71,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     }
   },
   "tiempoExamenesPromedio": {
@@ -56,7 +57,7 @@ const Header = (props) => {
       "max":60,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     }
     },
   "tiempoExamenesMaximo": {
@@ -68,7 +69,7 @@ const Header = (props) => {
       "max":60,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     },
     "Syphilis":{
       "min":0,
@@ -78,7 +79,7 @@ const Header = (props) => {
       "max":80,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]}
+      "fliers": [0, -50, 85, 100 ]}
     }
   };
   const socio = {"genero":{
@@ -100,7 +101,7 @@ const Header = (props) => {
         "max":60,
         "mean": 30,
         "sd": 1,
-        "outliers": [0, -50, 85, 100 ]
+        "fliers": [0, -50, 85, 100 ]
       },
       "Syphilis":{
         "min":1,
@@ -110,7 +111,7 @@ const Header = (props) => {
         "max":61,
         "mean": 30,
         "sd": 40,
-        "outliers": [0, -50, 85, 100 ]
+        "fliers": [0, -50, 85, 100 ]
       }
     },
     "estadoCivil":{
@@ -268,11 +269,17 @@ const Header = (props) => {
   }
   //const [dataLabs, setDataLabs] = useState([labs]);
   const navigate = useNavigate();
+  const socioGetAPI = "http://20.214.241.33:8000/api/socio_economics";
+  const labsGetAPI = "http://20.214.241.33:8000/api/laboratory";
+  const notesGetAPI = "http://20.214.241.33:8000/api/notes";
+  //<CardBody onClick={() => changeData([socio, "sociodemographic"])}>
+  //<CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}></CardBody>
 
   function changeData(data){
     
-    console.log("Data changed to:", data[1]);
-    console.log("Data changed to:", data[0]);
+    
+    //console.log("Data changed to:", data[1]);
+    //console.log("Rpta API a changeData:", data[0]);
     //setDataSelected(data);
     //setDataLabs(data[0])
     if (data[1] === "sociodemographic"){
@@ -286,6 +293,23 @@ const Header = (props) => {
     }
   }
 
+
+  function getDataAPI(url_api, group){
+    let rpta
+    axios.get(url_api)
+    .then(res => {
+      rpta = res.data
+      changeData([rpta, group])
+      //console.log('rpta del API', rpta);
+    })
+    .catch(e => {
+      //console.log(e);
+      rpta = {}
+      changeData([rpta, group])
+    })
+    return rpta
+  }
+  
   return (
     <>
       <div className="header bg_gradient_personalized pb-8 pt-5 pt-md-8">
@@ -295,7 +319,7 @@ const Header = (props) => {
             <Row>
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData([socio, "sociodemographic"])}>
+                  <CardBody onClick={() => getDataAPI(socioGetAPI, "sociodemographic")}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -345,7 +369,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData([notes, "notes"])}>
+                  <CardBody onClick={() => getDataAPI(notesGetAPI, "notes")}>
                     <Row>
                       <div className="col">
                         <CardTitle
