@@ -2,6 +2,7 @@
 import sys
 from typing import Optional
 import json
+from pathlib import Path
 
 import numpy as np
 import requests
@@ -29,7 +30,10 @@ condition_name_dict = {
 }
 
 ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
-
+socio_json_path = Path('scripts')/'utils'/'api_data'/'sociodemographic_summary.json'
+if socio_json_path.is_file():
+    with open(socio_json_path) as in_file:
+        socio_json = json.load(in_file)
 
 class Post_APIView(APIView):
 
@@ -81,7 +85,7 @@ class Post_APIView(APIView):
 class socioEconomic_APIView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
-        data = 'Socioeconomic'
+        data = socio_json
         
         return Response(data)
 
