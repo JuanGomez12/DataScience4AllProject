@@ -27,8 +27,8 @@ const NewStackedBarPlot = ({props}) => {
           return y_vals
       })
       return( 
-          {//x: diseases,
-            x: disease_names,
+          {x: diseases,
+            //x: disease_names,
             y: y_vals,
             name: cat,
             type: 'bar',

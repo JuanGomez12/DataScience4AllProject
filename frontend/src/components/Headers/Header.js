@@ -26,41 +26,80 @@ import axios from 'axios'
 const Header = (props) => {
 
   //const [dataSelected, setDataSelected] = useState();
-  const labs = {"examenes":{
-    "Diabetes":{
-      "min":0,
-      "q1":10,
-      "med":15,
-      "q3":45, 
-      "max":60,
-      "mean": 20,
-      "sd": 10,
-      "fliers": [100, 80]
+  const labs = {
+    "keywords_count":{
+      "test1": {
+        "Diabetes":{
+          "min":0,
+          "q1":10,
+          "med":15,
+          "q3":45, 
+          "max":60,
+          "mean": 20,
+          "sd": 10,
+          "fliers": [100, 80]
+        },
+        "Syphilis":{
+          "min":10,
+          "q1":21,
+          "med":26,
+          "q3":56, 
+          "max":71,
+          "mean": 30,
+          "sd": 20,
+          "fliers": [0, -50, 85, 100 ]
+        },
+      },
+      "test2": {
+        "Diabetes":{
+          "min":20,
+          "q1":30,
+          "med":35,
+          "q3":65, 
+          "max":80,
+          "mean": 40,
+          "sd": 30,
+          "fliers": [130, 85]
+        },
+        "Syphilis":{
+          "min":10,
+          "q1":21,
+          "med":26,
+          "q3":56, 
+          "max":71,
+          "mean": 30,
+          "sd": 20,
+          "fliers": [0, -50, 85, 100 ]
+        },
+      }
     },
-    "Syphilis":{
-      "min":10,
-      "q1":21,
-      "med":26,
-      "q3":56, 
-      "max":71,
-      "mean": 30,
-      "sd": 20,
-      "fliers": [0, -50, 85, 100 ]
-    }
-  },
-  "tiempoExamenesPromedio": {
-    "Diabetes":{
-      "min":0,
-      "q1":10,
-      "med":15,
-      "q3":45, 
-      "max":60,
-      "mean": 30,
-      "sd": 20,
-      "fliers": [0, -50, 85, 100 ]
-    }
+    "keywords_max": {
+      "test1":{
+        "Diabetes":{
+          "min":0,
+          "q1":10,
+          "med":15,
+          "q3":45, 
+          "max":60,
+          "mean": 30,
+          "sd": 20,
+          "fliers": [0, -50, 85, 100 ]
+      }
+      }
     },
-  "tiempoExamenesMaximo": {
+    "date_diff_mean": {
+      "Diabetes":{
+        "min":0,
+        "q1":10,
+        "med":15,
+        "q3":45, 
+        "max":60,
+        "mean": 30,
+        "sd": 20,
+        "fliers": [0, -50, 85, 100 ]
+      }
+    },
+  "date_diff_max": {
     "Diabetes":{
       "min":0,
       "q1":10,
