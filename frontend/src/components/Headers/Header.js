@@ -119,21 +119,153 @@ const Header = (props) => {
           "casado":32
         }
     },
-    "tipoSangre":{
-        "Diabetes":{
-          "O+":12,
-          "AB":32,
-          "O-":28,
-          "A+":10
-         },
-         "Syphilis":{
-          "O+":15,
-          "AB":30,
-          "O-":25,
-          "A+":20
-         }
+    "tipoSangre": {
+      "DIABETES MELLITUS NOINSULINODEPENDIENTE SIN MENCION DE COMPLICACION": {
+          "A+": "1521.0",
+          "A-": "77.0",
+          "AB+": "36.0",
+          "AB-": "14.0",
+          "B+": "259.0",
+          "B-": "3.0",
+          "O+": "5290.0",
+          "O-": "141.0"
+      },
+      "DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION": {
+          "A+": "202.0",
+          "A-": "0.0",
+          "AB+": "0.0",
+          "AB-": "0.0",
+          "B+": "84.0",
+          "B-": "2.0",
+          "O+": "884.0",
+          "O-": "7.0"
+      },
+      "DIABETES MELLITUSINSULINODEPENDIENTE SIN MENCION DE COMPLICACION": {
+          "A+": "487.0",
+          "A-": "49.0",
+          "AB+": "22.0",
+          "AB-": "0.0",
+          "B+": "174.0",
+          "B-": "7.0",
+          "O+": "1848.0",
+          "O-": "83.0"
+      },
+      "OTRAS SIFILIS SECUNDARIAS": {
+          "A+": "52.0",
+          "A-": "0.0",
+          "AB+": "0.0",
+          "AB-": "0.0",
+          "B+": "8.0",
+          "B-": "0.0",
+          "O+": "797.0",
+          "O-": "45.0"
+      },
+      "SIFILIS GENITAL PRIMARIA": {
+          "A+": "24.0",
+          "A-": "0.0",
+          "AB+": "0.0",
+          "AB-": "0.0",
+          "B+": "24.0",
+          "B-": "0.0",
+          "O+": "301.0",
+          "O-": "55.0"
+      },
+      "SIFILIS LATENTE, NO ESPECIFICADA COMO PRECOZ O TARDIA": {
+          "A+": "2453.0",
+          "A-": "112.0",
+          "AB+": "167.0",
+          "AB-": "0.0",
+          "B+": "725.0",
+          "B-": "32.0",
+          "O+": "14564.0",
+          "O-": "298.0"
+      },
+      "SIFILIS PRIMARIA ANAL": {
+          "A+": "0.0",
+          "A-": "0.0",
+          "AB+": "0.0",
+          "AB-": "0.0",
+          "B+": "0.0",
+          "B-": "0.0",
+          "O+": "1.0",
+          "O-": "0.0"
+      },
+      "SIFILIS TARDIA, NO ESPECIFICADA": {
+          "A+": "79.0",
+          "A-": "0.0",
+          "AB+": "6.0",
+          "AB-": "0.0",
+          "B+": "74.0",
+          "B-": "0.0",
+          "O+": "524.0",
+          "O-": "4.0"
+      },
+      "SIFILIS, NO ESPECIFICADA": {
+          "A+": "1271.0",
+          "A-": "9.0",
+          "AB+": "85.0",
+          "AB-": "0.0",
+          "B+": "404.0",
+          "B-": "5.0",
+          "O+": "14329.0",
+          "O-": "135.0"
       }
+  },
+
    };
+   const notes = //{
+    //"top_notes":
+      {
+      "DIABETES MELLITUS NOINSULINODEPENDIENTE SIN MENCION DE COMPLICACION": {
+          "cede": "0.1504970067690268",
+          "ebre": "0.19343970761029933",
+          "enfermedades": "0.1229407660281712",
+          "infeccion": "0.12152421440777647",
+          "infecciones": "0.13866781089559702",
+          "mas": "0.13777709167873153",
+          "prevenir": "0.12340846646639902",
+          "si": "0.20488948105853774",
+          "sintomas": "0.12767002813287587",
+          "transmision": "0.30475706351481113"
+      },
+      "DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION": {
+          "cede": "0.21830790016148832",
+          "dosis": "0.12521941018870142",
+          "formulando": "0.13930652132198162",
+          "medicamentos": "0.20540258445771867",
+          "momento": "0.16022500301113976",
+          "motivacion": "0.13538771066167074",
+          "persistente": "0.1323664768961512",
+          "segir": "0.13930652132198162",
+          "sexual": "0.12521941018870142",
+          "vida": "0.14971814011419865"
+      },
+      "OTRAS SIFILIS SECUNDARIAS": {
+          "acetaminofen": "0.2088923887486686",
+          "cede": "0.30766916749219797",
+          "interna": "0.1730357808802786",
+          "med": "0.25442942138585717",
+          "motivacion": "0.20170160328722056",
+          "nutricion": "0.17019525705996127",
+          "persistente": "0.18950838264532688",
+          "sexual": "0.15570373156662187",
+          "tres": "0.18522427210053205",
+          "vida": "0.21764048872893224"
+      },
+      "SIFILIS GENITAL PRIMARIA": {
+          "cd": "0.18760013858114136",
+          "diagnostico": "0.21743038819919713",
+          "envian": "0.1864666172147405",
+          "ficha": "0.19472039868430155",
+          "ingreso": "0.19157551246253077",
+          "programa": "0.1355336103229673",
+          "proxima": "0.20032148924152293",
+          "resultados": "0.14669295105733277",
+          "ss": "0.14667396748350955",
+          "trae": "0.17483356560559768"
+      }
+    //}
+  }
   //const [dataLabs, setDataLabs] = useState([labs]);
   const navigate = useNavigate();
 
@@ -213,7 +345,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData([labs, "notes"])}>
+                  <CardBody onClick={() => changeData([notes, "notes"])}>
                     <Row>
                       <div className="col">
                         <CardTitle

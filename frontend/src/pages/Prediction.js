@@ -34,6 +34,9 @@ function Prediction() {
   const [modalContent, setModalContent] = useState("exam");
   const [resultPrediction, setResultPrediction] = useState();
 
+  const urlPrediction = "http://20.214.241.33:8000/api/post";
+  const exampleGet = "http://20.214.241.33:8000/api/socio_economics";
+
   const sexOptions = [
     { value: 'Mujer', label: 'Female' },
     { value: 'Hombre', label: 'Male' }
@@ -131,10 +134,18 @@ function Prediction() {
     var json = createDataJson();
     console.log(json);
 
-    axios.post(`https://jsonplaceholder.typicode.com/users`, { name:"Santiago"})
+    // axios.get(exampleGet)
+    // .then(res => {
+    //   console.log(res);
+    // })
+    // .catch(e => {
+    //   console.log(e);
+    // })
+
+    axios.post(urlPrediction,json)
     .then(res => {
       setModalContent("prediction");
-      setResultPrediction(JSON.stringify(res.data));
+      setResultPrediction(res.data.respuesta);
       console.log(res);
       setIsOpen(true);
     })
@@ -144,30 +155,26 @@ function Prediction() {
   }
 
   function createDataJson(){
-    var names = {};
-    var dates = {};
-    var values = {};
+    var names = [];
+    var dates = [];
+    var values = [];
 
     for (var i = 0; i < Object.keys(medicalExams).length; i++) {
-      names[i] = medicalExams[0].name;
-      dates[i] = medicalExams[0].date;
-      values[i] = medicalExams[0].value;
-    }
-
-    var medicalExamsObject = {
-      "Codigo": names,
-      "Fecha": dates,
-      "Valor": values
+      names.push(medicalExams[0].name);
+      dates.push(medicalExams[0].date);
+      values.push(medicalExams[0].value);
     }
 
     var json = {
-      "Edad": parseInt(age),
+      "Edad": age,
       "Genero": sex,
       "GrupoEtnico": ethnicGroup,
       "AreaResidencial": residentialArea,
       "EstadoCivil": maritalStatus,
       "TSangre": bloodType,
-      "Examenes": medicalExamsObject,
+      "Nombre": names,
+      "Fecha": dates,
+      "Valor": values,
       "Tipo": type,
       "Plan": plan
     }
@@ -478,11 +485,11 @@ function Prediction() {
           </>
           :
           <>
-            <p>El resultado de la prediction es:</p>
+            <p><b>Result of prediction:</b></p>
             <p>{resultPrediction}</p>
             <Button 
               color='info'
-              onClick={() => setIsOpen(false)}>Cerrar</Button>
+              onClick={() => setIsOpen(false)}>Close</Button>
           </>
         }
       </Modal>

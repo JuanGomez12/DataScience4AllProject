@@ -1,32 +1,35 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
-const NewStackedBarPlot = ({props}) => {
-    const diseases = Object.keys(props[0])
-    const categories = Object.keys(props[0][diseases[0]])
-    //const cats = categories.reduce((obj,cat)=> (obj[cat]=[],obj),{});
-    let traces = categories.map(function (cat) {
-        let y_vals = []
-        Object.entries(props[0]).map(([key, value]) => {
-            y_vals.push(value[cat])
-            return y_vals
-        })
-        return( 
-            {x: diseases,
-             y: y_vals,
-             name: cat,
-             type: 'bar',
-             text: y_vals.map(String)
-            }
-        )
-    })
+const NewBarPlot = ({props}) => {
+
+    const x_vals = Object.keys(props[0])
+    const y_vals = Object.values(props[0])
+
+    const trace = [{
+        x: ('orientation' in props[1]) && (props[1].orientation === 'h')? y_vals : x_vals,
+        y: ('orientation' in props[1]) && (props[1].orientation === 'h')? x_vals : y_vals,
+        //name: cat,
+        type: 'bar',
+        text: y_vals.map(ele => Number(ele).toFixed(3)),
+        //text: y_vals.map(ele => ele.toFixed(2)),
+        orientation: 'orientation' in props[1] ? props[1].orientation : 'v',
+        marker:{
+          color: 'bar_color' in props[1] ? props[1].bar_color :'rgba(50, 171, 96)',
+          //opacity: 0.6,
+          line:{
+            //color:'rgba(50, 171, 96, 1.0)',
+            opacity: '1.0',
+            //width:1
+          },
+        }
+        }]
     return(
       <div className='plot-class'>
         <Plot
-          data={traces}
+          data={trace}
           layout={
             {
-              barmode: 'stack',
               // width: 'width' in props[1] ? props[1].width : 586,
               // height: 'height' in props[1] ? props[1].height : 430, 
               title: !('title' in props[1]) ? '' : {
@@ -40,7 +43,12 @@ const NewStackedBarPlot = ({props}) => {
                 }
               },
               margin:{
-                t:50
+                l: ('orientation' in props[1]) && (props[1].orientation === 'h')? 100 : 80,
+                t:50,
+                pad: 5
+              },
+              grid:{
+                yside: 'left plot'
               },
               legend: {
                 legend_title: props[1].title,
@@ -49,11 +57,11 @@ const NewStackedBarPlot = ({props}) => {
                 }
               },
               legend_title: props[1].title,
-              color: diseases,
+              //color: diseases,
               paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
               plot_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
               xaxis: {
-                  title: 'Type of Disease',
+                  title: 'Importance',
                   titlefont: {
                     size: 15,
                     //color: 'rgb(107, 107, 107)'
@@ -64,7 +72,7 @@ const NewStackedBarPlot = ({props}) => {
                   }
               },
               yaxis: {
-                title: 'Percentage',
+                title: 'Top terms',
                 titlefont: {
                   size: 15,
                   //color: 'rgb(107, 107, 107)'
@@ -87,4 +95,4 @@ const NewStackedBarPlot = ({props}) => {
       </div> 
     )
 }
-export default NewStackedBarPlot;
+export default NewBarPlot;
