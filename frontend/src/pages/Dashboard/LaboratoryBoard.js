@@ -137,10 +137,10 @@ const LaboratoryBoard = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
+                    <h2 className="text-white mb-1">Exams vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-light ls-1 mb-0">
+                      DISTRIBUTIONS OF EXAMS PER TYPE OF DISEASE
                     </h6>
-                    <h2 className="text-white mb-0">Exams vs. Type of Disease</h2>
                   </Col>
                   <Col xl="2">
                     <div className="text-right">
@@ -165,10 +165,10 @@ const LaboratoryBoard = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                    <h2 className="mb-1">Average Time vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-muted ls-1 mb-0">
+                      AVERAGE TIME BETWEEN EXAMS PER EACH TYPE OF DISEASE
                     </h6>
-                    <h2 className="mb-0">Average Time bet. exams vs. Type of Disease</h2>
                   </Col>
                   <Col xl="2">
                     <div className="text-right">
@@ -195,16 +195,16 @@ const LaboratoryBoard = (props) => {
             <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                    <h2 className="mb-1">Maximum Time between exams vs. Type of Disease</h2>
+                    <h6 className="text-uppercase text-muted ls-1 mb-0">
+                      DISTRIBUTIONS OF MAXIMUM TIME BETWEEN EXAMS PER EACH TYPE OF DISEASE
                     </h6>
-                    <h2 className="mb-0">Maximum Time between exams vs. Type of Disease</h2>
                   </Col>
                   <Col xl="2">
                     <div className="text-right">
                       <Button
                         color="primary"
-                        onClick={() => showOutliers(["exam-max", tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)", width:800, height: 380}])}
+                        onClick={() => showOutliers(["exam-max", tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)"}])}
                         size="sm"
                       >
                         Outliers
@@ -214,118 +214,11 @@ const LaboratoryBoard = (props) => {
                 </Row>
               </CardHeader>
               <div id="exam-max">
-                <BoxPlot props={[tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)", width:800, height: 380}]}></BoxPlot>
+                <BoxPlot props={[tiempoExamenesMaximo, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>
               </div>
             </Card>
           </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
-              </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col" />
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">60%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="60"
-                            barClassName="bg-gradient-danger"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">70%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="70"
-                            barClassName="bg-gradient-success"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">80%</span>
-                        <div>
-                          <Progress max="100" value="80" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">75%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="75"
-                            barClassName="bg-gradient-info"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">30%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="30"
-                            barClassName="bg-gradient-warning"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card>
-          </Col>
+          
         </Row>
       </Container>
     </>
