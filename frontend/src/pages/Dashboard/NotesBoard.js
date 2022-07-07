@@ -129,7 +129,7 @@ const NotesBoard = (props) => {
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="9">
             <Card className="bg-gradient-default shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
@@ -178,32 +178,36 @@ const NotesBoard = (props) => {
               </CardBody>
             </Card>
           </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
-                    </h6>
-                    <h2 className="mb-0">Total orders</h2>
+          <Col xl="3">
+            {false ?
+              <Card className="shadow">
+                <CardHeader className="bg-transparent">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h6 className="text-uppercase text-muted ls-1 mb-1">
+                        Performance
+                      </h6>
+                      <h2 className="mb-0">Total orders</h2>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  {/* Chart */}
+                  <div className="chart">
+                    <Bar
+                      data={chartExample2.data}
+                      options={chartExample2.options}
+                    />
                   </div>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                {/* Chart */}
-                <div className="chart">
-                  <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+              :
+              <></>
+            }
           </Col>
         </Row>
         <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="9">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
@@ -222,7 +226,7 @@ const NotesBoard = (props) => {
                             { Object.keys(sifilis).map(function (type) {
                               return(
                                 <div key={type}>
-                                  <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)"}, 
+                                  <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}, 
                                   'sifi-subt', desease_type[type]])} dropdownvalue={type} size="sm">
                                     {desease_type[type]}
                                   </DropdownItem>
@@ -242,7 +246,7 @@ const NotesBoard = (props) => {
               <CardBody>
                 {Object.keys(state).length !== 0 ?
                   <div id="sifilis">
-                    <BarPlot props={[notes["A51"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)0"}]}></BarPlot>
+                    <BarPlot props={[notes["A51"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}]}></BarPlot>
                   </div>
                   :
                   <CardHeader className="bg-transparent">
@@ -252,113 +256,117 @@ const NotesBoard = (props) => {
               </CardBody>
             </Card>
           </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#predict"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
-              </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col" />
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">60%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="60"
-                            barClassName="bg-gradient-danger"
-                          />
+          <Col xl="3">
+            { false ?
+              <Card className="shadow">
+                <CardHeader className="border-0">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h3 className="mb-0">Social traffic</h3>
+                    </div>
+                    <div className="col text-right">
+                      <Button
+                        color="primary"
+                        href="#pablo"
+                        onClick={(e) => e.preventDefault()}
+                        size="sm"
+                      >
+                        See all
+                      </Button>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th scope="col">Referral</th>
+                      <th scope="col">Visitors</th>
+                      <th scope="col" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Facebook</th>
+                      <td>1,480</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">60%</span>
+                          <div>
+                            <Progress
+                              max="100"
+                              value="60"
+                              barClassName="bg-gradient-danger"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">70%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="70"
-                            barClassName="bg-gradient-success"
-                          />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Facebook</th>
+                      <td>5,480</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">70%</span>
+                          <div>
+                            <Progress
+                              max="100"
+                              value="70"
+                              barClassName="bg-gradient-success"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">80%</span>
-                        <div>
-                          <Progress max="100" value="80" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Google</th>
+                      <td>4,807</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">80%</span>
+                          <div>
+                            <Progress max="100" value="80" />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">75%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="75"
-                            barClassName="bg-gradient-info"
-                          />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Instagram</th>
+                      <td>3,678</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">75%</span>
+                          <div>
+                            <Progress
+                              max="100"
+                              value="75"
+                              barClassName="bg-gradient-info"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">30%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="30"
-                            barClassName="bg-gradient-warning"
-                          />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">twitter</th>
+                      <td>2,645</td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="mr-2">30%</span>
+                          <div>
+                            <Progress
+                              max="100"
+                              value="30"
+                              barClassName="bg-gradient-warning"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Card>
+              :
+              <></>
+            }
           </Col>
         </Row>
       </Container>

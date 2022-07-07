@@ -21,7 +21,7 @@ const NewBoxPlot = ({props}) => {
         return( 
             {
             type: "box",
-            name: desease_type[key],
+            name: key,
             offsetgroup: c,
             boxmean: 'sd',
             //offsetgroup: "1",

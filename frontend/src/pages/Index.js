@@ -175,13 +175,20 @@ const Index = (props) => {
                   <Col xl="10">
                     <h2 className="text-white mb-1">Gender vs. Type of Disease</h2>
                     <h6 className="text-uppercase text-light ls-1 mb-0">
-                      PROPORTIONS OF GENDERS PER TYPE OF DISEASE
+                      PROPORTIONS OF GENDER PER TYPE OF DISEASE
                     </h6>
                   </Col>
                 </Row>
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
-                <StackedBarPlot props={[dataState.Genero, {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></StackedBarPlot>
+                <div>
+                  <StackedBarPlot props={[dataState.Genero, {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></StackedBarPlot>
+                  <div class="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0 text-white">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
@@ -217,9 +224,16 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
-                <div id="Edad">
-                  <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>   
-                </div> 
+                <div>
+                  <div id="Edad">
+                    <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot> 
+                  </div> 
+                  <div class="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
@@ -242,7 +256,14 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
-                <StackedBarPlot props={[dataState.EstadoCivil, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
+                <div>
+                  <StackedBarPlot props={[dataState.EstadoCivil, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
+                  <div class="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>      
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
@@ -263,7 +284,14 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
+              <div>
                 <StackedBarPlot props={[dataState.TSangre, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
+                <div class="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                  <h6 className="ls-1 mb-0">
+                    <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                  </h6> 
+                </div>
+              </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
