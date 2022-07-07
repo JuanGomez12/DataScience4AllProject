@@ -30,10 +30,29 @@ condition_name_dict = {
 }
 
 ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
+# Path definitions
 socio_json_path = Path('scripts')/'utils'/'api_data'/'sociodemographic_summary.json'
+lab_json_path = Path('scripts')/'utils'/'api_data'/'lab_summary.json'
+notes_json_path = Path('scripts')/'utils'/'api_data'/'notes_summary.json'
+
+# Load files
 if socio_json_path.is_file():
     with open(socio_json_path) as in_file:
         socio_json = json.load(in_file)
+else:
+    socio_json = {'error':'sociodemographic_file_not_found'}
+
+if lab_json_path.is_file():
+    with open(lab_json_path) as in_file:
+        lab_json = json.load(in_file)
+else:
+    lab_json = {'error':'lab_file_not_found'}
+
+if notes_json_path.is_file():
+    with open(notes_json_path) as in_file:
+        notes_json = json.load(in_file)
+else:
+    notes_json = {'error':'notes_file_not_found'}
 
 class Post_APIView(APIView):
 
@@ -92,14 +111,14 @@ class socioEconomic_APIView(APIView):
 class Laboratory_APIView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
-        data = 'Laboratory'
+        data = lab_json
         
         return Response(data)
 
 class Notes_APIView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
-        data = 'Notes'
+        data = notes_json
         
         return Response(data)
 
