@@ -1,6 +1,7 @@
 
 import sys
 from typing import Optional
+import json
 
 import numpy as np
 import requests
@@ -15,6 +16,18 @@ from rest_framework.views import APIView
 sys.path.append('scripts')
 from utils.preprocessing_utils import preprocess_json
 
+condition_name_dict = {
+    'A510':'Primary genital syphilis' ,
+    'A511':'Primary anal syphilis',
+    'A514':'Other secondary syphilis',
+    'A529':'Late syphilis, unspecified',
+    'A530':'Latent syphilis, unspecified as early or late',
+    'A539':'Syphilis, unspecified',
+    'E109':'Type I diabetes mellitus',
+    'E119':'Type II diabetes mellitus',
+    'E149':'Unspecified diabetes mellitus',
+}
+
 ml_pipeline = load('scripts/model/prediction_pipeline.pickle')
 
 
@@ -28,7 +41,7 @@ class Post_APIView(APIView):
         return Response(data)
 
     def post(self, request, format=None):
-        post_data = request.GET
+        post_data = dict(request.data)
         data = post_data.copy()
         print('****************************************')
         print(data)
@@ -55,7 +68,12 @@ class Post_APIView(APIView):
         data_clean['Examenes'] = Examenes
         print(data_clean)
         prediction = ml_pipeline.predict(preprocess_json(data_clean))
-        prediction = {'respuesta':prediction[0]}
+        print('****************************************')
+        print(f'Prediction probabilities:')
+        print(json.dumps(ml_pipeline.predict_proba(preprocess_json(data_clean))[0], sort_keys=True, indent=4))
+        print(f"Final Prediction: {prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}")
+        print('****************************************')
+        prediction = {'respuesta':f"{prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"}
         if data_clean:
             return Response(prediction, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -100,7 +118,6 @@ def test_ml_model(sample_path:Optional[str] = None) -> np.array:
     Returns:
         np.array: Numpy array containing the prediction for the supplied example.
     """
-    import json
     if sample_path is None:
         sample_path = 'scripts/utils/sample_example.json'
     with open(sample_path) as in_file:

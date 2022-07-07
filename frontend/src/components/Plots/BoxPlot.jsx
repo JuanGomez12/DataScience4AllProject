@@ -5,6 +5,8 @@ const NewBoxPlot = ({props}) => {
     let c=0
     let traces = Object.entries(props[0]).map(([key, value]) => {
         c ++
+        const std = (value.q3-value.mean)/(0.675)
+        console.log('std:', value.sd ? [value.sd] : [std])
         return( 
             {
             type: "box",
@@ -16,17 +18,28 @@ const NewBoxPlot = ({props}) => {
             median: [value.med],
             q3: [value.q3],
             lowerfence: [value.min],
-            upperfence: [value.max]
+            upperfence: [value.max],
+            mean: [value.mean],
+            sd: value.sd ? [value.sd] : [std],
+            y : (value.outliers.length > 0) ? [value.outliers] : [[value.med]],
+            boxpoints: 'outliers', //'suspectedoutliers'
+            marker: {
+              //outliercolor: 'rgba(219, 64, 82, 0.6)',
+              line: {
+                //outliercolor: 'rgba(219, 64, 82, 1.0)',
+                outlierwidth: 2
+              }
+            },
             }
         )})
     return(
       <div className='plot-class'>
-        <Plot 
+        <Plot
         data={traces}
         layout={
           {
             // width: 'width' in props[1] ? props[1].width : 586,
-            // height: 'height' in props[1] ? props[1].height : 480, 
+            // height: 'height' in props[1] ? props[1].height : 430,
             title: !('title' in props[1]) ? '' : {
             text: '<b>' + props[1].title + ' vs. Type of Disease</b>',
             x: 0.05,
@@ -37,13 +50,18 @@ const NewBoxPlot = ({props}) => {
               color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
             }
           },
-          legend: {
-            legend_title: props[1].title,
-            font: {
-              size: 13
-            }
+          margin:{
+            t:50
           },
           showlegend: true,
+          legend: {
+            title: {
+              text: props[1].title,
+              font: {
+                size: 13
+              }
+            }
+          },
           legend_title: props[1].title,
           boxmode: 'group',
           paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
@@ -75,10 +93,10 @@ const NewBoxPlot = ({props}) => {
             //size: 18,
             color: 'font_color' in props[1] ? props[1].font_color : 'rgb(149,163,179)'
           }
-        }}
-        x = {['day 1', 'day 2']}
-        useResizeHandler={true}
-        style={{width: "100%", height: "100%"}}
+          }}
+        useResizeHandler={true} 
+        style={{width: "100%", height: "100%", fontSize: "10px !important"}}
+        className='a.modebar-btn'
         />
       </div>
     )

@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import React from "react";
 import { useState } from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
@@ -28,6 +29,10 @@ import {
   Card,
   CardHeader,
   CardBody,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
   NavItem,
   NavLink,
   Nav,
@@ -49,16 +54,34 @@ import {
 import Header from "../../components/Headers/Header.js";
 import { useLocation } from 'react-router-dom';
 import BoxPlot from "../../components/Plots/BoxPlot";
-import StackedBarPlot from "../../components/Plots/StackedBarPlot";
+import BarPlot from "../../components/Plots/BarPlot";
+import * as ReactDOMClient from 'react-dom/client';
 
 const NotesBoard = (props) => {
 
-  console.log("Cargo index");
+  //console.log("Cargo notes");
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
-  //const { state } = useLocation();
-  //console.log(state)
-  //const {genero,edad,estadoCivil,tipoSangre} = state
+  const {state}  = useLocation();
+  const notes = state
+
+  const [dropdownOpenDiab, setDropdownOpenDiab] = React.useState(false);
+  const toggleDiab = () => setDropdownOpenDiab(prevState => !prevState);
+  const [dropdownOpenSif, setDropdownOpenSif] = React.useState(false);
+  const toggleSif = () => setDropdownOpenSif(prevState => !prevState);
+  //let dropdown = {"isOpen": false, "toggle": }
+  //console.log(notes)
+
+  const diabetes= {} 
+  const sifilis = {}
+  Object.entries(notes).map(([key, value]) => {
+    if (key.includes('DIABETES')) {
+      diabetes[key] = value
+    }else{
+      sifilis[key] = value
+    }
+  })
+    
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -69,6 +92,24 @@ const NotesBoard = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+
+  function handleChangeDropdown(plot_info){
+    let root
+    let root_subt
+    if (!root && !root_subt) {
+      root = ReactDOMClient.createRoot(document.getElementById(plot_info[0]));
+      root_subt = ReactDOMClient.createRoot(document.getElementById(plot_info[3]));
+    }
+    root_subt.render(
+      <div id={plot_info[3]}>TOP TERMS FOR {plot_info[4]}</div>
+    )
+    root.render(
+      <div id={plot_info[0]}>
+        <BarPlot props={[plot_info[1], plot_info[2]]}></BarPlot>
+      </div>)
+    root = null
+    root_subt = null
+  }
   
   return (
     <>
@@ -80,51 +121,37 @@ const NotesBoard = (props) => {
             <Card className="bg-gradient-default shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
+                  <Col xl="9">
+                    <h2 className="text-white ls-1 mb-1">Most Relevant Terms for Diabetes in the EHR</h2>
+                    <h6 className="text-uppercase text-light mb-0">
+                      <div id='diab-subt'>TOP TERMS FOR DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION</div>
                     </h6>
-                    <h2 className="text-white mb-0">Sales value</h2>
-                  </div>
-                  <div className="col">
-                    <Nav className="justify-content-end" pills>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 1,
-                          })}
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 1)}
-                        >
-                          <span className="d-none d-md-block">Month</span>
-                          <span className="d-md-none">M</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 2,
-                          })}
-                          data-toggle="tab"
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 2)}
-                        >
-                          <span className="d-none d-md-block">Week</span>
-                          <span className="d-md-none">W</span>
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
+                  </Col>
+                  <Col xl="3">
+                    <div className="text-right">
+                      <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm">
+                        <DropdownToggle caret>Type of Diabetes</DropdownToggle>
+                        <DropdownMenu size="sm" left='true'>
+                          { Object.keys(diabetes).map(function (type) {
+                            return(
+                              <div key={type}>
+                                <DropdownItem onClick={() => handleChangeDropdown(['diabetes', diabetes[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"},
+                                 'diab-subt', type])} dropdownvalue={type} size="sm">
+                                  {type}
+                                </DropdownItem>
+                              </div>
+                            )
+                          })
+                          }
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                {/* Chart */}
-                <div className="chart">
-                  <Line
-                    data={chartExample1[chartExample1Data]}
-                    options={chartExample1.options}
-                    getDatasetAtEvent={(e) => console.log(e)}
-                  />
+                <div id="diabetes">
+                  <BarPlot props={[notes["DIABETES MELLITUS, NO ESPECIFICADA SIN MENCION DE COMPLICACION"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
                 </div>
               </CardBody>
             </Card>
@@ -158,76 +185,39 @@ const NotesBoard = (props) => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
+                  <Col xl="9">
+                    <h2 className="ls-1 mb-1">Most Relevant Terms for Syphilis in the EHR</h2>
+                    <h6 className="text-uppercase text-muted mb-0">
+                      <div id='sifi-subt'>TOP TERMS FOR OTRAS SIFILIS SECUNDARIAS</div>
+                    </h6>
+                  </Col>
+                  <Col xl="3">
+                    <div className="text-right">
+                      <Dropdown isOpen={dropdownOpenSif} toggle={toggleSif} size="sm" color="primary">
+                        <DropdownToggle caret color="primary">Type of Syphilis</DropdownToggle>
+                        <DropdownMenu size="sm" left='true'>
+                          { Object.keys(sifilis).map(function (type) {
+                            return(
+                              <div key={type}>
+                                <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)"}, 
+                                'sifi-subt', type])} dropdownvalue={type} size="sm">
+                                  {type}
+                                </DropdownItem>
+                              </div>
+                            )
+                          })
+                          }
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  </Col>
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">/argon/</th>
-                    <td>4,569</td>
-                    <td>340</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/index.html</th>
-                    <td>3,985</td>
-                    <td>319</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/charts.html</th>
-                    <td>3,513</td>
-                    <td>294</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/tables.html</th>
-                    <td>2,050</td>
-                    <td>147</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/profile.html</th>
-                    <td>1,795</td>
-                    <td>190</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
+              <CardBody>
+                <div id="sifilis">
+                  <BarPlot props={[notes["OTRAS SIFILIS SECUNDARIAS"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)0"}]}></BarPlot>
+                </div>
+              </CardBody>
             </Card>
           </Col>
           <Col xl="4">

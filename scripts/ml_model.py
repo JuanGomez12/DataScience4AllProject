@@ -104,6 +104,42 @@ class PredictionPipeline:
             prediction = self.label_encoder.inverse_transform(prediction)
         return prediction
 
+    def predict_proba(
+        self, X: pd.DataFrame, preprocess_data: bool = True, **kwargs
+    ) -> list:
+        """Predicts the probabilities for each label for the samples passed into
+        the function.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the data to predict on.
+            preprocess_data (bool, optional): If True, the data will be
+                preprocessed using preprocess_data before trying to predict on
+                it. Defaults to True.
+
+        Returns:
+            np.array: List of dictionaries, where each dictionary represents one
+            sample of the prediction, with its keys being the class and the
+            value the probability of the class being the correct class.
+        """
+        if preprocess_data:
+            preprocessed_X = self.preprocess_data(X)
+        else:
+            preprocessed_X = X
+        predictions = self.estimator.predict_proba(preprocessed_X, **kwargs)
+        predictions_preprocessed = []
+        for i in range(len(predictions)):
+            sample = predictions[i]
+            predictions_dict = {}
+            for idx, j in enumerate(sample):
+                if self.label_encoder is not None:
+                    predictions_dict[
+                        self.label_encoder.inverse_transform([idx])[0]
+                    ] = np.round(float(j), 3)
+                else:
+                    predictions_dict[idx] = np.round(float(j), 3)
+            predictions_preprocessed.append(predictions_dict.copy())
+        return predictions_preprocessed
+
 
 class PipelineManager:
     def __init__(
@@ -112,6 +148,19 @@ class PipelineManager:
         use_feature_selector: bool = True,
         use_text_preprocessor: bool = False,
     ):
+        """_summary_
+
+        Args:
+            estimator (str): Type of estimator to use. Either regressor or
+                classifier
+            use_feature_selector (bool, optional): If true, adds a feature
+                selection step to the pipeline. Defaults to True.
+            use_text_preprocessor (bool, optional): If true, adds a text
+                preprocessing transformer to the pipeline. Defaults to False.
+
+        Raises:
+            ValueError: _description_
+        """
         # estimator should be regressor or classifier
         if estimator.lower() not in ["regressor", "classifier"]:
             raise ValueError(
@@ -229,16 +278,36 @@ class PipelineManager:
 
         self.pipeline = Pipeline(pipeline_list)
 
-    def get_categorical_features(self) ->list:
+    def get_categorical_features(self) -> list:
+        """Returns the categorical features of the pipeline
+
+        Returns:
+            list: Categorical features.
+        """
         return self.cat_features.copy()
 
-    def get_numerical_features(self)->list:
+    def get_numerical_features(self) -> list:
+        """Returns the numerical features of the pipeline
+
+        Returns:
+            list: numerical features.
+        """
         return self.num_features.copy()
 
-    def get_text_features(self)->list:
+    def get_text_features(self) -> list:
+        """Returns the text feature of the pipeline
+
+        Returns:
+            list: Text feature.
+        """
         return [] if self.text_features is None else [self.text_features]
 
-    def get_features(self)->list:
+    def get_features(self) -> list:
+        """Returns the features of the pipeline
+
+        Returns:
+            list: List containing all the features in the pipeline.
+        """
         features_list = (
             self.get_categorical_features()
             + self.get_numerical_features()

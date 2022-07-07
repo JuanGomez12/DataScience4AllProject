@@ -28,7 +28,7 @@ const NewStackedBarPlot = ({props}) => {
             {
               barmode: 'stack',
               // width: 'width' in props[1] ? props[1].width : 586,
-              // height: 'height' in props[1] ? props[1].height : 480, 
+              // height: 'height' in props[1] ? props[1].height : 430, 
               title: !('title' in props[1]) ? '' : {
                 text: '<b>' + props[1].title + ' vs. Type of Disease</b>',
                 x: 0.05,
@@ -38,6 +38,9 @@ const NewStackedBarPlot = ({props}) => {
                   size: 19,
                   color: 'font_color' in props[1] ? props[1].font_color :'rgb(50,50,93)'
                 }
+              },
+              margin:{
+                t:50
               },
               legend: {
                 legend_title: props[1].title,
