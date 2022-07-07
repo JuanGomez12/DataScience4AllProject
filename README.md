@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="imgs/DoctorDiseaseHeader.jpg" alt="Doctor Disease Headere"/>
+  <img src="imgs/DoctorDiseaseHeader.png" alt="Doctor Disease Header"/>
 </p>
 
 # DS4A-Project
