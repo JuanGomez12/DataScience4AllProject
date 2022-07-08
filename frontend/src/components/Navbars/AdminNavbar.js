@@ -95,7 +95,7 @@ const AdminNavbar = (props) => {
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>
-                {/* <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                {/* <DropdownItem href="#rpedict" onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem> */}
