@@ -37,6 +37,10 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     'http://www.doctordisease.org/',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    '*.doctordisease.org',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
