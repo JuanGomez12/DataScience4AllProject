@@ -359,7 +359,7 @@ function Prediction() {
                           <Col className="text-right" xs="4">
                             <Button
                               color="info"
-                              href="#pablo"
+                              href="#predict"
                               onClick={(e) => openModal("exam")}
                               size="sm"
                             >
@@ -409,7 +409,7 @@ function Prediction() {
                   <Row>
                     <Button
                       color="info"
-                      href="#pablo"
+                      href="#predict"
                       onClick={handleSubmit}
                     >Submit</Button>
                   </Row>

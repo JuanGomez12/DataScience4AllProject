@@ -47,7 +47,7 @@ const UserHeader = () => {
               </p>
               <Button
                 color="info"
-                href="#pablo"
+                href="#predict"
                 onClick={(e) => e.preventDefault()}
               >
                 Edit profile
