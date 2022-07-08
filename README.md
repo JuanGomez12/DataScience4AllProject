@@ -32,12 +32,12 @@ The frontend was developed using Javascript, specifically the React framework, w
 - Capabilities of getting predictions through the Frontend prediction form or from an API call.
 
 ## Installation
-The Python version we used for development was Python 3.9.12 in Ubuntu 20.04.4 LTS, with the exact version of the Python libraries found in the [reqquirements_versioned](requirements_versioned.txt) text file. The [requirements file](requirements.txt) contains the unversioned libraries needed to run the scripts for the ML and Deep Learning training, as well as the Django server, in a different environment/system than the one used for the versioned script. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510), is already stored in the repo, so there's no need to run the ML training process, only to start up the Django service for API calls and optionally the frontend. If model training is desired, the datasets (sociodemografico.csv, laboratorios.csv, and notas.csv) to train it need to be placed in the data directory inside of the scripts directory (the path should look like scripts/data/).
+The Python version we used for development was Python 3.9.12 in Ubuntu 20.04.4 LTS, with the exact version of the Python libraries found in the [requirements_versioned](requirements_versioned.txt) text file. The [requirements file](requirements.txt) contains the unversioned libraries needed to run the scripts for the ML and Deep Learning training, as well as the Django server, in a different environment/system than the one used for the versioned script. The resulting pipeline_predictor file, ready to be used to predict results and return the respective prediction code (e.g. A510), is already stored in the repo, so there's no need to run the ML training process, only to start up the Django service for API calls and optionally the frontend. If model training is desired, the datasets (sociodemografico.csv, laboratorios.csv, and notas.csv) to train it need to be placed in the data directory inside of the scripts directory (the path should look like scripts/data/).
 
 ## How to use
 ### Frontend and backend deployment
 #### Backend
-To run the backend, it is necessary to run in the command line from the root directory of this repository:
+To run the backend, it is necessary to run the following command in a terminal from the root directory of this repository:
 ```
 python manage.py runserver
 ```
