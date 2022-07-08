@@ -23,6 +23,13 @@ import NotesBoard from "./pages/Dashboard/NotesBoard";
 
 var routes = [
   {
+    path: "",
+    name: "Home",
+    icon: "ni ni-laptop text-info",
+    component: <Home/>,
+    layout: "/home",
+  },
+  {
     path: "/index",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
@@ -35,13 +42,6 @@ var routes = [
     icon: "ni ni-app text-primary",
     component: <Prediction/>,
     layout: "/admin",
-  },
-  {
-    path: "/",
-    name: "Home",
-    icon: "ni ni-laptop text-info",
-    component: <Home/>,
-    layout: "/home",
   }
 ];
 export default routes;

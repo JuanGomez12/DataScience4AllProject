@@ -124,23 +124,24 @@ const Index = (props) => {
   };
 
   useEffect(() => {
-    //console.log(state);
+    console.log(state);
     if(state !== null){
       setDataState(state);
     } else{
-      setDataState(getDataAPI());
+      getDataAPI();
     }
 
     if (window.Chart) {
       parseOptions(Chart, chartOptions());
     }
-  });
+  }, []);
 
   function getDataAPI(){
     let rpta
     axios.get(socioGetAPI)
     .then(res => {
       rpta = res.data
+      setDataState(rpta)
       //console.log('rpta del API', rpta);
     })
     .catch(e => {

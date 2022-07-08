@@ -40,7 +40,6 @@ function App() {
         {/* <Navegationbar></Navegationbar> */}
         <Routes>
           <Route path="/admin/*" element={<AdminLayout /> } />
-          <Route path="/home" element={<Homepage /> } />
           <Route path='/*' element={<Homepage/>}/>
           {/* <Route path="/*" element={<Homepage /> } /> */}
           {/* <Route path='/dashboard' element={<Dashboard/>}/>

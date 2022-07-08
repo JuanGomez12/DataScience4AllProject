@@ -300,7 +300,6 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.keywords_max !== undefined ?
                 <div>
                   <div id="maxTest">
-                  {console.log('BOX', dataState.keywords_max)}
                     <BoxPlot props={[dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></BoxPlot>
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>

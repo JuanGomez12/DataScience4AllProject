@@ -18,7 +18,7 @@
 
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios'
@@ -311,6 +311,7 @@ const Header = (props) => {
   const socioGetAPI = "http://20.214.241.33:8000/api/socio_economics";
   const labsGetAPI = "http://20.214.241.33:8000/api/laboratory";
   const notesGetAPI = "http://20.214.241.33:8000/api/notes";
+  const activeDash = useRef('');
   //<CardBody onClick={() => changeData([socio, "sociodemographic"])}>
   //<CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}></CardBody>
 
@@ -321,13 +322,17 @@ const Header = (props) => {
     //console.log("Rpta API a changeData:", data[0]);
     //setDataSelected(data);
     //setDataLabs(data[0])
+    console.log(activeDash.current)
     if (data[1] === "sociodemographic"){
+      //activeDash.current = "sociodemographic"
       navigate('/admin/index', { state:  data[0]})
     }
     else if (data[1] === "laboratory"){
+      //activeDash.current = "laboratory"
       navigate('/admin/labs', { state:  data[0]})
     }
     else if (data[1] === "notes"){
+      //activeDash.current = "notes"
       navigate('/admin/notes', { state:  data[0]})
     }
   }
@@ -335,6 +340,7 @@ const Header = (props) => {
 
   function getDataAPI(url_api, group){
     let rpta
+    activeDash.current = group
     axios.get(url_api)
     .then(res => {
       rpta = res.data
@@ -358,7 +364,7 @@ const Header = (props) => {
             <Row>
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(socioGetAPI, "sociodemographic")}>
+                  <CardBody onClick={() => getDataAPI(socioGetAPI, "sociodemographic")} className={activeDash.current === 'sociodemographic' ? 'card-active' : ''}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -386,7 +392,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}>
+                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -408,7 +414,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(notesGetAPI, "notes")}>
+                  <CardBody onClick={() => getDataAPI(notesGetAPI, "notes")} className={activeDash.current === 'notes' ? 'card-active' : ''}>
                     <Row>
                       <div className="col">
                         <CardTitle

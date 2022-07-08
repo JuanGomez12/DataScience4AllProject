@@ -40,7 +40,7 @@ const AdminNavbar = (props) => {
         <Container fluid>
           <Link
             className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
-            to="/admin"
+            to="/admin/index"
           >
             <p>Dashboard</p>
           </Link>
