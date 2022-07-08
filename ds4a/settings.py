@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['20.214.241.33', 'localhost']
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^http:\/\/20.214.241.33$',
     r'^http:\/\/localhost:\d+$',
+    r'^http:\/\/www.doctordisease.org\d+$',
     'http://localhost:8000',
     'http://20.214.241.33:8000',
     'http://www.doctordisease.org/',
