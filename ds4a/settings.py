@@ -33,6 +33,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^http:\/\/localhost:\d+$',
     'http://localhost:8000',
     'http://20.214.241.33:8000',
+    'http://www.doctordisease.org/',
 ]
 
 # Application definition
