@@ -42,7 +42,7 @@ import * as ReactDOMClient from 'react-dom/client';
 
 const Index = (props) => {
 
-  const socio = {"genero":{
+  const socio = {"Genero":{
     "Diabetes":{
         "hombres":40,
         "mujeres":60
@@ -52,7 +52,7 @@ const Index = (props) => {
       "mujeres":30
     }
     },
-  "edad":{
+  "Edad":{
     "Diabetes":{
       "min":0,
       "q1":10,
@@ -61,7 +61,7 @@ const Index = (props) => {
       "max":60,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     },
     "Syphilis":{
       "min":1,
@@ -71,16 +71,16 @@ const Index = (props) => {
       "max":61,
       "mean": 30,
       "sd": 20,
-      "outliers": [0, -50, 85, 100 ]
+      "fliers": [0, -50, 85, 100 ]
     }
   },
-  "estadoCivil":{
+  "EstadoCivil":{
       "Diabetes":{
         "soltero":12,
         "casado":32
       }
   },
-  "tipoSangre":{
+  "TSangre":{
       "Diabetes":{
         "O+":12,
         "AB":32,
@@ -95,12 +95,25 @@ const Index = (props) => {
        }
     }
   };
+  const desease_type = {
+    'A510': 'Primary genital Syph.',
+    'A511': 'Primary anal Syph.',
+    'A514': 'Other secondary Syph.',
+    'A529': 'Late Syph, unspecif.',
+    'A530': 'Latent Syph, unspecif. as early or late',
+    'A539': 'Syphilis, unspecif.',
+    'E109': 'Type 1 Diabetes M.',
+    'E119': 'Type 2 Diabetes M.',
+    'E149': 'Unspecif. Diabetes M.'
+  }
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const { state } = useLocation();
-  const [dataState, setDataState] = useState(socio);
+  const [dataState, setDataState] = useState({});
+  console.log('stat', state)
   //const {genero,edad,estadoCivil,tipoSangre} = state
-  let outs_states =  {'edad':[true, null]}
+  let outs_states =  {'Edad':[true, {}]} // idx 1 true if outliers are showing, idx 2 saves the outliers
+  //console.log('Estado', state)
 
   const toggleNavs = (e, index) => {
     e.preventDefault();
@@ -109,7 +122,7 @@ const Index = (props) => {
   };
 
   useEffect(() => {
-    console.log(state);
+    //console.log(state);
     if(state !== null){
       setDataState(state);
     }
@@ -124,16 +137,19 @@ const Index = (props) => {
     if (!root) {
       root = ReactDOMClient.createRoot(document.getElementById(plot_info[0]));
     }
-    outs_states[plot_info[0]] = outs_states[plot_info[0]] ? false : true
+    //console.log('outs_states', outs_states)
+    outs_states[plot_info[0]][0] = outs_states[plot_info[0]][0] ? false : true
     //showOuts = showOuts ? false : true
     console.log('old', plot_info[1])
+    //console.log(outs_states)
     Object.entries(plot_info[1]).map(([key, value]) => {
-      if (!outs_states[plot_info[0]]) {
-        outs_states[plot_info[1]] = value.outliers
-        value.outliers = []
+      if (!outs_states[plot_info[0]][0]) {
+        outs_states[plot_info[0]][1][key] = value.fliers
+        value.fliers = []
+        //console.log('outs_states_af', plot_info[1])
       } 
       else {
-        value.outliers = outs_states[plot_info[1]]
+        value.fliers = outs_states[plot_info[0]][1][key]
       }
       root.render(<div id={plot_info[0]}>
                     <BoxPlot props={[plot_info[1], plot_info[2]]}></BoxPlot>
@@ -164,10 +180,12 @@ const Index = (props) => {
                   </Col>
                 </Row>
               </CardHeader>
-              {dataState?
-                <StackedBarPlot props={[dataState.genero, {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></StackedBarPlot>
+              {Object.keys(dataState).length !== 0 ?
+                <StackedBarPlot props={[dataState.Genero, {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></StackedBarPlot>
                 :
-                <></>
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
               }
             </Card>
           </Col>
@@ -182,24 +200,30 @@ const Index = (props) => {
                     </h6>
                   </Col>
                   <Col xl="2">
-                    <div className="text-right">
-                      <Button
-                        color="primary"
-                        onClick={() => showOutliers(["edad", dataState.edad, {bck_color:"rgba(0,0,0,0)"}])}
-                        size="sm"
-                      >
-                        Outliers
-                      </Button>
-                    </div>
+                    {Object.keys(dataState).length !== 0 ?
+                      <div className="text-right">
+                        <Button
+                          color="primary"
+                          onClick={() => showOutliers(["Edad", dataState.Edad, {bck_color:"rgba(0,0,0,0)"}])}
+                          size="sm"
+                        >
+                          Outliers
+                        </Button>
+                      </div>
+                      :
+                      <></>
+                    }
                   </Col>
                 </Row>
               </CardHeader>
-              {dataState?
-                <div id="edad">
-                  <BoxPlot props={[dataState.edad, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>   
+              {Object.keys(dataState).length !== 0 ?
+                <div id="Edad">
+                  <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>   
                 </div> 
                 :
-                <></>
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
               }      
             </Card>
           </Col>
@@ -217,10 +241,12 @@ const Index = (props) => {
                   </Col>
                 </Row>
               </CardHeader>
-              {dataState?
-                <StackedBarPlot props={[dataState.estadoCivil, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
+              {Object.keys(dataState).length !== 0 ?
+                <StackedBarPlot props={[dataState.EstadoCivil, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
                 :
-                <></>
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
               } 
             </Card>
           </Col>
@@ -236,10 +262,12 @@ const Index = (props) => {
                   </Col>
                 </Row>
               </CardHeader>
-              {dataState?
-                <StackedBarPlot props={[dataState.tipoSangre, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
+              {Object.keys(dataState).length !== 0 ?
+                <StackedBarPlot props={[dataState.TSangre, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
                 :
-                <></>
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
               } 
             </Card>
           </Col>

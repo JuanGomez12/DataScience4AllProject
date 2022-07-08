@@ -106,11 +106,11 @@ const LaboratoryBoard = (props) => {
     console.log('old', plot_info[1])
     Object.entries(plot_info[1]).map(([key, value]) => {
       if (!outs_states[plot_info[0]]) {
-        outs_states[plot_info[1]] = value.outliers
-        value.outliers = []
+        outs_states[plot_info[1]] = value.fliers
+        value.fliers = []
       } 
       else {
-        value.outliers = outs_states[plot_info[1]]
+        value.fliers = outs_states[plot_info[1]]
       }
       root.render(<div id={plot_info[0]}>
       <BoxPlot props={[plot_info[1], plot_info[2]]}></BoxPlot>

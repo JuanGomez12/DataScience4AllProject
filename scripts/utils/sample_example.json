@@ -1,5 +1,5 @@
 {
-  "Edad": 39,
+  "Edad": "39",
   "Genero": "Mujer",
   "GrupoEtnico": "Mestizo",
   "AreaResidencial": "Zona Urbana",
@@ -16,7 +16,7 @@
     },
     "Valor": {
       "0": "NaN",
-      "1": 20
+      "1": "20"
     }
   },
   "Tipo": "Confirmado Repetido",
