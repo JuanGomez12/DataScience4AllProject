@@ -31,8 +31,35 @@ ALLOWED_HOSTS = ['20.214.241.33', 'localhost']
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^http:\/\/20.214.241.33$',
     r'^http:\/\/localhost:\d+$',
+    r'^http:\/\/www.doctordisease.org\d+$',
     'http://localhost:8000',
     'http://20.214.241.33:8000',
+    'http://www.doctordisease.org/',
+]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "cache-control",
+    "pragma",
 ]
 
 # Application definition

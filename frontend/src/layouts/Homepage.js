@@ -140,17 +140,17 @@ const Homepage = (props) => {
                 <Col>
                   <img className="home-picture-team" src="img/members/charic.jpg"></img>
                   <h2 className="home-title-column light-text">Charic Farinango</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Computer Scientist and AI Enthusiast</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/jorge.jpeg"></img>
                   <h2 className="home-title-column light-text">Jorge Acevedo</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Electronic and Industrial Engineer</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/juan.jpeg"></img>
                   <h2 className="home-title-column light-text">Juan M Gómez</h2>
-                  <p className="home-text-column light-text">Biomedical Engineer</p>
+                  <p className="home-text-column light-text">Biomedical Engineer, Software Developer, and Data Scientist</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/santiago.jpg"></img>
@@ -169,12 +169,12 @@ const Homepage = (props) => {
                 <Col>
                   <img className="home-picture-team" src="img/members/cristian.png"></img>
                   <h2 className="home-title-column light-text">Cristian Prieto</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Systems Engineer</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/steven.jpeg"></img>
                   <h2 className="home-title-column light-text">Steven Ruiz</h2>
-                  <p className="home-text-column light-text">Ingeniero</p>
+                  <p className="home-text-column light-text">Economist, Supply Chain Data Analyst</p>
                 </Col>
               </Row>
             </div>
