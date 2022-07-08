@@ -43,10 +43,8 @@ function Prediction() {
   ];
 
   const ethnicOptions = [
-    { value: 'Mestizo', label: 'Mestize' },
-    { value: 'Negro', label: 'Black' },
-    { value: 'Mulato', label: 'Mulatto' },
-    { value: 'Afrocolombiano o Afro descendiente', label: 'Afro-Colombian or Afro-descendant' },
+    { value: 'Mestizo', label: 'Mestizo' },
+    { value: 'Negro, Mulato, Afrocolombiano o Afro descendiente', label: 'Black, Mulatto, Afrocolombian or Afro descendant' },
     { value: 'Blanco', label: 'White' },
     { value: 'Indígena', label: 'Indigenous' },
     { value: 'Palenquero de San Basilio', label: 'Palenquero of San Basilio' },
@@ -64,7 +62,7 @@ function Prediction() {
     { value: 'Soltero', label: 'Single' },
     { value: 'No reportado', label: 'Not reported' },
     { value: 'Viudo/a', label: 'Widower' },
-    { value: 'Union libre', label: 'Free union' },
+    { value: 'Union libre', label: 'Free union/common law partners' },
     { value: 'Desconocido', label: 'Unknown' },
     { value: 'Divorciado', label: 'Divorced' }
   ];
