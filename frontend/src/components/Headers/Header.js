@@ -37,7 +37,7 @@ const Header = (props) => {
           "max":60,
           "mean": 20,
           "sd": 10,
-          "fliers": [100, 80]
+          "fliers": [150, -5]
         },
         "Syphilis":{
           "min":10,
@@ -59,7 +59,7 @@ const Header = (props) => {
           "max":80,
           "mean": 40,
           "sd": 30,
-          "fliers": [130, 85]
+          "fliers": [130, 90]
         },
         "Syphilis":{
           "min":10,
@@ -69,7 +69,7 @@ const Header = (props) => {
           "max":71,
           "mean": 30,
           "sd": 20,
-          "fliers": [0, -50, 85, 100 ]
+          "fliers": [0, -40, -85 ]
         },
       }
     },
@@ -83,7 +83,7 @@ const Header = (props) => {
           "max":60,
           "mean": 30,
           "sd": 20,
-          "fliers": [0, -50, 85, 100 ]
+          "fliers": [-10, 90, -25 ]
       }
       }
     },
@@ -96,7 +96,7 @@ const Header = (props) => {
         "max":60,
         "mean": 30,
         "sd": 20,
-        "fliers": [0, -50, 85, 100 ]
+        "fliers": [-20, 95, 130 ]
       }
     },
   "date_diff_max": {
@@ -118,7 +118,7 @@ const Header = (props) => {
       "max":80,
       "mean": 30,
       "sd": 20,
-      "fliers": [0, -50, 85, 100 ]}
+      "fliers": [-10, -20, 100, 150 ]}
     }
   };
   const socio = {"genero":{
@@ -386,7 +386,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => changeData([labs, "laboratory"])}>
+                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}>
                     <Row>
                       <div className="col">
                         <CardTitle
