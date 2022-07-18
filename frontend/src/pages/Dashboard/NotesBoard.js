@@ -63,6 +63,9 @@ const NotesBoard = (props) => {
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const {state}  = useLocation();
   const notes = state
+  let init_diab_name = 'E109'
+  let init_syph_name = 'A51'
+
 
   const [dropdownOpenDiab, setDropdownOpenDiab] = React.useState(false);
   const toggleDiab = () => setDropdownOpenDiab(prevState => !prevState);
@@ -89,11 +92,12 @@ const NotesBoard = (props) => {
   Object.entries(notes).map(([key, value]) => {
     if (key.includes('E')) {
       diabetes[key] = value
+      init_diab_name = key
     }else{
       sifilis[key] = value
+      init_syph_name = key
     }
   })
-    
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -127,28 +131,28 @@ const NotesBoard = (props) => {
     <>
       <Header />
       {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="mt--7 bg-secondary" fluid>
         <Row>
           <Col className="mb-5 mb-xl-0" xl="9">
-            <Card className="bg-gradient-default shadow">
+            <Card className="shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="9">
-                    <h2 className="text-white ls-1 mb-1">Most Relevant Terms for Diabetes in the EHR</h2>
-                    <h6 className="text-uppercase text-light mb-0">
-                      <div id='diab-subt'>TOP TERMS FOR {desease_type["E109"]}</div>
+                    <h2 className="ls-1 mb-1">Most Relevant Terms for Diabetes in the EHR</h2>
+                    <h6 className="text-uppercase text-muted mb-0">
+                      <div id='diab-subt'>TOP TERMS FOR {desease_type[init_diab_name]}</div>
                     </h6>
                   </Col>
                   <Col xl="3">
                     {Object.keys(state).length !== 0 ?
                       <div className="text-right">
-                        <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm">
-                          <DropdownToggle caret>Type of Diabetes</DropdownToggle>
+                        <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm" color="primary">
+                          <DropdownToggle caret color="primary">Type of Diabetes</DropdownToggle>
                           <DropdownMenu size="sm" left='true'>
                             { Object.keys(diabetes).map(function (type) {
                               return(
                                 <div key={type}>
-                                  <DropdownItem onClick={() => handleChangeDropdown(['diabetes', diabetes[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"},
+                                  <DropdownItem onClick={() => handleChangeDropdown(['diabetes', diabetes[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"},
                                   'diab-subt', desease_type[type]])} dropdownvalue={type} size="sm">
                                     {desease_type[type]}
                                   </DropdownItem>
@@ -168,7 +172,7 @@ const NotesBoard = (props) => {
               <CardBody>
                 {Object.keys(state).length !== 0 ?
                   <div id="diabetes">
-                    <BarPlot props={[notes["E109"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", font_color:'white', bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
+                    <BarPlot props={[notes[init_diab_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}]}></BarPlot>
                   </div>
                   :
                   <CardHeader className="bg-transparent">
@@ -214,7 +218,7 @@ const NotesBoard = (props) => {
                   <Col xl="9">
                     <h2 className="ls-1 mb-1">Most Relevant Terms for Syphilis in the EHR</h2>
                     <h6 className="text-uppercase text-muted mb-0">
-                      <div id='sifi-subt'>TOP TERMS FOR {desease_type['A51']}</div>
+                      <div id='sifi-subt'>TOP TERMS FOR {desease_type[init_syph_name]}</div>
                     </h6>
                   </Col>
                   <Col xl="3">
@@ -226,7 +230,7 @@ const NotesBoard = (props) => {
                             { Object.keys(sifilis).map(function (type) {
                               return(
                                 <div key={type}>
-                                  <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}, 
+                                  <DropdownItem onClick={() => handleChangeDropdown(['sifilis', sifilis[type], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(94, 114, 228)"}, 
                                   'sifi-subt', desease_type[type]])} dropdownvalue={type} size="sm">
                                     {desease_type[type]}
                                   </DropdownItem>
@@ -246,7 +250,7 @@ const NotesBoard = (props) => {
               <CardBody>
                 {Object.keys(state).length !== 0 ?
                   <div id="sifilis">
-                    <BarPlot props={[notes["A51"], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}]}></BarPlot>
+                    <BarPlot props={[notes[init_syph_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
                   </div>
                   :
                   <CardHeader className="bg-transparent">

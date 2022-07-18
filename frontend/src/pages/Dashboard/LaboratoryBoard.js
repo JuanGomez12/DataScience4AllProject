@@ -161,7 +161,7 @@ const LaboratoryBoard = (props) => {
       root_btn = ReactDOMClient.createRoot(document.getElementById(plot_info[0]+'-btn'));
     }
     root_subt.render(
-      <div id={plot_info[4]}>TOP TERMS FOR {plot_info[5]}</div>
+      <div id={plot_info[4]}>{plot_info[5]}</div>
     )
     root_btn.render(
       <div id={plot_info[0]+'-btn'}>
@@ -242,15 +242,15 @@ const LaboratoryBoard = (props) => {
     <>
       <Header />
       {/* Page content */}
-      <Container className="mt--7" fluid>
+      <Container className="mt--7 bg-secondary" fluid>
         <Row>
           <Col className="mb-5 mb-xl-0" xl="6">
-            <Card className="bg-gradient-default shadow">
+            <Card className="shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="9">
-                    <h2 className="text-white mb-1">Max. Lab. Value by Test and Disease</h2>
-                    <h6 className="text-uppercase text-light ls-1 mb-0">
+                    <h2 className="mb-1">Max. Lab. Value by Test and Disease</h2>
+                    <h6 className="text-uppercase text-muted ls-1 mb-0">
                       <div id='maxTest-subt'>MAX LAB VALUE BY DISEASE FOR TEST <b>{test_names[init_test_name]}</b></div>
                     </h6>
                   </Col>
@@ -262,7 +262,7 @@ const LaboratoryBoard = (props) => {
                             <div id='maxTest-btn'>
                               <Button
                                 color="primary"
-                                onClick={() => showOutliers(["maxTest", dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)", font_color:'white'}])}
+                                onClick={() => showOutliers(["maxTest", dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)"}])}
                                 size="sm"
                               >
                                 Outliers
@@ -278,8 +278,8 @@ const LaboratoryBoard = (props) => {
                                 { Object.keys(dataState.keywords_max).map(function (test) {
                                   return(
                                     <div key={test}>
-                                      <DropdownItem onClick={() => handleChangeDropdown(['maxTest', dataState.keywords_max, test, {bck_color:"rgba(0,0,0,0)", font_color:'white'},
-                                      'maxTest-subt', test_names[test]])} dropdownvalue={test} size="sm">
+                                      <DropdownItem onClick={() => handleChangeDropdown(['maxTest', dataState.keywords_max, test, {bck_color:"rgba(0,0,0,0)"},
+                                      'maxTest-subt', 'MAX LAB VALUE BY DISEASE FOR TEST '+test_names[test]])} dropdownvalue={test} size="sm">
                                         {test_names[test]}
                                       </DropdownItem>
                                     </div>
@@ -300,10 +300,10 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.keywords_max !== undefined ?
                 <div>
                   <div id="maxTest">
-                    <BoxPlot props={[dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)", font_color:'white'}]}></BoxPlot>
+                    <BoxPlot props={[dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
-                    <h6 className="ls-1 mb-0 text-white">
+                    <h6 className="ls-1 mb-0">
                       <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
                     </h6> 
                   </div>
@@ -350,7 +350,7 @@ const LaboratoryBoard = (props) => {
                                   return(
                                     <div key={test}>
                                       <DropdownItem onClick={() => handleChangeDropdown(['countTest', dataState.keywords_count, test, {bck_color:"rgba(0,0,0,0)"},
-                                      'countTest-subt', test_names[test]])} dropdownvalue={test} size="sm">
+                                      'countTest-subt', 'NUMBER OF TESTS BY DISEASE FOR TEST '+test_names[test]])} dropdownvalue={test} size="sm">
                                         {test_names[test]}
                                       </DropdownItem>
                                     </div>

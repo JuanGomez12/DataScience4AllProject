@@ -140,7 +140,7 @@ const Homepage = (props) => {
                 <Col>
                   <img className="home-picture-team" src="img/members/charic.jpg"></img>
                   <h2 className="home-title-column light-text">Charic Farinango</h2>
-                  <p className="home-text-column light-text">Computer Scientist and AI Enthusiast</p>
+                  <p className="home-text-column light-text">Computer Scientist, Software Developer and AI Enthusiast</p>
                 </Col>
                 <Col>
                   <img className="home-picture-team" src="img/members/jorge.jpeg"></img>

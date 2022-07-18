@@ -2,6 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 
 const NewStackedBarPlot = ({props}) => {
+  let c=-1
   const desease_type = {
     'A510': 'Primary genital Syph.',
     'A511': 'Primary anal Syph.',
@@ -13,6 +14,10 @@ const NewStackedBarPlot = ({props}) => {
     'E119': 'Type 2 Diabetes M.',
     'E149': 'Unspecif. Diabetes M.'
   }
+  //const colors = ['',"LightSeaGreen",'blue','green','orange','purple','red','darkblue','darkred']
+  const colors = ['rgba(245, 54, 92, 0.9)', 'rgba(29, 105, 150, 0.9)', 'rgba(56, 166, 165, 0.9)', 'rgba(15, 133, 84, 0.9)', 'rgba(115, 175, 72, 0.9)', 'rgba(237, 173, 8, 0.9)', 'rgba(225, 124, 5, 0.9)', 'rgba(204, 80, 62, 0.9)', 'rgba(148, 52, 110, 0.9)', 'rgba(95, 70, 144, 0.9)','rgba(111, 64, 112, 0.9)', 'rgba(102, 102, 102, 0.9)']
+
+  //const colors = ['#636EFA','#EF553B','#00CC96','#AB63FA','#FFA15A','#19D3F3','#FF6692','#B6E880','#FF97FF','#FECB52']
   const diseases = Object.keys(props[0])
   const categories = Object.keys(props[0][diseases[0]])
   let disease_names = diseases.map(function (dis) {
@@ -21,20 +26,24 @@ const NewStackedBarPlot = ({props}) => {
 
   //const cats = categories.reduce((obj,cat)=> (obj[cat]=[],obj),{});
   let traces = categories.map(function (cat) {
-      let y_vals = []
-      Object.entries(props[0]).map(([key, value]) => {
-          y_vals.push(value[cat])
-          return y_vals
-      })
-      return( 
-          {x: diseases,
-            //x: disease_names,
-            y: y_vals,
-            name: cat,
-            type: 'bar',
-            text: y_vals.map(String)
+    c ++
+    let y_vals = []
+    Object.entries(props[0]).map(([key, value]) => {
+        y_vals.push(value[cat])
+        return y_vals
+    })
+    return( 
+        {x: diseases,
+          //x: disease_names,
+          y: y_vals,
+          name: cat,
+          type: 'bar',
+          text: y_vals.map(String),
+          marker: {
+            color:colors[c]
           }
-      )
+        }
+    )
   })
   return(
     <div className='plot-class'>

@@ -104,7 +104,7 @@ const AdminLayout = (props) => {
         }
         
 
-        <Container fluid>
+        <Container fluid className="bg-secondary" >
           <AdminFooter />
         </Container>
       </div>
