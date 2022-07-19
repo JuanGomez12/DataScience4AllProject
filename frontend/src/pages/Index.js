@@ -111,7 +111,7 @@ const Index = (props) => {
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const { state } = useLocation();
   const [dataState, setDataState] = useState({});
-  const socioGetAPI = "http://20.214.241.33:8000/api/socio_economics";
+  const socioGetAPI = "http://20.214.157.160:8000/api/socio_economics";
   //console.log('stat', state)
   //const {genero,edad,estadoCivil,tipoSangre} = state
   let outs_states =  {'Edad':[true, {}]} // idx 1 true if outliers are showing, idx 2 saves the outliers

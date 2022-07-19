@@ -56,7 +56,7 @@ import {
 var ps;
 
 const Sidebar = (props) => {
-  const socioGetAPI = "http://20.214.241.33:8000/api/socio_economics";
+  const socioGetAPI = "http://20.214.157.160:8000/api/socio_economics";
   let rpta
   const [collapseOpen, setCollapseOpen] = useState();
   // verifies if routeName is the one active (in browser input)

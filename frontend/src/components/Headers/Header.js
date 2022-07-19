@@ -541,9 +541,9 @@ const Header = (props) => {
   }
   //const [dataLabs, setDataLabs] = useState([labs]);
   const navigate = useNavigate();
-  const socioGetAPI = "http://20.214.241.33:8000/api/socio_economics";
-  const labsGetAPI = "http://20.214.241.33:8000/api/laboratory";
-  const notesGetAPI = "http://20.214.241.33:8000/api/notes";
+  const socioGetAPI = "http://20.214.157.160:8000/api/socio_economics";
+  const labsGetAPI = "http://20.214.157.160:8000/api/laboratory";
+  const notesGetAPI = "http://20.214.157.160:8000/api/notes";
   const activeDash = useRef('');
   //<CardBody onClick={() => changeData([socio, "sociodemographic"])}>
   //<CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}></CardBody>

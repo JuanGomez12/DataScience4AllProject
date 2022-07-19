@@ -34,8 +34,8 @@ function Prediction() {
   const [modalContent, setModalContent] = useState("exam");
   const [resultPrediction, setResultPrediction] = useState();
 
-  const urlPrediction = "http://20.214.241.33:8000/api/post";
-  const exampleGet = "http://20.214.241.33:8000/api/socio_economics";
+  const urlPrediction = "http://20.214.157.160:8000/api/post";
+  const exampleGet = "http://20.214.157.160:8000/api/socio_economics";
 
   const sexOptions = [
     { value: 'Mujer', label: 'Female' },
