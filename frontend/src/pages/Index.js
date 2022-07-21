@@ -133,7 +133,7 @@ const Index = (props) => {
   };
 
   useEffect(() => {
-    console.log(state);
+    console.log('state', state);
     if(state !== null){
       setDataState(state);
     } else{
@@ -190,7 +190,7 @@ const Index = (props) => {
   //<Card className="shadow" style={{padding: '0.5px'}}>
   //<StackedBarPlot props={[genero, {title:"Gender", bck_color:"rgba(23,41,77,1)", font_color:'white'}]}></StackedBarPlot>
   //BoxPlot props={[edad, {title: "Age"}]} style={{borderRadius: '5px'}}></BoxPlot>
-  
+  //<Container className="mt-5 bg-secondary" fluid>
   return (
     <>
       <Header />

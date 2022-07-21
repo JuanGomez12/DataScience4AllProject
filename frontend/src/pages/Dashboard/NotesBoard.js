@@ -16,7 +16,7 @@
 
 */
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -61,8 +61,9 @@ const NotesBoard = (props) => {
   //console.log("Cargo notes");
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
-  const {state}  = useLocation();
-  const notes = state
+  const { state }  = useLocation();
+  const [dataState, setDataState] = useState({});
+  //const notes = state
   let init_diab_name = 'E109'
   let init_syph_name = 'A51'
 
@@ -72,7 +73,7 @@ const NotesBoard = (props) => {
   const [dropdownOpenSif, setDropdownOpenSif] = React.useState(false);
   const toggleSif = () => setDropdownOpenSif(prevState => !prevState);
   //let dropdown = {"isOpen": false, "toggle": }
-  console.log('notes',notes)
+  //console.log('notes',notes)
 
   const diabetes= {} 
   const sifilis = {}
@@ -89,19 +90,26 @@ const NotesBoard = (props) => {
     'A51': 'Other Secondary Syphilis' // ?
   }
 
-  Object.entries(notes).map(([key, value]) => {
-    if (key.includes('E')) {
-      diabetes[key] = value
-      init_diab_name = key
-    }else{
-      sifilis[key] = value
-      init_syph_name = key
+  useEffect(() => {
+    console.log('notes obj:', state);
+    if(state !== null){
+      setDataState(state);
+      //console.log('notes obj:', dataState);
+      Object.entries(state.word_count).map(([key, value]) => {
+        if (key.includes('E')) {
+          diabetes[key] = value
+          init_diab_name = key
+        }else{
+          sifilis[key] = value
+          init_syph_name = key
+        }
+      })
     }
-  })
 
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
+    if (window.Chart) {
+      parseOptions(Chart, chartOptions());
+    }
+  },[]);
 
   const toggleNavs = (e, index) => {
     e.preventDefault();
@@ -148,7 +156,7 @@ const NotesBoard = (props) => {
                     </h6>
                   </Col>
                   <Col xl="3">
-                    {Object.keys(state).length !== 0 ?
+                    {Object.keys(dataState).length !== 0 && dataState.word_count !== undefined?
                       <div className="text-right">
                         <Dropdown isOpen={dropdownOpenDiab} toggle={toggleDiab} size="sm" color="primary">
                           <DropdownToggle caret color="primary">Type of Diabetes</DropdownToggle>
@@ -174,9 +182,9 @@ const NotesBoard = (props) => {
                 </Row>
               </CardHeader>
               <CardBody>
-                {Object.keys(state).length !== 0 ?
+                {Object.keys(dataState).length !== 0 && dataState.word_count !== undefined?
                   <div id="diabetes">
-                    <BarPlot props={[notes[init_diab_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}]}></BarPlot>
+                    <BarPlot props={[dataState.word_count[init_diab_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(251, 99, 64)"}]}></BarPlot>
                   </div>
                   :
                   <CardHeader className="bg-transparent">
@@ -228,7 +236,7 @@ const NotesBoard = (props) => {
                     </h6>
                   </Col>
                   <Col xl="3">
-                    {Object.keys(state).length !== 0 ?
+                    {Object.keys(dataState).length !== 0 && dataState.word_count !== undefined?
                       <div className="text-right">
                         <Dropdown isOpen={dropdownOpenSif} toggle={toggleSif} size="sm" color="primary">
                           <DropdownToggle caret color="primary">Type of Syphilis</DropdownToggle>
@@ -254,9 +262,9 @@ const NotesBoard = (props) => {
                 </Row>
               </CardHeader>
               <CardBody>
-                {Object.keys(state).length !== 0 ?
+                {Object.keys(dataState).length !== 0 && dataState.word_count !== undefined?
                   <div id="sifilis">
-                    <BarPlot props={[notes[init_syph_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
+                    <BarPlot props={[dataState.word_count[init_syph_name], {orientation: 'h', bck_color:"rgba(0,0,0,0)", bar_color:"rgb(94, 114, 228)"}]}></BarPlot>
                   </div>
                   :
                   <CardHeader className="bg-transparent">

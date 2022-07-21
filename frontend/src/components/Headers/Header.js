@@ -617,6 +617,7 @@ const Header = (props) => {
   const labsGetAPI = "http://20.214.157.160:8000/api/laboratory";
   const notesGetAPI = "http://20.214.157.160:8000/api/notes";
   const activeDash = useRef('');
+  const [activeDash1, setActiveDash1] = useState('sociodemographic')
   //<CardBody onClick={() => changeData([socio, "sociodemographic"])}>
   //<CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")}></CardBody>
 
@@ -627,10 +628,10 @@ const Header = (props) => {
     //console.log("Rpta API a changeData:", data[0]);
     //setDataSelected(data);
     //setDataLabs(data[0])
-    console.log(activeDash.current)
+    console.log('active_dash: ',activeDash.current)
     if (data[1] === "sociodemographic"){
       //activeDash.current = "sociodemographic"
-      navigate('/admin/index', { state:  data[0]})
+      navigate('/admin/index', { state:   data[0]})
     }
     else if (data[1] === "laboratory"){
       //activeDash.current = "laboratory"
@@ -645,7 +646,9 @@ const Header = (props) => {
 
   function getDataAPI(url_api, group){
     let rpta
+
     activeDash.current = group
+    setActiveDash1('group')
     axios.get(url_api)
     .then(res => {
       rpta = res.data
@@ -659,7 +662,7 @@ const Header = (props) => {
     })
     return rpta
   }
-  
+  //<div className="header pb-5 pt-5 pt-md-8">
   return (
     <>
       <div className="header pb-8 pt-5 pt-md-8">
@@ -669,7 +672,7 @@ const Header = (props) => {
             <Row>
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(socioGetAPI, "sociodemographic")/*changeData([socio, "sociodemographic"])*/} className={activeDash.current === 'sociodemographic' ? 'card-active' : ''}>
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(socioGetAPI, "sociodemographic")/*changeData([socio, "sociodemographic"])*/} className={activeDash1.current === 'sociodemographic' ? 'card-active' : ''}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -697,7 +700,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")/*/changeData([labs, "laboratory"])*/} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(labsGetAPI, "laboratory")/*/changeData([labs, "laboratory"])*/} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -719,7 +722,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(notesGetAPI, "notes")/*changeData([notes, "notes"])*/} className={activeDash.current === 'notes' ? 'card-active' : ''}>
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(notesGetAPI, "notes")/*changeData([notes, "notes"])*/} className={activeDash.current === 'notes' ? 'card-active' : ''}>
                     <Row>
                       <div className="col">
                         <CardTitle
