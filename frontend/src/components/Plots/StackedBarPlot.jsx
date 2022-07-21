@@ -39,6 +39,8 @@ const NewStackedBarPlot = ({props}) => {
           name: cat,
           type: 'bar',
           text: y_vals.map(String),
+          hovertemplate: '(%{x})<br>' +
+                        '<b>%{y}%</b>',
           marker: {
             color:colors[c]
           }

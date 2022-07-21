@@ -119,9 +119,81 @@ const Header = (props) => {
       "mean": 30,
       "sd": 20,
       "fliers": [-10, -20, 100, 150 ]}
-    }
+    },
+  "exam_count_time_series":{
+    'A530':{80: {'Count': '18', 'Date': '2019-01-01'},
+      87: {'Count': '18', 'Date': '2019-02-01'},
+      97: {'Count': '13', 'Date': '2019-04-01'},
+      104: {'Count': '13', 'Date': '2019-05-01'},
+      112: {'Count': '1', 'Date': '2019-06-01'},
+      146: {'Count': '23', 'Date': '2019-11-01'}},
+    'A510':{80: {'Count': '30', 'Date': '2019-01-01'},
+      87: {'Count': '25', 'Date': '2019-02-01'},
+      97: {'Count': '5', 'Date': '2019-04-01'},
+      104: {'Count': '15', 'Date': '2019-05-01'},
+      112: {'Count': '24', 'Date': '2019-06-01'},
+      146: {'Count': '30', 'Date': '2019-11-01'}}
+    },
+    "top_lab_names": {
+      "A510": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "804", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "1", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "9", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "35", "Percentage": "4.0"}
+      },
+      "A511": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "810", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "10", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "19", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "25", "Percentage": "4.0"}
+      },
+      "A514": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "804", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "1", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "9", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "35", "Percentage": "4.0"}
+      },
+      "A529": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "810", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "10", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "19", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "25", "Percentage": "4.0"}
+      },
+      "A539": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "804", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "1", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "9", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "35", "Percentage": "4.0"}
+      },
+      "A109": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "810", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "10", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "19", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "25", "Percentage": "4.0"}
+      },
+      "A119": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "804", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "1", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "9", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "35", "Percentage": "4.0"}
+      },
+      "A149": {"bilirrubina test": {"Count": "14", "Percentage": "2.0"},
+        "colesterol test": {"Count": "810", "Percentage": "91.0"}, 
+        "coloracion acido alcohol resis...": {"Count": "10", "Percentage": "0.0"}, 
+        "hematocrito": {"Count": "19", "Percentage": "1.0"}, 
+        "hepatitis b test": {"Count": "25", "Percentage": "4.0"}
+      }
+  }
   };
   const socio = {
+    "condition_distribution": {
+      "A51": {"Count": "3685", "Percentage": "2.63"},
+      "A530": {"Count": "60587", "Percentage": "43.22"}, 
+      "A539": {"Count": "49378", "Percentage": "35.23"}, 
+      "E109": {"Count": "6278", "Percentage": "4.48"}, 
+      "E119": {"Count": "17439", "Percentage": "12.44"}, 
+      "E149": {"Count": "2808", "Percentage": "2.0"}
+    },
     "Edad": {
         "A510": {
             "cihi": "35.65297375025808",
@@ -625,7 +697,7 @@ const Header = (props) => {
 
               <Col lg="6" xl="4">
                 <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")/*changeData([labs, "laboratory"])*/} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
+                  <CardBody onClick={() => getDataAPI(labsGetAPI, "laboratory")/*/changeData([labs, "laboratory"])*/} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
                     <Row>
                       <div className="col">
                         <CardTitle

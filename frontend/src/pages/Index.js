@@ -38,6 +38,7 @@ import Header from "../components/Headers/Header.js";
 import { useLocation } from 'react-router-dom';
 import BoxPlot from "../components/Plots/BoxPlot";
 import StackedBarPlot from "../components/Plots/StackedBarPlot";
+import PiePlot from "../components/Plots/PiePlot";
 import * as ReactDOMClient from 'react-dom/client';
 import axios from 'axios';
 
@@ -94,7 +95,15 @@ const Index = (props) => {
         "O-":25,
         "A+":20
        }
-    }
+    },
+  "condition_distribution": {
+    "A51": {"Count": "3685", "Percentage": "2.63"},
+    "A530": {"Count": "60587", "Percentage": "43.22"}, 
+    "A539": {"Count": "49378", "Percentage": "35.23"}, 
+    "E109": {"Count": "6278", "Percentage": "4.48"}, 
+    "E119": {"Count": "17439", "Percentage": "12.44"}, 
+    "E149": {"Count": "2808", "Percentage": "2.0"}
+  },
   };
   const desease_type = {
     'A510': 'Primary genital Syph.',
@@ -187,15 +196,46 @@ const Index = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7 bg-secondary" fluid>
-        <Row>
+      <Row>
+          <Col className="mb-5 mb-xl-0" xl="12">
+            <Card className="shadow">
+              <CardHeader className="bg-transparent">
+                <Row className="align-items-center">
+                  <Col xl="10">
+                    <h2 className="mb-1">Distribution of People with Type of Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      Proportions of people diagnosed with a type of disease
+                    </h6>
+                  </Col>
+                </Row>
+              </CardHeader>
+              {Object.keys(dataState).length !== 0 && dataState.condition_distribution !== undefined?
+                <div>
+                  {/*<StackedBarPlot props={[dataState.condition_distribution, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>*/ }
+                  <PiePlot props={[dataState.condition_distribution, {bck_color:"rgba(0,0,0,0)"}]}></PiePlot>
+                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>
+                :
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
+              }
+            </Card>
+          </Col>
+        </Row>
+        <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="6">
             <Card className="shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
                     <h2 className="mb-1">Gender vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      PROPORTIONS OF GENDER PER TYPE OF DISEASE
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      Proportions of gender per type of disease
                     </h6>
                   </Col>
                 </Row>
@@ -211,7 +251,7 @@ const Index = (props) => {
                 </div>
                 :
                 <CardHeader className="bg-transparent">
-                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                  <h5 className="text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
               }
             </Card>
@@ -222,8 +262,8 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <Col xl="10">
                     <h2 className="mb-1">Age vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      DISTRIBUTIONS OF AGES PER TYPE OF DISEASE
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      Distributions of ages per type of disease
                     </h6>
                   </Col>
                   <Col xl="2">
@@ -246,7 +286,7 @@ const Index = (props) => {
               {Object.keys(dataState).length !== 0 ?
                 <div>
                   <div id="Edad">
-                    <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot> 
+                    <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)", ytitle:"Age"}]}></BoxPlot> 
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
                     <h6 className="ls-1 mb-0">
@@ -256,7 +296,7 @@ const Index = (props) => {
                 </div>
                 :
                 <CardHeader className="bg-transparent">
-                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                  <h5 className="text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
               }      
             </Card>
@@ -269,8 +309,8 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <Col xl="10">
                     <h2 className="mb-1">Marital Status vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-light ls-1 mb-0">
-                      DISTRIBUTIONS OF MARITAL STATUS PER TYPE OF DISEASE
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      Distributions of marital status per type of disease
                     </h6>
                   </Col>
                 </Row>
@@ -286,7 +326,7 @@ const Index = (props) => {
                 </div>      
                 :
                 <CardHeader className="bg-transparent">
-                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                  <h5 className="text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
               } 
             </Card>
@@ -297,8 +337,8 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <Col xl="10">
                     <h2 className="mb-0">Blood Type vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      DISTRIBUTIONS OF BLOOD TYPES PER TYPE OF DISEASE
+                    <h6 className="text-muted ls-1 mb-1 text-xs">
+                      Distributions of blood types per type of disease
                     </h6>
                   </Col>
                 </Row>

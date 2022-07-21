@@ -73,6 +73,8 @@ import {
 import Header from "../../components/Headers/Header.js";
 import { useLocation } from 'react-router-dom';
 import BoxPlot from "../../components/Plots/BoxPlot";
+import LinePlot from "../../components/Plots/LinePlot";
+import ScatterPlot from "../../components/Plots/ScatterPlot";
 import ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
@@ -108,7 +110,7 @@ const LaboratoryBoard = (props) => {
   };
 
   useEffect(() => {
-    console.log(state);
+    console.log('Labs obj:', state);
     if(state !== null){
       setDataState(state);
     }
@@ -249,9 +251,9 @@ const LaboratoryBoard = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="9">
-                    <h2 className="mb-1">Max. Lab. Value by Test and Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      <div id='maxTest-subt'>MAX LAB VALUE BY DISEASE FOR TEST <b>{test_names[init_test_name]}</b></div>
+                    <h2 className="mb-1">Max. Lab. Value of Test vs. Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0">
+                      <div id='maxTest-subt'>Max value of the test performed on each patient per disease for test: <b>{test_names[init_test_name]}</b></div>
                     </h6>
                   </Col>
                   <Col xl="3">
@@ -278,8 +280,8 @@ const LaboratoryBoard = (props) => {
                                 { Object.keys(dataState.keywords_max).map(function (test) {
                                   return(
                                     <div key={test}>
-                                      <DropdownItem onClick={() => handleChangeDropdown(['maxTest', dataState.keywords_max, test, {bck_color:"rgba(0,0,0,0)"},
-                                      'maxTest-subt', 'MAX LAB VALUE BY DISEASE FOR TEST '+test_names[test]])} dropdownvalue={test} size="sm">
+                                      <DropdownItem onClick={() => handleChangeDropdown(['maxTest', dataState.keywords_max, test, {bck_color:"rgba(0,0,0,0)", ytitle:"Max test value"},
+                                      'maxTest-subt', 'Max value of the test performed on each patient per disease for test: '+test_names[test]])} dropdownvalue={test} size="sm">
                                         {test_names[test]}
                                       </DropdownItem>
                                     </div>
@@ -300,7 +302,7 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.keywords_max !== undefined ?
                 <div>
                   <div id="maxTest">
-                    <BoxPlot props={[dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>
+                    <BoxPlot props={[dataState.keywords_max[init_test_name], {bck_color:"rgba(0,0,0,0)", ytitle:"Max test value (Metric)"}]}></BoxPlot>
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
                     <h6 className="ls-1 mb-0">
@@ -320,9 +322,9 @@ const LaboratoryBoard = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="9">
-                    <h2 className="mb-1">Count by Lab Test and Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      <div id='countTest-subt'>NUMBER OF TESTS BY DISEASE FOR TEST <b>{test_names[init_test_name]}</b></div>
+                    <h2 className="mb-1">Count of Lab Test per Patient vs. Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0">
+                      <div id='countTest-subt'>Number of total tests performed on each patient per disease for test: <b>{test_names[init_test_name]}</b></div>
                     </h6>
                   </Col>
                   <Col xl="3">
@@ -349,8 +351,8 @@ const LaboratoryBoard = (props) => {
                                 { Object.keys(dataState.keywords_count).map(function (test) {
                                   return(
                                     <div key={test}>
-                                      <DropdownItem onClick={() => handleChangeDropdown(['countTest', dataState.keywords_count, test, {bck_color:"rgba(0,0,0,0)"},
-                                      'countTest-subt', 'NUMBER OF TESTS BY DISEASE FOR TEST '+test_names[test]])} dropdownvalue={test} size="sm">
+                                      <DropdownItem onClick={() => handleChangeDropdown(['countTest', dataState.keywords_count, test, {bck_color:"rgba(0,0,0,0)", ytitle:"Number of tests per patient"},
+                                      'countTest-subt', 'Number of total tests performed on each patient per disease for test: '+test_names[test]])} dropdownvalue={test} size="sm">
                                         {test_names[test]}
                                       </DropdownItem>
                                     </div>
@@ -371,7 +373,69 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.keywords_count !== undefined ?
                 <div>
                   <div id="countTest">
-                    <BoxPlot props={[dataState.keywords_count[init_test_name], {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot> 
+                    <BoxPlot props={[dataState.keywords_count[init_test_name], {bck_color:"rgba(0,0,0,0)", ytitle:"Number of tests per patient"}]}></BoxPlot> 
+                  </div> 
+                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>
+              :
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
+              }   
+            </Card>
+          </Col> 
+        </Row>
+        <Row className="mt-5">
+          <Col className="mb-5 mb-xl-0" xl="6">
+            <Card className="shadow">
+              <CardHeader className="bg-transparent">
+                <Row className="align-items-center">
+                  <Col xl="12">
+                    <h2 className="mb-1">Total Tests by Month vs. Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      <div id='testsDate-subt'>Number of total tests performed each month for a type of disease</div>
+                    </h6>
+                  </Col>
+                </Row>
+              </CardHeader>
+              {Object.keys(dataState).length !== 0 && dataState.exam_count_time_series !== undefined ?
+                <div>
+                  <div id="testsDate">
+                    <LinePlot props={[dataState.exam_count_time_series, {bck_color:"rgba(0,0,0,0)", xtitle:"Date - Monthly", ytitle:"Number of performed tests"}]}></LinePlot>
+                  </div> 
+                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6> 
+                  </div>
+                </div>
+                :
+                <CardHeader className="bg-transparent">
+                  <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
+                </CardHeader>
+              }   
+            </Card>
+          </Col>
+          <Col xl="6">
+            <Card className="shadow">
+              <CardHeader className="bg-transparent">
+                <Row className="align-items-center">
+                  <Col xl="12">
+                    <h2 className="mb-1">Count of Tests by Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0 text-xs">
+                      <div id='topTests-subt'>Number of times a tests has been performed for each disease</div>
+                    </h6>
+                  </Col>
+                </Row>
+              </CardHeader>
+              {Object.keys(dataState).length !== 0 && dataState.top_lab_names !== undefined ?
+                <div>
+                  <div id="topTests">
+                    <ScatterPlot props={[dataState.top_lab_names, {bck_color:"rgba(0,0,0,0)", xtitle:"", ytitle:""}]}></ScatterPlot>
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
                     <h6 className="ls-1 mb-0">
@@ -393,9 +457,9 @@ const LaboratoryBoard = (props) => {
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h2 className="mb-1">Average Time vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      AVERAGE TIME BETWEEN EXAMS PER EACH TYPE OF DISEASE
+                    <h2 className="mb-1">Average Time Difference vs. Type of Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0">
+                      Average time difference between the first and last test of each patient
                     </h6>
                   </Col>
                   <Col xl="2">
@@ -403,7 +467,7 @@ const LaboratoryBoard = (props) => {
                       <div className="text-right">
                         <Button
                           color="primary"
-                          onClick={() => showOutliers(["examDate-avg", dataState.date_diff_mean, {bck_color:"rgba(0,0,0,0)"}])}
+                          onClick={() => showOutliers(["examDate-avg", dataState.date_diff_mean, {bck_color:"rgba(0,0,0,0)", ytitle:"Number of days"}])}
                           size="sm"
                         >
                           Outliers
@@ -418,7 +482,7 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.date_diff_mean !== undefined ?
                 <div>
                   <div id="examDate-avg">
-                    <BoxPlot props={[dataState.date_diff_mean, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>  
+                    <BoxPlot props={[dataState.date_diff_mean, {bck_color:"rgba(0,0,0,0)", ytitle:"Number of days"}]}></BoxPlot>  
                   </div> 
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
                     <h6 className="ls-1 mb-0">
@@ -438,9 +502,9 @@ const LaboratoryBoard = (props) => {
             <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
                   <Col xl="10">
-                    <h2 className="mb-1">Maximum Time vs. Type of Disease</h2>
-                    <h6 className="text-uppercase text-muted ls-1 mb-0">
-                      MAXIMUM TIME BETWEEN EXAMS PER EACH TYPE OF DISEASE
+                    <h2 className="mb-1">Maximum Time Difference vs. Type of Disease</h2>
+                    <h6 className="text-muted ls-1 mb-0">
+                      Maximum time difference between the first and last test of each patient
                     </h6>
                   </Col>
                   <Col xl="2">
@@ -448,7 +512,7 @@ const LaboratoryBoard = (props) => {
                       <div className="text-right">
                         <Button
                           color="primary"
-                          onClick={() => showOutliers(["examDate-max", dataState.date_diff_max, {bck_color:"rgba(0,0,0,0)"}])}
+                          onClick={() => showOutliers(["examDate-max", dataState.date_diff_max, {bck_color:"rgba(0,0,0,0)", ytitle:"Number of days"}])}
                           size="sm"
                         >
                           Outliers
@@ -463,7 +527,7 @@ const LaboratoryBoard = (props) => {
               {Object.keys(dataState).length !== 0 && dataState.date_diff_max !== undefined ?
                 <div>
                   <div id="examDate-max">
-                    <BoxPlot props={[dataState.date_diff_max, {bck_color:"rgba(0,0,0,0)"}]}></BoxPlot>
+                    <BoxPlot props={[dataState.date_diff_max, {bck_color:"rgba(0,0,0,0)", ytitle:"Number of days"}]}></BoxPlot>
                   </div>
                   <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
                     <h6 className="ls-1 mb-0">

@@ -149,3 +149,6 @@
 .card-active{
   border-left: 5px solid #11cdef;
 }
+
+.bg-lightblue {
+  background: #EBF8FE 100% !important; }

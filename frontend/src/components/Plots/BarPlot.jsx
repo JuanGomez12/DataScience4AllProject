@@ -62,7 +62,7 @@ const NewBarPlot = ({props}) => {
             paper_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
             plot_bgcolor: 'bck_color' in props[1] ? props[1].bck_color : 'rgba(245,246,249,1)',
             xaxis: {
-                title: 'Importance',
+                title: 'TF-IDF Score',
                 titlefont: {
                   size: 15,
                   //color: 'rgb(107, 107, 107)'

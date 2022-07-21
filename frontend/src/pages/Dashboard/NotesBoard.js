@@ -117,7 +117,9 @@ const NotesBoard = (props) => {
       root_subt = ReactDOMClient.createRoot(document.getElementById(plot_info[3]));
     }
     root_subt.render(
-      <div id={plot_info[3]}>TOP TERMS FOR {plot_info[4]}</div>
+      <div id={plot_info[3]}> 
+        <div className="text-xs">Relevant (distinct) terms found for {plot_info[4]}. <br></br></div>
+        TF-IDF weights terms that appear just once on a whole site (relevant) vs terms common to all pages (non relevant)</div>
     )
     root.render(
       <div id={plot_info[0]}>
@@ -139,8 +141,10 @@ const NotesBoard = (props) => {
                 <Row className="align-items-center">
                   <Col xl="9">
                     <h2 className="ls-1 mb-1">Most Relevant Terms for Diabetes in the EHR</h2>
-                    <h6 className="text-uppercase text-muted mb-0">
-                      <div id='diab-subt'>TOP TERMS FOR {desease_type[init_diab_name]}</div>
+                    <h6 className="text-muted mb-0">
+                      <div id='diab-subt'>
+                        <div className="text-xs">Relevant (distinct) terms found for {desease_type[init_diab_name]}. <br></br></div>
+                        TF-IDF weights terms that appear just once on a whole site (relevant) vs terms common to all pages (non relevant)</div>
                     </h6>
                   </Col>
                   <Col xl="3">
@@ -217,8 +221,10 @@ const NotesBoard = (props) => {
                 <Row className="align-items-center">
                   <Col xl="9">
                     <h2 className="ls-1 mb-1">Most Relevant Terms for Syphilis in the EHR</h2>
-                    <h6 className="text-uppercase text-muted mb-0">
-                      <div id='sifi-subt'>TOP TERMS FOR {desease_type[init_syph_name]}</div>
+                    <h6 className="text-muted mb-0">
+                      <div id='sifi-subt'>
+                        <div className="text-xs">Relevant (distinct) terms found for {desease_type[init_syph_name]}. <br></br></div>
+                        TF-IDF weights terms that appear just once on a whole site (relevant) vs terms common to all pages (non relevant)</div>
                     </h6>
                   </Col>
                   <Col xl="3">
