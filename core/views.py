@@ -141,8 +141,10 @@ class Post_APIView(APIView):
                         indent=4,
                     )
                 )
+                prediction_ok = True
             except Exception as e:
                 print(f"Could not calculate probabilities of prediction, error: {e}")
+                prediction_ok = False
             finally:
                 print("****************************************")
 
