@@ -89,18 +89,21 @@ class Post_APIView(APIView):
 
         Examenes = {"Nombre": Nombre, "Fecha": Fecha, "Valor": Valor}
         data_clean = {
-            "Edad": data["Edad"],
-            "Genero": data["Genero"],
-            "GrupoEtnico": data["GrupoEtnico"],
-            "AreaResidencial": data["AreaResidencial"],
-            "EstadoCivil": data["EstadoCivil"],
-            "TSangre": data["TSangre"],
-            "Tipo": data["Tipo"],
-            "Plan": data["Plan"],
+            "Edad": data.get("Edad", 'NA'),
+            "Genero": data.get("Genero", 'NA'),
+            "GrupoEtnico": data.get("GrupoEtnico", 'NA'),
+            "AreaResidencial": data.get("AreaResidencial", 'NA'),
+            "EstadoCivil": data.get("EstadoCivil", 'NA'),
+            "TSangre": data.get("TSangre", 'NA'),
+            "Tipo": data.get("Tipo", 'NA'),
+            "Plan": data.get("Plan", 'NA'),
         }
         data_clean["Examenes"] = Examenes
         print(data_clean)
-        prediction = ml_pipeline.predict(preprocess_json(data_clean))
+        try:
+            prediction = ml_pipeline.predict(preprocess_json(data_clean))
+        except Exception as e:
+            print(f'Error predicting: {e}')
         print("****************************************")
         print(f"Prediction probabilities:")
         print(
