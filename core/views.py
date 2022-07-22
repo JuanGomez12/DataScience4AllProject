@@ -2,6 +2,7 @@ import sys
 from typing import Optional
 import json
 from pathlib import Path
+from distutils.util import strtobool
 
 import numpy as np
 import requests
@@ -67,6 +68,14 @@ class Post_APIView(APIView):
     def post(self, request, format=None):
         post_data = dict(request.data)
         data = post_data.copy()
+        # Should the model return the top diagnosis or a dictionary with all
+        # the diagnoses and their probabilities? True by default
+        try:
+            probabilities_response = bool(
+                strtobool(data.get("probabilities_response", ["True"])[0])
+            )
+        except:
+            probabilities_response = True
         print("Raw data")
         print("****************************************")
         print(data)
@@ -104,36 +113,46 @@ class Post_APIView(APIView):
         print("****************************************")
         print(data_clean)
         print("****************************************")
-        try:
-            prediction = ml_pipeline.predict(preprocess_json(data_clean))
-            prediction_ok = True
-        except Exception as e:
-            print(f"Error predicting: {e}")
-            prediction_ok = False
-
-        try:
-            print("****************************************")
-            print(f"Prediction probabilities:")
-            print(
-                json.dumps(
-                    ml_pipeline.predict_proba(preprocess_json(data_clean))[0],
-                    sort_keys=True,
-                    indent=4,
+        if not probabilities_response:
+            try:
+                top_prediction = ml_pipeline.predict(preprocess_json(data_clean))
+                prediction_ok = True
+            except Exception as e:
+                print(f"Error predicting: {e}")
+                prediction_ok = False
+        else:
+            try:
+                print("****************************************")
+                print(f"Prediction probabilities:")
+                prediction_probabilities = ml_pipeline.predict_proba(
+                    preprocess_json(data_clean)
                 )
-            )
+                prediction_probabilities = prediction_probabilities[0]
+                # Add full names to diagnoses
+                prediction_response = {
+                    f"{key}:{condition_name_dict.get(key, 'NA')}": value
+                    for key, value in prediction_probabilities.items()
+                }
+                prediction = {"respuesta": prediction_response}
+                print(
+                    json.dumps(
+                        prediction_probabilities,
+                        sort_keys=True,
+                        indent=4,
+                    )
+                )
+            except Exception as e:
+                print(f"Could not calculate probabilities of prediction, error: {e}")
+            finally:
+                print("****************************************")
 
-        except Exception as e:
-            print(f"Could not calculate probabilities of prediction, error: {e}")
-        finally:
-            print("****************************************")
-
-        if prediction_ok:
-            print(
-                f"Final Prediction: {prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
-            )
-            prediction = {
-                "respuesta": f"{prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
-            }
+        if prediction_ok and not probabilities_response:
+            # Add full names to diagnosis
+            top_prediction = f"{top_prediction[0]} : {condition_name_dict.get(top_prediction[0], 'NA')}"
+            print(f"Final Prediction: {top_prediction}")
+            prediction = {"respuesta": top_prediction}
+        elif prediction_ok and probabilities_response:
+            prediction = {"respuesta": prediction_response}
         else:
             prediction = {
                 "respuesta": "Error en la predicción, intenta de nuevo más tarde"
