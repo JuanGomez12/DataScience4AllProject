@@ -32,7 +32,7 @@ const NewLinePlot = ({props}) => {
       tests.map(function (test) {
         let count = 0
         let perc = 0
-        console.log(test)
+        //console.log(test)
         if (Object.keys(value).includes(test)) {
           count = value[test]['Count']
           perc = value[test]['Percentage']

@@ -90,20 +90,23 @@ const NotesBoard = (props) => {
     'A51': 'Other Secondary Syphilis' // ?
   }
 
+  if (Object.keys(state).length !== 0){
+    Object.entries(state.word_count).map(([key, value]) => {
+      if (key.includes('E')) {
+        diabetes[key] = value
+        init_diab_name = key
+      }else{
+        sifilis[key] = value
+        init_syph_name = key
+      }
+    })
+  }
+
   useEffect(() => {
     console.log('notes obj:', state);
     if(state !== null){
       setDataState(state);
       //console.log('notes obj:', dataState);
-      Object.entries(state.word_count).map(([key, value]) => {
-        if (key.includes('E')) {
-          diabetes[key] = value
-          init_diab_name = key
-        }else{
-          sifilis[key] = value
-          init_syph_name = key
-        }
-      })
     }
 
     if (window.Chart) {
@@ -143,7 +146,7 @@ const NotesBoard = (props) => {
       {/* Page content */}
       <Container className="mt--7 bg-secondary" fluid>
         <Row>
-          <Col className="mb-5 mb-xl-0" xl="9">
+          <Col className="mb-5 mb-xl-0" xl="11">
             <Card className="shadow">
               <CardHeader className="bg-transparent">
                 <Row className="align-items-center">
@@ -223,7 +226,7 @@ const NotesBoard = (props) => {
           </Col>
         </Row>
         <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="9">
+          <Col className="mb-5 mb-xl-0" xl="11">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">

@@ -147,7 +147,7 @@
 }
 
 .card-active{
-  border-left: 5px solid #11cdef;
+  border-left: 9px solid #11cdef !important;
 }
 
 .bg-lightblue {
