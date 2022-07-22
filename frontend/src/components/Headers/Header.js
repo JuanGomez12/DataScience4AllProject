@@ -671,8 +671,8 @@ const Header = (props) => {
             {/* Card stats */}
             <Row>
               <Col lg="6" xl="4">
-                <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(socioGetAPI, "sociodemographic")/*changeData([socio, "sociodemographic"])*/} className={activeDash1.current === 'sociodemographic' ? 'card-active' : ''}>
+                <Card className={activeDash1.current === 'sociodemographic' ? 'card-stats mb-4 mb-xl-0 card-active' : 'card-stats mb-4 mb-xl-0'}>
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(socioGetAPI, "sociodemographic")/*changeData([socio, "sociodemographic"])*/}>
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -699,8 +699,8 @@ const Header = (props) => {
               </Col>
 
               <Col lg="6" xl="4">
-                <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(labsGetAPI, "laboratory")/*/changeData([labs, "laboratory"])*/} className={activeDash.current === 'laboratory' ? 'card-active' : ''}> 
+                <Card className={activeDash.current === 'laboratory' ? 'card-stats mb-4 mb-xl-0 card-active' : 'card-stats mb-4 mb-xl-0'}>
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(labsGetAPI, "laboratory")/*/changeData([labs, "laboratory"])*/}> 
                     <Row>
                       <div className="col">
                         <CardTitle
@@ -721,8 +721,8 @@ const Header = (props) => {
               </Col>
 
               <Col lg="6" xl="4">
-                <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(notesGetAPI, "notes")/*changeData([notes, "notes"])*/} className={activeDash.current === 'notes' ? 'card-active' : ''}>
+                <Card className={activeDash.current === 'notes' ? 'card-stats mb-4 mb-xl-0 card-active' : 'card-stats mb-4 mb-xl-0'}>
+                  <CardBody style={{ cursor: "pointer" }} onClick={() => getDataAPI(notesGetAPI, "notes")/*changeData([notes, "notes"])*/}>
                     <Row>
                       <div className="col">
                         <CardTitle
