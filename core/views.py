@@ -67,6 +67,7 @@ class Post_APIView(APIView):
     def post(self, request, format=None):
         post_data = dict(request.data)
         data = post_data.copy()
+        print("Raw data")
         print("****************************************")
         print(data)
         print("****************************************")
@@ -89,37 +90,54 @@ class Post_APIView(APIView):
 
         Examenes = {"Nombre": Nombre, "Fecha": Fecha, "Valor": Valor}
         data_clean = {
-            "Edad": data.get("Edad", 'NA'),
-            "Genero": data.get("Genero", 'NA'),
-            "GrupoEtnico": data.get("GrupoEtnico", 'NA'),
-            "AreaResidencial": data.get("AreaResidencial", 'NA'),
-            "EstadoCivil": data.get("EstadoCivil", 'NA'),
-            "TSangre": data.get("TSangre", 'NA'),
-            "Tipo": data.get("Tipo", 'NA'),
-            "Plan": data.get("Plan", 'NA'),
+            "Edad": data.get("Edad", "NA"),
+            "Genero": data.get("Genero", "NA"),
+            "GrupoEtnico": data.get("GrupoEtnico", "NA"),
+            "AreaResidencial": data.get("AreaResidencial", "NA"),
+            "EstadoCivil": data.get("EstadoCivil", "NA"),
+            "TSangre": data.get("TSangre", "NA"),
+            "Tipo": data.get("Tipo", "NA"),
+            "Plan": data.get("Plan", "NA"),
         }
         data_clean["Examenes"] = Examenes
+        print("Clean data")
+        print("****************************************")
         print(data_clean)
+        print("****************************************")
         try:
             prediction = ml_pipeline.predict(preprocess_json(data_clean))
+            prediction_ok = True
         except Exception as e:
-            print(f'Error predicting: {e}')
-        print("****************************************")
-        print(f"Prediction probabilities:")
-        print(
-            json.dumps(
-                ml_pipeline.predict_proba(preprocess_json(data_clean))[0],
-                sort_keys=True,
-                indent=4,
+            print(f"Error predicting: {e}")
+            prediction_ok = False
+
+        try:
+            print("****************************************")
+            print(f"Prediction probabilities:")
+            print(
+                json.dumps(
+                    ml_pipeline.predict_proba(preprocess_json(data_clean))[0],
+                    sort_keys=True,
+                    indent=4,
+                )
             )
-        )
-        print(
-            f"Final Prediction: {prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
-        )
-        print("****************************************")
-        prediction = {
-            "respuesta": f"{prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
-        }
+
+        except Exception as e:
+            print(f"Could not calculate probabilities of prediction, error: {e}")
+        finally:
+            print("****************************************")
+
+        if prediction_ok:
+            print(
+                f"Final Prediction: {prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
+            )
+            prediction = {
+                "respuesta": f"{prediction[0]} : {condition_name_dict.get(prediction[0], 'NA')}"
+            }
+        else:
+            prediction = {
+                "respuesta": "Error en la predicción, intenta de nuevo más tarde"
+            }
         if data_clean:
             return Response(prediction, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
