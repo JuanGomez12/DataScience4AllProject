@@ -68,7 +68,7 @@ const AdminNavbar = (props) => {
                   <span className="avatar avatar-sm rounded-circle">
                     <img
                       alt="..."
-                      src="/img/user.png"
+                      src="/img/user.webp"
                     />
                   </span>
                   <Media className="ml-2 d-none d-lg-block">

@@ -78,7 +78,7 @@ const AdminLayout = (props) => {
         routes={routes_sidebar}
         logo={{
           innerLink: "/home",
-          imgSrc: "/icons/logo_2.png",
+          imgSrc: "/icons/logo_2.webp",
           imgAlt: "...",
         }}
       />

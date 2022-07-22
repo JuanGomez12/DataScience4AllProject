@@ -153,7 +153,7 @@ const Sidebar = (props) => {
             <img
               alt={"logo"}
               className="navbar-brand-img"
-              src='/icons/logo_2.png'
+              src='/icons/logo_2.webp'
             />
           </NavbarBrand>
         ) : null}
@@ -227,11 +227,11 @@ const Sidebar = (props) => {
                 <Col className="collapse-brand" xs="6">
                   {logo.innerLink ? (
                     <Link to={logo.innerLink}>
-                      <img alt={logo.imgAlt} src='/icons/logo_2.png' />
+                      <img alt={logo.imgAlt} src='/icons/logo_2.webp' />
                     </Link>
                   ) : (
                     <a href={logo.outterLink}>
-                      <img alt={logo.imgAlt} src='/icons/logo_2.png' />
+                      <img alt={logo.imgAlt} src='/icons/logo_2.webp' />
                     </a>
                   )}
                 </Col>

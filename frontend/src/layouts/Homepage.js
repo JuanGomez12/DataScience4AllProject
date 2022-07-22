@@ -69,7 +69,7 @@ const Homepage = (props) => {
             <div className="header-body text-center">
               <Row className="justify-content-center">
                 <div className="home_section">
-                  <img src="/icons/icon_doctor.png" className="logo_home"></img>
+                  <img src="/icons/icon_doctor.webp" className="logo_home"></img>
                   <div className="title-home-section">
                     <h1 className="title_home">Doctor Disease</h1>
                     <span className="subtitle_home">The power of Data Science and Machine Learning applied to Health data</span>
@@ -99,12 +99,12 @@ const Homepage = (props) => {
               </Row>
               <Row className="justify-content-center">
                 <Col>
-                  <img src="/icons/setting.png" className="home-icon-column"></img>
+                  <img src="/icons/setting.webp" className="home-icon-column"></img>
                   <h3 className="home-title-column">Feature Engineering</h3>
                   <p className="home-text-section">Find average and maximum differences between data for each patient</p>
                 </Col>
                 <Col>
-                  <img src="/icons/natural-language-processing.png" className="home-icon-column"></img>
+                  <img src="/icons/natural-language-processing.webp" className="home-icon-column"></img>
                   <h3 className="home-title-column">Data Preprocessing</h3>
                   <p className="home-text-section">
                     Normalize and scale numerical data, one-hot encode categories, 
@@ -112,14 +112,14 @@ const Homepage = (props) => {
                   </p>
                 </Col>
                 <Col>
-                  <img src="/icons/brain.png" className="home-icon-column"></img>
+                  <img src="/icons/brain.webp" className="home-icon-column"></img>
                   <h3 className="home-title-column">Model training</h3>
                   <p className="home-text-section">
                     80-20% train-test split
                   </p>
                 </Col>
                 <Col>
-                  <img src="/icons/speed.png" className="home-icon-column"></img>
+                  <img src="/icons/speed.webp" className="home-icon-column"></img>
                   <h3 className="home-title-column">Optimize final model</h3>
                   <p className="home-text-section">
                     Oversampling, feature selection using Elastic Net and hyperparameter tuning using 5-fold CV
@@ -138,22 +138,22 @@ const Homepage = (props) => {
               </Row>
               <Row className="justify-content-center">
                 <Col>
-                  <img className="home-picture-team" src="img/members/charic.jpg"></img>
+                  <img className="home-picture-team" src="img/members/charic.webp"></img>
                   <h2 className="home-title-column light-text">Charic Farinango</h2>
                   <p className="home-text-column light-text">Computer Scientist, Software Developer and AI Enthusiast</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/jorge.jpeg"></img>
+                  <img className="home-picture-team" src="img/members/jorge.webp"></img>
                   <h2 className="home-title-column light-text">Jorge Acevedo</h2>
                   <p className="home-text-column light-text">Electronic and Industrial Engineer</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/juan.jpeg"></img>
-                  <h2 className="home-title-column light-text">Juan M Gómez</h2>
+                  <img className="home-picture-team" src="img/members/juan.webp"></img>
+                  <h2 className="home-title-column light-text">Juan M. Gómez</h2>
                   <p className="home-text-column light-text">Biomedical Engineer, Software Developer, and Data Scientist</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/santiago.jpg"></img>
+                  <img className="home-picture-team" src="img/members/santiago.webp"></img>
                   <h2 className="home-title-column light-text">Santiago Garcia</h2>
                   <p className="home-text-column light-text">Systems Engineer, Web Developer and Assitant Professor</p>
                 </Col>
@@ -162,17 +162,17 @@ const Homepage = (props) => {
             <div className="header-body text-center mb-7">
               <Row className="justify-content-center">
                 <Col>
-                  <img className="home-picture-team" src="img/members/daniel.jpeg"></img>
+                  <img className="home-picture-team" src="img/members/daniel.webp"></img>
                   <h2 className="home-title-column light-text">Daniel Montes</h2>
                   <p className="home-text-column light-text">Software Developer</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/cristian.png"></img>
+                  <img className="home-picture-team" src="img/members/cristian.webp"></img>
                   <h2 className="home-title-column light-text">Cristian Prieto</h2>
                   <p className="home-text-column light-text">Systems Engineer</p>
                 </Col>
                 <Col>
-                  <img className="home-picture-team" src="img/members/steven.jpeg"></img>
+                  <img className="home-picture-team" src="img/members/steven.webp"></img>
                   <h2 className="home-title-column light-text">Steven Ruiz</h2>
                   <p className="home-text-column light-text">Economist, Supply Chain Data Analyst</p>
                 </Col>

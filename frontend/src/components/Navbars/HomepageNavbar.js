@@ -89,7 +89,7 @@ const HomepageNavbar = () => {
         <NavbarBrand to="/home" tag={Link}>
           <img
             alt="..."
-            src="/icons/dd_white.png"
+            src="/icons/dd_white.webp"
           />
         </NavbarBrand>
         <button className="navbar-toggler" id="navbar-collapse-main">
@@ -104,7 +104,7 @@ const HomepageNavbar = () => {
                 <Link to="/home">
                   <img
                     alt="..."
-                    src="icons/logo_2.png"
+                    src="icons/logo_2.webp"
                   />
                 </Link>
               </Col>
