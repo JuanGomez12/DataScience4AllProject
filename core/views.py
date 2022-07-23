@@ -72,7 +72,7 @@ class Post_APIView(APIView):
         # the diagnoses and their probabilities? True by default
         try:
             probabilities_response = bool(
-                strtobool(data.get("probabilities_response", ["True"])[0])
+                strtobool(data.get("probabilities_response", ["False"])[0])
             )
         except:
             probabilities_response = True
