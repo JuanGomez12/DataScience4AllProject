@@ -163,6 +163,9 @@ function Prediction() {
       values.push(medicalExams[0].value);
     }
 
+      // probabilities_response controls the response type of the API.
+      // When True, it responds with the probabilities of each diagnosis
+      // When False, it responds with the top diagnosis (e.g. A530)
     var json = {
       "Edad": age,
       "Genero": sex,
@@ -174,7 +177,8 @@ function Prediction() {
       "Fecha": dates,
       "Valor": values,
       "Tipo": type,
-      "Plan": plan
+      "Plan": plan,
+      "probabilities_response": "False"
     }
 
     return json;
