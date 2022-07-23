@@ -72,16 +72,16 @@ const Sidebar = (props) => {
     setCollapseOpen(false);
   };
 
-  function getDataAPI(){
+  function getDataAPI() {
     axios.get(socioGetAPI)
-    .then(res => {
-      rpta = res.data
-      //console.log('rpta del API', rpta);
-    })
-    .catch(e => {
-      //console.log(e);
-      rpta = {}
-    })
+      .then(res => {
+        rpta = res.data
+        //console.log('rpta del API', rpta);
+      })
+      .catch(e => {
+        //console.log(e);
+        rpta = {}
+      })
     return rpta
   }
 
@@ -89,16 +89,16 @@ const Sidebar = (props) => {
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
       let ste
-      if (prop.name === 'Dashboard'){
+      if (prop.name === 'Dashboard') {
         axios.get(socioGetAPI)
-        .then(res => {
-          ste = res.data
-          //console.log('rpta del API', ste);
-        })
-        .catch(e => {
-          ste = {}
-        })
-      } else{
+          .then(res => {
+            ste = res.data
+            //console.log('rpta del API', ste);
+          })
+          .catch(e => {
+            ste = {}
+          })
+      } else {
         ste = {}
       }
       return (
@@ -108,7 +108,7 @@ const Sidebar = (props) => {
             state={ste}
             tag={NavLinkRRD}
             onClick={closeCollapse}
-            // activeClassName="active"
+          // activeClassName="active"
           >
             <i className={prop.icon} />
             {prop.name}
@@ -258,9 +258,9 @@ const Sidebar = (props) => {
                 type="search"
               />
               {/* <InputGroupAddon addonType="prepend"> */}
-                <InputGroupText>
-                  <span className="fa fa-search" />
-                </InputGroupText>
+              <InputGroupText>
+                <span className="fa fa-search" />
+              </InputGroupText>
               {/* </InputGroupAddon> */}
             </InputGroup>
           </Form>

@@ -44,66 +44,67 @@ import axios from 'axios';
 
 const Index = (props) => {
 
-  const socio = {"Genero":{
-    "Diabetes":{
-        "hombres":40,
-        "mujeres":60
+  const socio = {
+    "Genero": {
+      "Diabetes": {
+        "hombres": 40,
+        "mujeres": 60
       },
-    "Syphilis":{
-      "hombres":70,
-      "mujeres":30
-    }
-    },
-  "Edad":{
-    "Diabetes":{
-      "min":0,
-      "q1":10,
-      "med":15,
-      "q3":45, 
-      "max":60,
-      "mean": 30,
-      "sd": 20,
-      "fliers": [0, -50, 85, 100 ]
-    },
-    "Syphilis":{
-      "min":1,
-      "q1":11,
-      "med":16,
-      "q3":46, 
-      "max":61,
-      "mean": 30,
-      "sd": 20,
-      "fliers": [0, -50, 85, 100 ]
-    }
-  },
-  "EstadoCivil":{
-      "Diabetes":{
-        "soltero":12,
-        "casado":32
+      "Syphilis": {
+        "hombres": 70,
+        "mujeres": 30
       }
-  },
-  "TSangre":{
-      "Diabetes":{
-        "O+":12,
-        "AB":32,
-        "O-":28,
-        "A+":10
-       },
-       "Syphilis":{
-        "O+":15,
-        "AB":30,
-        "O-":25,
-        "A+":20
-       }
     },
-  "condition_distribution": {
-    "A51": {"Count": "3685", "Percentage": "2.63"},
-    "A530": {"Count": "60587", "Percentage": "43.22"}, 
-    "A539": {"Count": "49378", "Percentage": "35.23"}, 
-    "E109": {"Count": "6278", "Percentage": "4.48"}, 
-    "E119": {"Count": "17439", "Percentage": "12.44"}, 
-    "E149": {"Count": "2808", "Percentage": "2.0"}
-  },
+    "Edad": {
+      "Diabetes": {
+        "min": 0,
+        "q1": 10,
+        "med": 15,
+        "q3": 45,
+        "max": 60,
+        "mean": 30,
+        "sd": 20,
+        "fliers": [0, -50, 85, 100]
+      },
+      "Syphilis": {
+        "min": 1,
+        "q1": 11,
+        "med": 16,
+        "q3": 46,
+        "max": 61,
+        "mean": 30,
+        "sd": 20,
+        "fliers": [0, -50, 85, 100]
+      }
+    },
+    "EstadoCivil": {
+      "Diabetes": {
+        "soltero": 12,
+        "casado": 32
+      }
+    },
+    "TSangre": {
+      "Diabetes": {
+        "O+": 12,
+        "AB": 32,
+        "O-": 28,
+        "A+": 10
+      },
+      "Syphilis": {
+        "O+": 15,
+        "AB": 30,
+        "O-": 25,
+        "A+": 20
+      }
+    },
+    "condition_distribution": {
+      "A51": { "Count": "3685", "Percentage": "2.63" },
+      "A530": { "Count": "60587", "Percentage": "43.22" },
+      "A539": { "Count": "49378", "Percentage": "35.23" },
+      "E109": { "Count": "6278", "Percentage": "4.48" },
+      "E119": { "Count": "17439", "Percentage": "12.44" },
+      "E149": { "Count": "2808", "Percentage": "2.0" }
+    },
   };
   const desease_type = {
     'A510': 'Primary genital Syph.',
@@ -123,7 +124,7 @@ const Index = (props) => {
   const socioGetAPI = "http://20.214.157.160:8000/api/socio_economics";
   //console.log('stat', state)
   //const {genero,edad,estadoCivil,tipoSangre} = state
-  let outs_states =  {'Edad':[true, {}]} // idx 1 true if outliers are showing, idx 2 saves the outliers
+  let outs_states = { 'Edad': [true, {}] } // idx 1 true if outliers are showing, idx 2 saves the outliers
   //console.log('Estado', state)
 
   const toggleNavs = (e, index) => {
@@ -134,9 +135,9 @@ const Index = (props) => {
 
   useEffect(() => {
     console.log('state', state);
-    if(state !== null){
+    if (state !== null) {
       setDataState(state);
-    } else{
+    } else {
       //setDataState(socio);
       getDataAPI();
     }
@@ -146,22 +147,22 @@ const Index = (props) => {
     }
   }, []);
 
-  function getDataAPI(){
+  function getDataAPI() {
     let rpta
     axios.get(socioGetAPI)
-    .then(res => {
-      rpta = res.data
-      setDataState(rpta)
-      //console.log('rpta del API', rpta);
-    })
-    .catch(e => {
-      //console.log(e);
-      rpta = {}
-    })
+      .then(res => {
+        rpta = res.data
+        setDataState(rpta)
+        //console.log('rpta del API', rpta);
+      })
+      .catch(e => {
+        //console.log(e);
+        rpta = {}
+      })
     return rpta
   }
 
-  function showOutliers(plot_info){
+  function showOutliers(plot_info) {
     let root
     if (!root) {
       root = ReactDOMClient.createRoot(document.getElementById(plot_info[0]));
@@ -176,13 +177,13 @@ const Index = (props) => {
         outs_states[plot_info[0]][1][key] = value.fliers
         value.fliers = []
         //console.log('outs_states_af', plot_info[1])
-      } 
+      }
       else {
         value.fliers = outs_states[plot_info[0]][1][key]
       }
       root.render(<div id={plot_info[0]}>
-                    <BoxPlot props={[plot_info[1], plot_info[2]]}></BoxPlot>
-                  </div>)
+        <BoxPlot props={[plot_info[1], plot_info[2]]}></BoxPlot>
+      </div>)
     })
     console.log('new', plot_info[1])
     root = null
@@ -196,7 +197,7 @@ const Index = (props) => {
       <Header />
       {/* Page content */}
       <Container className="mt--7 bg-secondary" fluid>
-      <Row>
+        <Row>
           <Col className="mb-5 mb-xl-0" xl="12">
             <Card className="shadow">
               <CardHeader className="bg-transparent">
@@ -209,14 +210,14 @@ const Index = (props) => {
                   </Col>
                 </Row>
               </CardHeader>
-              {Object.keys(dataState).length !== 0 && dataState.condition_distribution !== undefined?
+              {Object.keys(dataState).length !== 0 && dataState.condition_distribution !== undefined ?
                 <div>
-                  {/*<StackedBarPlot props={[dataState.condition_distribution, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>*/ }
-                  <PiePlot props={[dataState.condition_distribution, {bck_color:"rgba(0,0,0,0)"}]}></PiePlot>
-                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                  {/*<StackedBarPlot props={[dataState.condition_distribution, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>*/}
+                  <PiePlot props={[dataState.condition_distribution, { bck_color: "rgba(0,0,0,0)" }]}></PiePlot>
+                  <div className="bg-transparent card-header" style={{ padding: "0.5rem 1.25rem 0.5rem" }}>
                     <h6 className="ls-1 mb-0">
                       <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
-                    </h6> 
+                    </h6>
                   </div>
                 </div>
                 :
@@ -242,11 +243,11 @@ const Index = (props) => {
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
                 <div>
-                  <StackedBarPlot props={[dataState.Genero, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
-                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                  <StackedBarPlot props={[dataState.Genero, { bck_color: "rgba(0,0,0,0)" }]}></StackedBarPlot>
+                  <div className="bg-transparent card-header" style={{ padding: "0.5rem 1.25rem 0.5rem" }}>
                     <h6 className="ls-1 mb-0">
                       <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
-                    </h6> 
+                    </h6>
                   </div>
                 </div>
                 :
@@ -271,7 +272,7 @@ const Index = (props) => {
                       <div className="text-right">
                         <Button
                           color="primary"
-                          onClick={() => showOutliers(["Edad", dataState.Edad, {bck_color:"rgba(0,0,0,0)"}])}
+                          onClick={() => showOutliers(["Edad", dataState.Edad, { bck_color: "rgba(0,0,0,0)" }])}
                           size="sm"
                         >
                           Outliers
@@ -286,19 +287,19 @@ const Index = (props) => {
               {Object.keys(dataState).length !== 0 ?
                 <div>
                   <div id="Edad">
-                    <BoxPlot props={[dataState.Edad, {bck_color:"rgba(0,0,0,0)", ytitle:"Age"}]}></BoxPlot> 
-                  </div> 
-                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                    <BoxPlot props={[dataState.Edad, { bck_color: "rgba(0,0,0,0)", ytitle: "Age" }]}></BoxPlot>
+                  </div>
+                  <div className="bg-transparent card-header" style={{ padding: "0.5rem 1.25rem 0.5rem" }}>
                     <h6 className="ls-1 mb-0">
                       <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
-                    </h6> 
+                    </h6>
                   </div>
                 </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
-              }      
+              }
             </Card>
           </Col>
         </Row>
@@ -317,18 +318,18 @@ const Index = (props) => {
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
                 <div>
-                  <StackedBarPlot props={[dataState.EstadoCivil, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
-                  <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
+                  <StackedBarPlot props={[dataState.EstadoCivil, { bck_color: "rgba(0,0,0,0)" }]}></StackedBarPlot>
+                  <div className="bg-transparent card-header" style={{ padding: "0.5rem 1.25rem 0.5rem" }}>
                     <h6 className="ls-1 mb-0">
                       <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
-                    </h6> 
+                    </h6>
                   </div>
-                </div>      
+                </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
-              } 
+              }
             </Card>
           </Col>
           <Col xl="6">
@@ -344,19 +345,19 @@ const Index = (props) => {
                 </Row>
               </CardHeader>
               {Object.keys(dataState).length !== 0 ?
-              <div>
-                <StackedBarPlot props={[dataState.TSangre, {bck_color:"rgba(0,0,0,0)"}]}></StackedBarPlot>
-                <div className="bg-transparent card-header" style={{padding: "0.5rem 1.25rem 0.5rem"}}>
-                  <h6 className="ls-1 mb-0">
-                    <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
-                  </h6> 
+                <div>
+                  <StackedBarPlot props={[dataState.TSangre, { bck_color: "rgba(0,0,0,0)" }]}></StackedBarPlot>
+                  <div className="bg-transparent card-header" style={{ padding: "0.5rem 1.25rem 0.5rem" }}>
+                    <h6 className="ls-1 mb-0">
+                      <b>A510:</b> Primary genital Syph. <b>A511:</b> Primary anal Syph. <b>A514:</b> Other secondary Syph. <b>A529:</b> Late Syph, unspecif. <b>A530:</b> Latent Syph, unspecif. as early or late. <b>A539:</b> Syphilis, unspecif. <b>E109:</b> Type 1 Diabetes M. <b>E119:</b> Type 2 Diabetes M. <b>E149:</b> Unspecif. Diabetes M.
+                    </h6>
+                  </div>
                 </div>
-              </div>
                 :
                 <CardHeader className="bg-transparent">
                   <h5 className="text-uppercase text-light ls-1 mb-0"> No data</h5>
                 </CardHeader>
-              } 
+              }
             </Card>
           </Col>
         </Row>
