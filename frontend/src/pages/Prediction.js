@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import {Container, Row, Col, Table, Card, CardHeader, Button, CardBody, FormGroup, Form, Input} from 'reactstrap'
+import { Container, Row, Col, Table, Card, CardHeader, Button, CardBody, FormGroup, Form, Input } from 'reactstrap'
 import PredictionHeader from "../components/Headers/PredictionHeader.js"
 import Select from 'react-select'
 import axios from 'axios'
@@ -67,7 +67,7 @@ function Prediction() {
     { value: 'Divorciado', label: 'Divorced' }
   ];
 
-   const bloodOptions = [
+  const bloodOptions = [
     { value: 'O+', label: 'O+' },
     { value: 'A+', label: 'A+' },
     { value: 'B+', label: 'B+' },
@@ -78,56 +78,56 @@ function Prediction() {
     { value: 'AB-', label: 'AB-' }
   ];
 
-  const planOptions = [
-    {  value: 'Confirmado Nuevo', label:'Confirmado Nuevo'},
-    {  value: 'Confirmado Repetido', label:'Confirmado Repetido'},
-    {  value: 'Impresión Diagnóstica', label:'Impresión Diagnóstica'},
-  ];
+  // const planOptions = [
+  //   { value: 'Confirmado Nuevo', label: 'Confirmado Nuevo' },
+  //   { value: 'Confirmado Repetido', label: 'Confirmado Repetido' },
+  //   { value: 'Impresión Diagnóstica', label: 'Impresión Diagnóstica' },
+  // ];
 
-  function handleChangeAge(event){
+  function handleChangeAge(event) {
     setAge(event.target.value);
   }
 
-  function handleChangeSex(value){
+  function handleChangeSex(value) {
     setSex(value.value);
   }
 
-  function handleChangeEthnicGroup(event){
+  function handleChangeEthnicGroup(event) {
     setEthnicGroup(event.value);
   }
 
-  function handleChangeResidentialArea(event){
+  function handleChangeResidentialArea(event) {
     setResidentialArea(event.value);
   }
 
-  function handleChangeMaritalStatus(event){
+  function handleChangeMaritalStatus(event) {
     setMaritalStatus(event.value);
   }
 
-  function handleChangeBlood(event){
+  function handleChangeBlood(event) {
     setBloodType(event.value);
   }
 
-  function handleChangePlan(event){
+  function handleChangePlan(event) {
     setPlan(event.target.value);
   }
 
-  function handleChangeType(event){
-    setType(event.value);
-  }
+  // function handleChangeType(event) {
+  //   setType(event.value);
+  // }
 
-  function handleChangeExams(event){
+  function handleChangeExams(event) {
     setMedicalExams(event.value);
   }
 
-  function removeMedicalExam(indice){
+  function removeMedicalExam(indice) {
     console.log("Removing:", indice);
     var copyMedicalExams = medicalExams;
     copyMedicalExams.splice(indice, 1);
     setMedicalExams(copyMedicalExams);
   }
 
-  function handleSubmit(event){
+  function handleSubmit(event) {
     console.log("Sending request");
     var json = createDataJson();
     console.log(json);
@@ -140,19 +140,19 @@ function Prediction() {
     //   console.log(e);
     // })
 
-    axios.post(urlPrediction,json)
-    .then(res => {
-      setModalContent("prediction");
-      setResultPrediction(res.data.respuesta);
-      console.log(res);
-      setIsOpen(true);
-    })
-    .catch(e => {
-     console.log(e);
-    })
+    axios.post(urlPrediction, json)
+      .then(res => {
+        setModalContent("prediction");
+        setResultPrediction(res.data.respuesta);
+        console.log(res);
+        setIsOpen(true);
+      })
+      .catch(e => {
+        console.log(e);
+      })
   }
 
-  function createDataJson(){
+  function createDataJson() {
     var names = [];
     var dates = [];
     var values = [];
@@ -163,9 +163,9 @@ function Prediction() {
       values.push(medicalExams[0].value);
     }
 
-      // probabilities_response controls the response type of the API.
-      // When True, it responds with the probabilities of each diagnosis
-      // When False, it responds with the top diagnosis (e.g. A530)
+    // probabilities_response controls the response type of the API.
+    // When True, it responds with the probabilities of each diagnosis
+    // When False, it responds with the top diagnosis (e.g. A530)
     var json = {
       "Edad": age,
       "Genero": sex,
@@ -199,7 +199,7 @@ function Prediction() {
       "date": newDate,
       "value": parseFloat(newValue)
     }
-    
+
     console.log(newMedicaExam);
 
     var copyMedicalExams = medicalExams;
@@ -215,7 +215,7 @@ function Prediction() {
   return (
     <>
       <PredictionHeader />
-        {/* Page content */}
+      {/* Page content */}
       <Container className="mt-5" fluid>
         <Col className="order-xl-1" xl="12">
           <Card className="bg-secondary shadow">
@@ -258,7 +258,7 @@ function Prediction() {
                         >
                           Sex
                         </label>
-                        <Select id="input-sex" options={sexOptions} onChange={handleChangeSex}/>
+                        <Select id="input-sex" options={sexOptions} onChange={handleChangeSex} />
                       </FormGroup>
                     </Col>
                   </Row>
@@ -271,7 +271,7 @@ function Prediction() {
                         >
                           Marital status
                         </label>
-                        <Select id="input-marital-status" options={maritalOptions} onChange={handleChangeMaritalStatus}/>
+                        <Select id="input-marital-status" options={maritalOptions} onChange={handleChangeMaritalStatus} />
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -282,7 +282,7 @@ function Prediction() {
                         >
                           Ethnic group
                         </label>
-                        <Select id="input-ethnic-group" options={ethnicOptions} onChange={handleChangeEthnicGroup}/>
+                        <Select id="input-ethnic-group" options={ethnicOptions} onChange={handleChangeEthnicGroup} />
                       </FormGroup>
                     </Col>
                   </Row>
@@ -295,7 +295,7 @@ function Prediction() {
                         >
                           Residential Area
                         </label>
-                        <Select id="input-residential-area" options={residentialOptions} onChange={handleChangeResidentialArea}/>
+                        <Select id="input-residential-area" options={residentialOptions} onChange={handleChangeResidentialArea} />
                       </FormGroup>
                     </Col>
                     <Col lg="6">
@@ -306,12 +306,12 @@ function Prediction() {
                         >
                           Blood type
                         </label>
-                        <Select id="input-blood-type" options={bloodOptions} onChange={handleChangeBlood}/>
+                        <Select id="input-blood-type" options={bloodOptions} onChange={handleChangeBlood} />
                       </FormGroup>
                     </Col>
                   </Row>
 
-                  <Row>
+                  {/* <Row>
                     <Col lg="12">
                       <FormGroup>
                         <label
@@ -320,10 +320,10 @@ function Prediction() {
                         >
                           Type
                         </label>
-                        <Select id="input-type" options={planOptions} onChange={handleChangeType}/>
+                        <Select id="input-type" options={planOptions} onChange={handleChangeType} />
                       </FormGroup>
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row>
                     <Col lg="12">
                       <FormGroup>
@@ -344,43 +344,43 @@ function Prediction() {
                       </FormGroup>
                     </Col>
                   </Row>
-                  
+
                 </div>
 
                 <hr className="my-4" />
                 <h6 className="heading-small text-muted mb-4">Medical Exams</h6>
                 <div className="pl-lg-4">
-                <Row>
-                  <div className="col">
-                    <Card className="shadow">
-                      <CardHeader className="border-0">
-                        <Row className="align-items-center">
-                          <Col xs="8">
-                            <h3 className="mb-0">Medical Exams</h3>
-                          </Col>
-                          <Col className="text-right" xs="4">
-                            <Button
-                              color="info"
-                              href="#predict"
-                              onClick={(e) => openModal("exam")}
-                              size="sm"
-                            >
-                              Add new exam
-                            </Button>
-                          </Col>
-                        </Row>
-                      </CardHeader>
-                      <Table className="align-items-center table-flush" responsive>
-                        <thead className="thead-light">
-                          <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {medicalExams.map((element, i) => (
+                  <Row>
+                    <div className="col">
+                      <Card className="shadow">
+                        <CardHeader className="border-0">
+                          <Row className="align-items-center">
+                            <Col xs="8">
+                              <h3 className="mb-0">Medical Exams</h3>
+                            </Col>
+                            <Col className="text-right" xs="4">
+                              <Button
+                                color="info"
+                                href="#predict"
+                                onClick={(e) => openModal("exam")}
+                                size="sm"
+                              >
+                                Add new exam
+                              </Button>
+                            </Col>
+                          </Row>
+                        </CardHeader>
+                        <Table className="align-items-center table-flush" responsive>
+                          <thead className="thead-light">
+                            <tr>
+                              <th scope="col">Name</th>
+                              <th scope="col">Date</th>
+                              <th scope="col">Value</th>
+                              <th scope="col">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {medicalExams.map((element, i) => (
                               <tr key={i}>
                                 <th scope="row">
                                   <span className="mb-0 text-sm">
@@ -397,13 +397,13 @@ function Prediction() {
                                   <Button onClick={() => removeMedicalExam(i)}>Remove</Button>
                                 </td>
                               </tr>
-                          ))}
-                          
-                        </tbody>
-                      </Table>
-                    </Card>
-                  </div>
-                </Row>
+                            ))}
+
+                          </tbody>
+                        </Table>
+                      </Card>
+                    </div>
+                  </Row>
                 </div>
 
                 <hr className="my-4" />
@@ -428,7 +428,7 @@ function Prediction() {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        {modalContent !== "prediction"?
+        {modalContent !== "prediction" ?
           <>
             <h6 className="heading-small text-muted mb-4">
               New Medical Examn
@@ -478,7 +478,7 @@ function Prediction() {
                     type="number"
                   />
                 </FormGroup>
-                
+
               </Row>
               <Row>
                 <Button color="info" onClick={closeModal}>Add</Button>
@@ -489,7 +489,7 @@ function Prediction() {
           <>
             <p><b>Result of prediction:</b></p>
             <p>{resultPrediction}</p>
-            <Button 
+            <Button
               color='info'
               onClick={() => setIsOpen(false)}>Close</Button>
           </>
