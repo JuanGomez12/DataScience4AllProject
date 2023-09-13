@@ -7,7 +7,8 @@ Repository of the final project of Team 24
 
 # Identification of patients with a specific observable feature
 - Natural language processing (NLP) code to extract relevant information of the medical notes. 
-- Predictive model that gives us an accurate identification of patients with a specific observable feature (certain pathologies or health conditions) 
+- Predictive model that gives us an accurate identification of patients with a specific observable feature (certain pathologies or health conditions)
+- API endpoint for prediction using the previously trained predictive model.
 
 ## Problem Description
 Syphilis is a disease which can present a multitude of different symptoms, for which the main indicator (chancres) is only present during the onset of the condition, i.e. Primary syphilis. Each year, 5 million people are diagnosed with this affliction, and its diagnosis can be difficult and can depend on a multitude of factors such as the microbiologist’s experience when analyzing a patient’s sample to the quantity of treponema bacteria present in the lesion during the sampling process. 
